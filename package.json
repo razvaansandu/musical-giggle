@@ -9,23 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@types/react-dom": "^19.2.2",
-    "axios": "^1.13.1",
-    "dotenv": "^17.2.3",
-    "express-session": "^1.18.2",
-=======
->>>>>>> development
     "next": "16.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@types/node": "24.9.2",
-<<<<<<< HEAD
-    "@types/react": "^19.2.2",
-=======
->>>>>>> development
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "nodemon": "^3.1.10"
