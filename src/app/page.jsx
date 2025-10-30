@@ -1,21 +1,27 @@
 import ArtistHero from "./components/ArtistHero";
+import Card from "./components/Card";
+import { songs } from "./components/data.ts";
 
 export default function Page() {
-  const artist = {
-    name: "Linkin Park",
-    listeners: 53091814,
-    image: "/images/linkinpark.jpg",
-    spotify: "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz",
-  };
-
-  return (
-    <main style={{ padding: 24, background: "#0b0b0b", minHeight: "100vh" }}>
-      <ArtistHero
-        name={artist.name}
-        listeners={artist.listeners}
-        image={artist.image}
-        spotifyUrl={artist.spotify}
-      />
-    </main>
-  );
+    return (
+        <main className="main grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+            <ArtistHero
+                name={artist.name}
+                listeners={artist.listeners}
+                image={artist.image}
+                spotifyUrl={artist.spotify}
+            />
+            {songs.map((song, index) => (
+                <Card
+                    key={index}
+                    title={song.title}
+                    description={song.description}
+                    imageUrl={song.imageUrl}
+                    numOfViews={song.numOfViews}
+                    time={song.time}
+                />
+            ))}
+        </main>
+    );
 }
+
