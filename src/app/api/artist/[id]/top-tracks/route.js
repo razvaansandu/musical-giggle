@@ -1,13 +1,14 @@
 import { cookies } from 'next/headers';
+import fetch from 'node-fetch';
 
-export async function GET(request) {
+// 🎧 Endpoint per top tracks artista
+export async function GET(request, { params }) {
+  const { id } = params;
+
   try {
-    const LIMIT = 10;
+    const token = (await cookies()).get('auth_code')?.value;
 
-    const cookiesStore = await cookies();
-    const token = cookiesStore.get('auth_code')?.value;
-
-    const response = await fetch(`https://api.spotify.com/v1/artists/0TnOYISbd1XYRBk9myaseg?limit=${LIMIT}`, {
+    const response = await fetch(`https://api.spotify.com/v1/artists/${id}/top-tracks?market=IT`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
