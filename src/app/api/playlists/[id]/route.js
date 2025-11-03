@@ -1,29 +1,17 @@
 import SpotifyWebApi from "spotify-web-api-node";
 
-// ✅ Inizializza il client Spotify
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
 });
 
-// 🔁 Ottiene e imposta l'access token
 async function refreshAccessToken() {
-  try {
-    const data = await spotifyApi.clientCredentialsGrant();
-    spotifyApi.setAccessToken(data.body.access_token);
-    console.log("✅ Access token aggiornato Spotify");
-  } catch (err) {
-    console.error("❌ Errore aggiornamento token Spotify:", err);
-  }
+  const data = await spotifyApi.clientCredentialsGrant();
+  spotifyApi.setAccessToken(data.body.access_token);
 }
 
-// Esegue subito il refresh del token all’avvio
 await refreshAccessToken();
 
-// Aggiorna il token ogni ora
-setInterval(refreshAccessToken, 3600 * 1000);
-
-// ✅ Endpoint GET: playlist per ID
 export async function GET(_request, { params }) {
   const { id } = params;
 
@@ -43,10 +31,8 @@ export async function GET(_request, { params }) {
 
     return Response.json(playlist);
   } catch (err) {
-    console.error("❌ Errore Spotify API:", err);
-    return Response.json(
-      { error: "Errore nel server Spotify API" },
-      { status: 500 }
-    );
+    console.error("Errore Spotify:", err);
+    return Response.json({ error: "Errore nel server Spotify API" }, { status: 500 });
   }
 }
+setInterval(refreshAccessToken, 3600 * 1000);
