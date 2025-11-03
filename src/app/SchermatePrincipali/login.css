@@ -46,13 +46,15 @@
   font-weight: bold;
 }
 
-.tab.active {
+.tab.active { 
+  font-family: Arial, Helvetica, sans-serif;
   color: #1db954;
   border-bottom: 2px solid #1db954;
 }
 
 /* Form */
-.login-form {
+.login-form { 
+  font-family: 'Times New Roman', Times, serif;
   display: flex;
   flex-direction: column;
   gap: 1rem;
