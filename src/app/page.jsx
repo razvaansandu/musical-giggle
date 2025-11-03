@@ -1,4 +1,4 @@
-import ArtistHero from "./components/ArtistHero";
+import ArtistHero from "../components/ArtistHero";
 
 const artist = {
     name: "Linkin Park",
@@ -16,8 +16,8 @@ export default function Page() {
                 image={artist.image}
                 spotifyUrl={artist.spotify}
             />
-            
+             
         </main>
     );
-}
+} 
 
