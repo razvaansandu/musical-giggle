@@ -1,10 +1,17 @@
 'use client';
-import React from 'react';
+import { useRouter } from 'next/navigation';
 import './login.css';
 
 export default function LoginPage() {
-  const handleSpotifyLogin = () => {
-    window.location.href = 'http://localhost:3000/api/auth/callback';
+  const router = useRouter();
+  const handleSpotifyLogin = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`, {
+      method: 'POST'
+    });
+    console.log('Response from login API:', res);
+    if (res.ok) {
+      router.push('/');
+    }
   };
 
   return (
