@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import fetch from 'node-fetch';
 
-// 🎧 Endpoint per top tracks artista
 export async function GET(request, { params }) {
   const { id } = params;
 
