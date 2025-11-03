@@ -1,8 +1,7 @@
 import "./login.css";
 
- function Login() { 
-  <link 
-  return ( 
+ function Login() {   
+   return ( 
     <div className="login-container">
       <div className="login-box">
         <div className="login-header"> 
@@ -10,7 +9,7 @@ import "./login.css";
           <h1 className="logo">Spotify</h1> 
           <div className="tabs"> 
             <button className="tab active">LOGIN </button>    
-          </div> 
+          </div>  
         </div>  
         <form className="login-form">
           <div className="form-group"> 
