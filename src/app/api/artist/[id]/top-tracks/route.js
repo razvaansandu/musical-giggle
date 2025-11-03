@@ -1,10 +1,10 @@
-
 import fetch from 'node-fetch';
 import { Buffer } from 'buffer';
 
 const clientId = '3c80f6f31cfe41fbb1e3a02175af8c83';
 const clientSecret = 'dc49d39e13dd49baac725c0d949fe8c0';
 
+// 🔑 Funzione per ottenere il token Spotify
 async function getAccessToken() {
   const response = await fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
@@ -19,6 +19,7 @@ async function getAccessToken() {
   return data.access_token;
 }
 
+// 🎧 Endpoint per top tracks artista
 export async function GET(request, { params }) {
   const { id } = params;
 
@@ -33,7 +34,7 @@ export async function GET(request, { params }) {
     return Response.json(data);
 
   } catch (err) {
-    console.error(err);
+    console.error('Errore top tracks:', err);
     return new Response(JSON.stringify({ error: 'Errore nel prendere top tracks artista' }), { status: 500 });
   }
 }
