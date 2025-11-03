@@ -1,6 +1,7 @@
 import "./login.css";
 
- function Login() {
+ function Login() { 
+  <link 
   return ( 
     <div className="login-container">
       <div className="login-box">
@@ -12,7 +13,7 @@ import "./login.css";
           </div> 
         </div>  
         <form className="login-form">
-          <div className="form-group">
+          <div className="form-group"> 
             <label>Username</label>
             <input type="text" placeholder="example@gmail.com" />
           </div> 
@@ -20,7 +21,7 @@ import "./login.css";
           <div className="form-group">
             <label>Password</label>
             <input type="password" placeholder="password" />
-          </div>
+          </div> 
 
           <div className="form-options">
             <label className="checkbox">
@@ -34,11 +35,11 @@ import "./login.css";
  
           <button type="button" className="btn-submit">
            Login 
-          </button>
-        </form>  
+          </button> 
+        </form>   
       </div>
     </div>
-  );
+  ); 
 } 
 export default Login;
  

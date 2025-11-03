@@ -10,7 +10,7 @@ export default function Home() {
         <Image
           className={styles.logo}
           src="/spo1.png"
-          width={330}
+          width={330} 
           height={330}
           priority
         />

@@ -1,0 +1,30 @@
+
+.btn-next-flat { 
+    background-color: grey;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  background: transparent; 
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color .12s ease, transform .08s ease, color .12s ease; 
+  line-height: 0; 
+}
+ 
+.btn-next-flat:hover {
+  background-color: black;
+  transform: translateY(-1px);
+}
+
+.btn-next-flat:active {
+  transform: translateY(0); 
+}
+
+.btn-next-flat:focus {
+  outline-offset: 2px;
+}
+
+
+ 
