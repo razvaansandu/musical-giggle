@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
-import styles from './home/home.module.css';
-import SpotifyHeader from 'components/SpotifyHeader';
+import styles from './home.module.css';
+import SpotifyHeader from '../../components/SpotifyHeader';
 
 // Componente principale 
 function MainContent() {

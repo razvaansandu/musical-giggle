@@ -1,0 +1,304 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  background-color: #121212;
+  color: white;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.searchContainer {
+  flex: 0 1 364px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 40px;
+  border-radius: 500px;
+  border: none;
+  background-color: #242424;
+  color: white;
+  font-size: 14px;
+}
+
+.searchInput::placeholder {
+  color: #a7a7a7;
+}
+
+.userNav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.installButton {
+  padding: 8px 16px;
+  border-radius: 500px;
+  border: none;
+  background-color: transparent;
+  color: #a7a7a7;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.profileButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mainContent {
+  padding: 24px 32px;
+}
+
+.content {
+  display: flex;
+  height: 100%;
+}
+
+/* Stili barra laterale */
+.sidebar {
+  width: 240px;
+  background-color: #000000;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mainContent {
+  position: relative;
+  padding-bottom: 60px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.menuItem:hover {
+  background-color: #282828;
+}
+
+.menuItem svg {
+  opacity: 0.7;
+}
+
+.menuItem span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.playlists {
+  border-top: 1px solid #282828;
+  padding-top: 24px;
+}
+
+.playlists h2 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  padding: 0 12px;
+}
+
+.createPlaylist {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.createPlaylist:hover {
+  opacity: 0.7;
+}
+
+/* Stili contenuto principale */
+.mainContent {
+  flex: 1;
+  background: linear-gradient(to bottom, #404040, #121212);
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+}
+
+/* Stili delle card */
+.card {
+  background-color: #181818;
+  padding: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.card:hover {
+  background-color: #282828;
+}
+
+.cardImage {
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: #282828;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.cardContent h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.cardContent p {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+/* Stili del volume */
+.volumeWrapper {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.volumeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 999px;
+  background-color: #181818;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.12s, transform 0.12s;
+  border: none;
+}
+
+.volumeButton:hover {
+  background-color: #282828;
+  transform: scale(1.03);
+}
+
+.volumePopover {
+  position: relative;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.sliderContainer {
+  width: 180px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #121212;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+
+.volumeSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  height: 36px;
+  display: block;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.05);
+  margin-top: 0;
+  transform: translateY(-3px);
+}
+.volumeSlider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #171b19;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 0 6px rgba(29,185,84,0.12);
+  transform: translateY(-3px);
+}
+
+.volumeSlider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #535353;
+  border-radius: 999px;
+}
+.volumeSlider::-moz-range-track {
+  height: 6px;
+  background: #535353;
+  border-radius: 999px;
+} 
