@@ -8,7 +8,7 @@ export default function LikeButton({ initial = false, onClick }) {
   const handleClick = () => {
     setIsLiked(!isLiked);
     if (onClick) onClick(!isLiked);
-  };
+  }; 
 
   return (
     <button className={styles.iconButton} onClick={handleClick} type="button">
