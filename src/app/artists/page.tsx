@@ -14,7 +14,7 @@ const getTopArtists = async () => {
 
 export default async function page() {
   const a = await getTopArtists();
-  console.log(a);
+  console.log(a); 
   return (
     <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
       <p>pagin artisti</p>
