@@ -5,14 +5,20 @@ import './login.css';
 export default function LoginPage() {
   const router = useRouter();
   const handleSpotifyLogin = async () => {
+  try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`, {
       method: 'POST'
     });
     console.log('Response from login API:', res);
     if (res.ok) {
-      router.push('/');
+      router.push('/home'); 
+    } else {
+      alert('Login fallito!');
     }
-  };
+  } catch (err) {
+    console.error('Errore durante login:', err);
+  }
+};
 
   return (
     <div className="login-container">
