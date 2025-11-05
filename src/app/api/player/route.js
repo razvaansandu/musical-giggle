@@ -1,8 +1,10 @@
 const SPOTIFY_API = "https://api.spotify.com/v1/me/player";
 
 export async function GET() {
+  const { id } = params;
+
   try {
-    const res = await fetch(SPOTIFY_API, {
+    const res = await fetch(`https://api.spotify.com/v1/player/${id}`, {
       headers: {
         Authorization: `Bearer ${process.env.SPOTIFY_ACCESS_TOKEN}`,
       },

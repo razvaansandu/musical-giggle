@@ -8,7 +8,7 @@ export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -28,7 +28,7 @@ export default function SearchBar() {
     } finally {
       setLoading(false);
     }
-  };
+  }; 
 
   return (
     <div className="search-wrapper">
@@ -72,7 +72,7 @@ export default function SearchBar() {
             ) : (
               <div className="result-image placeholder" />
             )}
-
+         
             <div className="result-meta">
               <div className="result-title">{track.name}</div>
               <div className="result-artists">{track.artists}</div>
@@ -94,4 +94,3 @@ export default function SearchBar() {
     </div>
   );
 }
- 

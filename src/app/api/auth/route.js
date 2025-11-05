@@ -15,7 +15,7 @@ export async function GET() {
   try {
     const authorizeURL = spotifyApi.createAuthorizeURL(scopes, "state123", true);
 
-    console.log("🔗 Reindirizzamento a:", authorizeURL);
+    console.log(" Reindirizzamento a:", authorizeURL);
 
     return Response.redirect(authorizeURL);
   } catch (err) {
