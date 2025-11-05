@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-export default async function HomePage() {
+export default function HomePage() {
   // const topArtists = await getTopArtists()
 
   return (
