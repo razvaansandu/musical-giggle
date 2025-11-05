@@ -1,33 +1,36 @@
-// routes/search.js
-import express from "express";
+// app/api/search/route.js
+import { NextResponse } from "next/server";
 import SpotifyWebApi from "spotify-web-api-node";
 
-const router = express.Router();
-
-// Inizializza Spotify API
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
 });
 
-// Recupera e salva l'access token
+let accessToken = null;
+let tokenExpiresAt = 0;
+
 async function refreshAccessToken() {
   const data = await spotifyApi.clientCredentialsGrant();
-  spotifyApi.setAccessToken(data.body.access_token);
+  accessToken = data.body.access_token;
+  tokenExpiresAt = Date.now() + data.body.expires_in * 1000;
+  spotifyApi.setAccessToken(accessToken);
   console.log("Spotify access token aggiornato.");
 }
 
-// Aggiorna subito all'avvio
-await refreshAccessToken();
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const query = searchParams.get("q");
 
-// Route principale: ricerca canzoni
-router.get("/", async (req, res) => {
-  const query = req.query.q;
   if (!query) {
-    return res.status(400).json({ error: "Parametro 'q' mancante" });
+    return NextResponse.json({ error: "Parametro 'q' mancante" }, { status: 400 });
   }
 
   try {
+    if (!accessToken || Date.now() > tokenExpiresAt) {
+      await refreshAccessToken();
+    }
+
     const data = await spotifyApi.searchTracks(query, { limit: 10 });
     const tracks = data.body.tracks.items.map((track) => ({
       id: track.id,
@@ -39,11 +42,12 @@ router.get("/", async (req, res) => {
       image: track.album.images[0]?.url,
     }));
 
-    res.json({ results: tracks });
+    return NextResponse.json({ results: tracks });
   } catch (err) {
     console.error("Errore ricerca Spotify:", err);
-    res.status(500).json({ error: "Errore nella ricerca Spotify" });
+    return NextResponse.json(
+      { error: "Errore nella ricerca Spotify" },
+      { status: 500 }
+    );
   }
-});
-
-export default router;
+}
