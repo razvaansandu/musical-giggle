@@ -7,7 +7,7 @@ export async function GET(request) {
     const cookiesStore = await cookies();
     const token = cookiesStore.get('auth_code')?.value;
 
-    const response = await fetch(`{process.env.SPOTIFY_API_URL}/artists/0TnOYISbd1XYRBk9myaseg?limit=${LIMIT}`, {
+    const response = await fetch(`${process.env.SPOTIFY_API_URL}/artists/0TnOYISbd1XYRBk9myaseg?limit=${LIMIT}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
