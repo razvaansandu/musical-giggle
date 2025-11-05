@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import styles from './home.module.css';
 import SpotifyHeader from '../../components/SpotifyHeader';
-
+import SearchTestPage from "../search/page"
 // Componente principale 
 function MainContent() {
   return (
@@ -69,8 +69,9 @@ function VolumeButton() {
 }
 
 export default function Home() { 
-  return (
-    <div className={styles.container}>
+  return ( 
+    <div className={styles.container}> 
+    <SearchTestPage> 
       <SpotifyHeader />
       <div className={styles.content}>
         {/* Prime 3 icone del menu */}

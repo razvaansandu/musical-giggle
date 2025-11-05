@@ -9,7 +9,7 @@ export default function SearchTestPage() {
   const [error, setError] = useState(null);
 
   const handleSearch = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     if (!query.trim()) return;
 
     setLoading(true);
@@ -21,7 +21,7 @@ export default function SearchTestPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore nella ricerca");
       setResults(data.results);
-    } catch (err) {
+    } catch (err) { 
       setError(err.message);
     } finally {
       setLoading(false);
@@ -85,4 +85,4 @@ export default function SearchTestPage() {
       </div>
     </main>
   );
-}
+} 
