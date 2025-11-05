@@ -141,6 +141,22 @@ export default function Home() {
               ))}
             </div>
           </section>
+
+          {/* array artisti consigliati */}
+          <section className={styles.section}>
+            <h2>Recommended artists</h2>
+            <div className={styles.grid}>
+              {[1, 2, 3, 4, 5, 6, 7].map((item) => (
+                <div key={item} className={styles.card}>
+                  <div className={styles.cardImage}></div>
+                  <div className={styles.cardContent}>
+                    <h3>Artisti {item}</h3>
+                    <p>Artisti consigliati</p>
+                  </div>
+                </div> 
+              ))}
+            </div>
+          </section>
           {/* Funzine bottone volume */}
           <VolumeButton />
           </main> 

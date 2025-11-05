@@ -1,3 +1,4 @@
+/* Stili pagina principale */
 .page {
   --background: #fafafa;
   --foreground: #fff;
@@ -16,7 +17,7 @@
   font-family: var(--font-geist-sans);
   background-color: var(--background);
 }
-
+/* Stili main pagina */
 .main {
   display: flex;
   min-height: 100vh;
@@ -126,7 +127,7 @@ a.secondary {
   .logo {
     filter: invert();
   }
-
+  /* Stili pagina dark */
   .page {
     --background: #000;
     --foreground: #000;

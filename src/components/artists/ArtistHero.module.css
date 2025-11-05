@@ -3,6 +3,7 @@
   --muted: rgba(255,255,255,0.85);
   --text: #ffffff;
 }
+/* Stili per il componente Hero dell'artista */
 .hero{
   position: relative;
   min-height: 600px;
@@ -50,6 +51,7 @@
   line-height:0.95;
   text-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
+/* Sottotitolo dell'artista */
 .subtitle{
   margin:8px 0 0 0;
   color:var(--muted);
