@@ -3,13 +3,13 @@ import { useState, useRef } from 'react';
 import styles from './home.module.css';
 import SpotifyHeader from '../../components/SpotifyHeader';
 
-// Componente principale
+// Componente principale 
 function MainContent() {
   return (
     <main className={styles.mainContent}>
       <div className={styles.recentlyPlayed}>
       </div>
-    </main>
+    </main> 
   );
 }
 
@@ -64,11 +64,11 @@ function VolumeButton() {
           />
         </div>
       </div>
-    </div>
+    </div> 
   );
 }
 
-export default function HomePage() {
+export default function Home() { 
   return (
     <div className={styles.container}>
       <SpotifyHeader />
@@ -137,7 +137,7 @@ export default function HomePage() {
                     <h3>Daily Mix {item}</h3>
                     <p>custom mix</p>
                   </div>
-                </div>
+                </div> 
               ))}
             </div>
           </section>
@@ -147,4 +147,4 @@ export default function HomePage() {
       </div>
     </div>
   );
-}
+} 

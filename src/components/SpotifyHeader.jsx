@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './SpotifyHeader.module.css';
+import SearchBar from "components/buttons/SearchBar"; 
 
 export default function SpotifyHeader() {
   return (
@@ -11,8 +12,8 @@ export default function SpotifyHeader() {
         </svg>
       </div>
       <div className={styles.searchSection}>
-        {/* Barra di ricerca */}
-        <input type="search" placeholder="Cosa vuoi ascoltare?" className={styles.searchInput} />
+       
+     <SearchBar> </SearchBar>
       </div>
       <div className={styles.userSection}>
         {/* Pulsanti utente */}
