@@ -10,9 +10,9 @@ export async function GET(_request, { params }) {
 
     const data = await res.json();
 
-    const album = {
+    const album = { 
       id: data.id,
-      name: data.name,
+      name: data.name, 
       artist: data.artists.map((a) => a.name).join(", "),
       release_date: data.release_date,
       total_tracks: data.total_tracks,
@@ -21,9 +21,9 @@ export async function GET(_request, { params }) {
       tracks: data.tracks.items.map((t) => ({
         name: t.name,
         duration_ms: t.duration_ms,
-      })),
+      })), 
     };
-
+  
     return Response.json(album);
   } catch (err) {
     console.error("Errore Spotify API (album):", err);

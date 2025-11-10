@@ -33,5 +33,5 @@ export default function SpotifyHeader() {
         </button>
       </div>
     </header>
-  );
+  ); 
 }
