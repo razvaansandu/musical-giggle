@@ -34,22 +34,11 @@ export default function SpotifyDevicesButton() {
 
   return (
     <div style={{ position: "relative" }}>
-      <button
-        onClick={fetchDevices}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          padding: "10px 16px",
-          borderRadius: "24px",
-          backgroundColor: "#1DB954",
-          color: "#fff",
-          fontWeight: "bold",
-          border: "none",
-          cursor: "pointer",
-        }}
+      <button className="bottoni"
+        
+        
       >
-        🎵 Dispositivi
+         Dispositivi
       </button>
 
       {open && (
