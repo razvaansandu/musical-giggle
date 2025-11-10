@@ -1,19 +1,30 @@
 import { NextResponse } from "next/server";
-import SpotifyWebApi from "spotify-web-api-node";
 
-const spotifyApi = new SpotifyWebApi({
-  clientId: process.env.SPOTIFY_CLIENT_ID,
-  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-});
+const clientId = process.env.SPOTIFY_CLIENT_ID;
+const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
 let accessToken = null;
 let tokenExpiresAt = 0;
 
 async function refreshAccessToken() {
-  const data = await spotifyApi.clientCredentialsGrant();
-  accessToken = data.body.access_token;
-  tokenExpiresAt = Date.now() + data.body.expires_in * 1000;
-  spotifyApi.setAccessToken(accessToken);
+  const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    headers: {
+      Authorization:
+        "Basic " + Buffer.from(`${clientId}:${clientSecret}`).toString("base64"),
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: "grant_type=client_credentials",
+  });
+
+  if (!tokenRes.ok) {
+    throw new Error("Impossibile ottenere access token da Spotify");
+  }
+
+  const data = await tokenRes.json();
+  accessToken = data.access_token;
+  tokenExpiresAt = Date.now() + data.expires_in * 1000;
+
   console.log("Spotify access token aggiornato.");
 }
 
@@ -30,8 +41,23 @@ export async function GET(request) {
       await refreshAccessToken();
     }
 
-    const data = await spotifyApi.searchTracks(query, { limit: 10 });
-    const tracks = data.body.tracks.items.map((track) => ({
+    const searchRes = await fetch(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=10`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!searchRes.ok) {
+      throw new Error("Errore durante la ricerca su Spotify");
+    }
+
+    const data = await searchRes.json();
+    const items = data.tracks?.items || [];
+
+    const tracks = items.map((track) => ({
       id: track.id,
       name: track.name,
       artists: track.artists.map((a) => a.name).join(", "),
