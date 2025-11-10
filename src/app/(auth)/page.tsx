@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
-import styles from './home/home.module.css';
+import styles from '../home/home.module.css';
 import SpotifyHeader from 'components/SpotifyHeader'; 
 import MiniCard from 'components/MiniCard';
 
