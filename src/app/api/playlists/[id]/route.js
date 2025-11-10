@@ -1,16 +1,26 @@
 import SpotifyWebApi from "spotify-web-api-node";
 
-const spotifyApi = new SpotifyWebApi({
-  clientId: process.env.SPOTIFY_CLIENT_ID,
-  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-});
+let spotifyApi;
+if (!global.spotifyApi) {
+  global.spotifyApi = new SpotifyWebApi({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+  });
+}
+spotifyApi = global.spotifyApi;
 
 async function refreshAccessToken() {
-  const data = await spotifyApi.clientCredentialsGrant();
-  spotifyApi.setAccessToken(data.body.access_token);
+  try {
+    const data = await spotifyApi.clientCredentialsGrant();
+    spotifyApi.setAccessToken(data.body.access_token);
+    console.log("✅ Token Spotify aggiornato");
+  } catch (err) {
+    console.error("❌ Errore aggiornamento token Spotify:", err);
+  }
 }
 
 await refreshAccessToken();
+setInterval(refreshAccessToken, 3600 * 1000);
 
 export async function GET(_request, { params }) {
   const { id } = params;
@@ -31,8 +41,10 @@ export async function GET(_request, { params }) {
 
     return Response.json(playlist);
   } catch (err) {
-    console.error("Errore Spotify:", err);
-    return Response.json({ error: "Errore nel server Spotify API" }, { status: 500 });
+    console.error("Errore Spotify API:", err);
+    return Response.json(
+      { error: "Errore nel server Spotify API" },
+      { status: 500 }
+    );
   }
 }
-setInterval(refreshAccessToken, 3600 * 1000);
