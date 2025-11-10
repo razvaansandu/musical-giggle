@@ -6,7 +6,7 @@ export async function GET(request, { params }) {
   try {
     const token = (await cookies()).get('auth_code')?.value;
 
-    const response = await fetch(`{process.env.SPOTIFY_API_URL}/artists/${id}/top-tracks?market=IT`, {
+    const response = await fetch(`${process.env.SPOTIFY_API_URL}/artists/${id}/top-tracks?market=IT`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 

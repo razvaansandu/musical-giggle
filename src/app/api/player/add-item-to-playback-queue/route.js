@@ -12,7 +12,7 @@ export async function POST(request) {
   const { uri } = await request.json();
 
   const res = await fetch(
-    `https://api.spotify.com/v1/me/player/queue?uri=${encodeURIComponent(uri)}`,
+    `${process.env.SPOTIFY_API_URL}/me/player/queue?uri=${encodeURIComponent(uri)}`,
     {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },

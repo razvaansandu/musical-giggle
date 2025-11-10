@@ -11,7 +11,7 @@ export async function PUT(request) {
 
   const body = await request.json();
 
-  const res = await fetch("https://api.spotify.com/v1/me/player/play", {
+  const res = await fetch(`${process.env.SPOTIFY_API_URL}/v1/me/player/play`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -2,7 +2,7 @@ export async function GET(_request, { params }) {
   const { id } = params;
 
   try {
-    const res = await fetch(`https://api.spotify.com/v1/albums/${id}`, {
+    const res = await fetch(`${process.env.SPOTIFY_API_URL}/v1/albums/${id}`, {
       headers: {
         Authorization: `Bearer ${process.env.SPOTIFY_ACCESS_TOKEN}`,
       },

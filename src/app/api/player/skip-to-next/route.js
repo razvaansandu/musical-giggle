@@ -9,7 +9,7 @@ export async function POST() {
     return NextResponse.json({ error: "Missing token" }, { status: 401 });
   }
 
-  const res = await fetch("https://api.spotify.com/v1/me/player/next", {
+  const res = await fetch(`${process.env.SPOTIFY_API_URL}/v1/me/player/next`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });

@@ -5,7 +5,7 @@ export async function GET(request, { params }) {
     const cookiesStore = await cookies();
     const token = cookiesStore.get('auth_code')?.value;
 
-    const response = await fetch(`{process.env.SPOTIFY_API_URL}/artists/${id}`, {
+    const response = await fetch(`${process.env.SPOTIFY_API_URL}/artists/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
@@ -13,7 +13,7 @@ export async function GET(request, { params }) {
     return Response.json(data);
 
   } catch (err) {
-    console.error('Errore top tracks:', err);
-    return new Response(JSON.stringify({ error: 'Errore nel prendere top tracks artista' }), { status: 500 });
+    console.error('Errore nel prendere artista:', err);
+    return new Response(JSON.stringify({ error: 'Errore nel prendere artista' }), { status: 500 });
   }
 }
