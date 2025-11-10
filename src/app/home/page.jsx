@@ -2,6 +2,8 @@
 import { useState, useRef } from 'react';
 import styles from './home.module.css';
 import SpotifyHeader from '../../components/SpotifyHeader';
+import SearchTestPage from "../search/page"; 
+import AlbumPage from '../api/albums/[id]/page'; 
 
 // Componente principale 
 function MainContent() {
@@ -69,9 +71,10 @@ function VolumeButton() {
 }
 
 export default function Home() { 
-  return (
-    <div className={styles.container}>
-      <SpotifyHeader />
+  return ( 
+    <div className={styles.container}> 
+    <SearchTestPage ></SearchTestPage> 
+      <SpotifyHeader /> 
       <div className={styles.content}>
         {/* Prime 3 icone del menu */}
         <nav className={styles.sidebar}>
@@ -115,12 +118,7 @@ export default function Home() {
             <h2>Recently played</h2>
             <div className={styles.grid}>
               {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-                <div key={item} className={styles.card}>
-                  <div className={styles.cardImage}></div>
-                  <div className={styles.cardContent}>
-                    <h3>Playlist {item}</h3>
-                    <p>Description</p>
-                  </div>
+                <AlbumPage> </AlbumPage>
                 </div>
               ))}
             </div>

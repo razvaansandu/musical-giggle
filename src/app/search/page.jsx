@@ -14,7 +14,7 @@ export default function SearchTestPage() {
 
     setLoading(true);
     setError(null);
-    setResults([]);
+    setResults([]); 
 
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
@@ -56,14 +56,15 @@ export default function SearchTestPage() {
           <div
             key={track.id}
             className="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition"
-          >
+          > 
+          <div className="searchConteiner"> 
             {track.image && (
               <img
-                src={track.image}
+                src={track.image} 
                 alt={track.name}
                 className="w-full h-48 object-cover"
               />
-            )}
+            )} 
             <div className="p-4">
               <h2 className="font-semibold text-lg">{track.name}</h2>
               <p className="text-gray-600">{track.artists}</p>
@@ -80,7 +81,8 @@ export default function SearchTestPage() {
                 Apri su Spotify →
               </a>
             </div>
-          </div>
+          </div> 
+          </div> 
         ))}
       </div>
     </main>
