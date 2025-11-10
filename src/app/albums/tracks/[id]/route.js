@@ -10,6 +10,7 @@ export async function GET(request, { params }) {
   const cookieStore = cookies();
   const cookieToken = cookieStore.get("spotify_token")?.value;
   const envToken = process.env.SPOTIFY_TOKEN;
+  const baseUrl = process.env.SPOTIFY_API_URL;
 
   const token = cookieToken || envToken;
 
@@ -20,8 +21,15 @@ export async function GET(request, { params }) {
     );
   }
 
+  if (!baseUrl) {
+    return NextResponse.json(
+      { error: "Missing SPOTIFY_API_URL env variable" },
+      { status: 500 }
+    );
+  }
+
   const r = await fetch(
-    `https://api.spotify.com/v1/albums/${id}/tracks?limit=${limit}&offset=${offset}`,
+    `${baseUrl}/albums/${id}/tracks?limit=${limit}&offset=${offset}`,
     {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",

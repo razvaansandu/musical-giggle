@@ -1,23 +1,37 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-
 function getToken() {
-const cookieToken = cookies().get("spotify_token")?.value;
-return cookieToken || process.env.SPOTIFY_TOKEN;
+  const cookieToken = cookies().get("spotify_token")?.value;
+  return cookieToken || process.env.SPOTIFY_TOKEN;
 }
 
-
 export async function GET(request, { params }) {
-const token = getToken();
-if (!token) return NextResponse.json({ error: "Missing token" }, { status: 500 });
+  const token = getToken();
+  const baseUrl = process.env.SPOTIFY_API_URL;
 
+  if (!token) {
+    return NextResponse.json(
+      { error: "Missing token" },
+      { status: 500 }
+    );
+  }
 
-const r = await fetch(`https://api.spotify.com/v1/artists/${params.id}/related-artists`, {
-headers: { Authorization: `Bearer ${token}` },
-cache: "no-store",
-});
+  if (!baseUrl) {
+    return NextResponse.json(
+      { error: "Missing SPOTIFY_API_URL env variable" },
+      { status: 500 }
+    );
+  }
 
+  const r = await fetch(
+    `${baseUrl}/artists/${params.id}/related-artists`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    }
+  );
 
-return NextResponse.json(await r.json(), { status: r.status });
+  const data = await r.json();
+  return NextResponse.json(data, { status: r.status });
 }
