@@ -1,0 +1,30 @@
+/* src/components/buttonHome.css */
+.btn-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  padding: 6px;
+  cursor: pointer;;
+  background: transparent;
+  transition: background-color .12s ease, transform .06s ease;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.btn-home svg {
+  display: block;
+}
+
+.btn-home:hover { 
+  transform: translateY(-1px);
+}
+
+.btn-home:active { 
+  transform: translateY(0);
+}
+
+
