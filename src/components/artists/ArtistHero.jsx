@@ -1,17 +1,16 @@
 "use client";
 import { useState } from "react";
 import styles from "./ArtistHero.module.css";
-/* Componente Hero per la pagina artista */
+
 export default function ArtistHero({ name, listeners, image, spotifyUrl }) {
   const [following, setFollowing] = useState(false);
-/* Rendering del componente Hero */
+
   return (
     <header
       className={styles.hero}
-      style={{ backgroundImage: `url('https://upload.wikimedia.org/wikipedia/commons/d/d8/Linkin_Park_-_From_Zero_Lead_Press_Photo_-_James_Minchin_III.jpg')` }}
+      style={{ backgroundImage: `url('${image || "/default-artist.jpg"}')` }}
       role="banner"
     >
-      {/* Overlay per l'effetto visivo */}
       <div className={styles.overlay} />
       <div className={styles.content}>
         <div className={styles.badge} aria-hidden="true">
@@ -22,16 +21,14 @@ export default function ArtistHero({ name, listeners, image, spotifyUrl }) {
         </div>
 
         <h1 className={styles.title}>{name}</h1>
-        {/* Sottotitolo con numero di ascoltatori mensili */}
         <p className={styles.subtitle}>
-          <span>{listeners?.toLocaleString()} ascoltatori mensili</span>
+          <span>{listeners ? `${listeners.toLocaleString()} ascoltatori mensili` : 'Dati non disponibili'}</span>
         </p>
 
         <div className={styles.actions}>
           <a className={styles.play} href={spotifyUrl} target="_blank" rel="noreferrer">
             Play
           </a>
-          {/* Bottone per seguire o smettere di seguire l'artista */}
           <button
             className={styles.follow}
             onClick={() => setFollowing((s) => !s)}

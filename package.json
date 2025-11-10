@@ -9,11 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "express": "^5.1.0",
     "next": "16.0.1",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "spotify-web-api-node": "^5.0.2"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@types/node": "24.9.2",
