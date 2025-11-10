@@ -119,7 +119,6 @@ export default function Home() {
             <div className={styles.grid}>
               {[1, 2, 3, 4, 5, 6, 7].map((item) => (
                 <AlbumPage> </AlbumPage>
-                </div>
               ))}
             </div>
           </section>
