@@ -3,16 +3,16 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  max-width: 540px;
+  max-width: 1920px;
   padding: 12px 14px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(40,40,40,0.95), rgba(30,30,30,0.95));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.95));
   color: #fff;
   box-shadow: 0 4px 14px rgba(0,0,0,0.5);
   transition: transform 0.16s ease, box-shadow 0.16s ease;
-  position: relative; 
+  position: absolute; 
   overflow: hidden;
-  cursor: pointer;
+  cursor: pointer; 
 }
 
 .card:hover { 
