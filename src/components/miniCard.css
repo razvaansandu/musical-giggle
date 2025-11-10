@@ -3,17 +3,22 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  max-width: 1920px;
+  max-width: px;
   padding: 12px 14px;
   border-radius: 8px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.95));
   color: #fff;
   box-shadow: 0 4px 14px rgba(0,0,0,0.5);
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
-  position: absolute; 
+  transition: transform 0.16s ease, box-shadow 0.16s ease; 
   overflow: hidden;
   cursor: pointer; 
+  position: absolute; 
+  bottom: 0;  
+  left: 0;   
+  /* position: sticky;   */
+  z-index: 100;
 }
+ 
 
 .card:hover { 
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
@@ -88,6 +93,16 @@
 .card:hover .card-play {
   opacity: 1; 
   background-color: white;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background:  #000000;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
 }
 
 
