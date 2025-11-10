@@ -1,4 +1,3 @@
-// app/api/search/route.js
 import { NextResponse } from "next/server";
 import SpotifyWebApi from "spotify-web-api-node";
 
