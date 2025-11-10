@@ -60,10 +60,11 @@ export default function SearchBar() {
       <div className="risultati">
         {results.map((track) => (
           <div
-            key={track.id}
+            key={track.id}   
+           
             className="result-card"
             onClick={() => window.open(track.external_url, "_blank")}
-            role="button"
+            role="button"  
             tabIndex={0}
             onKeyDown={(e) => e.key === "Enter" && window.open(track.external_url, "_blank")}
           >
@@ -77,8 +78,7 @@ export default function SearchBar() {
               <div className="result-title">{track.name}</div>
               <div className="result-artists">{track.artists}</div>
               <div className="result-album">{track.album}</div>
-            </div>
-
+            </div> 
             <button
               className="result-action"
               onClick={(e) => { e.stopPropagation(); window.open(track.external_url, "_blank"); }}
