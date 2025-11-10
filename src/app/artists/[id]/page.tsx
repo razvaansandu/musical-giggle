@@ -25,8 +25,9 @@ const getTopTracks = async (id: string) => {
 };
 
 export default async function page({ params }: { params: { id: string } }) {
-  const id = params.id;
+  const { id } = await params;
   const artist = await getArtist(id);
+  console.log(artist);
   const topTracks = await getTopTracks(id);
 
   const name = artist?.name || 'Artista sconosciuto';

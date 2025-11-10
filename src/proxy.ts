@@ -12,7 +12,6 @@ export async function proxy(request: NextRequest) {
   // Call our authentication function to check the request
   const cookiesStore = await cookies();
   const isAuth = cookiesStore.get('auth_code')?.value;
-  console.log("Auth Token:", isAuth);
   if (!isAuth) {
     // Respond with JSON indicating an error message
     return NextResponse.redirect(new URL('/login', request.url));
