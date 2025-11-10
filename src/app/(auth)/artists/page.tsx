@@ -7,7 +7,7 @@ export default async function page() {
       <p>pagin artisti</p>
       <Link href="/login" style={{ color: 'blue', textDecoration: 'underline' }}>
         Vai alla home
-      </Link>
+      </Link>  
     </main>
   );
 }

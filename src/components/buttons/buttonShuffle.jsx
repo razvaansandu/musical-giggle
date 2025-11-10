@@ -4,21 +4,21 @@ import React from "react";
 import "./buttonShuffle.css";
 
 export default function ButtonShuffle({
-  isShuffled = false,     // se fornito, componente è controlled
-  onToggle,               // callback quando cambia lo stato
+  isShuffled = false,    
+  onToggle,              
   title = "Shuffle",
   ariaLabel = "Toggle shuffle",
   className = ""
 }) {
-  // Interno solo se onToggle non è fornito (uncontrolled)
+ 
   const [internal, setInternal] = React.useState(isShuffled);
   React.useEffect(() => { if (typeof isShuffled === "boolean") setInternal(isShuffled); }, [isShuffled]);
 
   const active = typeof onToggle === "function" ? isShuffled : internal;
 
   const handleClick = () => {
-    if (onToggle) {
-      onToggle(!isShuffled);
+    if (onToggle) { 
+      onToggle(!isShuffled); 
     } else {
       setInternal(v => !v);
     }
@@ -30,7 +30,7 @@ export default function ButtonShuffle({
       className={`btn-shuffle ${active ? "active" : ""} ${className}`.trim()}
       onClick={handleClick}
       aria-pressed={active}
-      title={title}
+      title={title} 
       aria-label={ariaLabel}
     >
      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shuffle" viewBox="0 0 16 16">
