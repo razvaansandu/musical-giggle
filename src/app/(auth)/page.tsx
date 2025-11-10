@@ -1,7 +1,9 @@
 'use client';
 import { useState, useRef } from 'react';
-import styles from '../home/home.module.css'; 
- 
+import styles from './home/home.module.css';
+import SpotifyHeader from 'components/SpotifyHeader'; 
+import MiniCard from 'components/MiniCard';
+
 // Componente principale 
 function MainContent() { 
   return (
@@ -72,6 +74,7 @@ export default function Home() {
     <div className={styles.container}>
       
       <div className={styles.content}>
+
         {/* Prime 3 icone del menu */} 
         <nav className={styles.sidebar}>
           <div className={styles.menu}>
@@ -140,10 +143,10 @@ export default function Home() {
               ))}
             </div>
           </section>
-         
-          <VolumeButton />  
+          {/* Funzine bottone volume */} 
           </main> 
       </div>
+      <MiniCard> </MiniCard>
     </div>
   );
 }
