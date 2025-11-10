@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
   }
 
   const { searchParams } = new URL(request.url);
-  const userId = searchParams.get("id"); // user id da query
+  const userId = searchParams.get("id"); 
 
   const url = userId
     ? `https://api.spotify.com/v1/users/${userId}`
