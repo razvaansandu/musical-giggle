@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import styles from './home.module.css';
 import SpotifyHeader from '../../components/SpotifyHeader';
 import SearchTestPage from "../search/page"; 
-import AlbumPage from '../api/albums/[id]/page'; 
+
 // Componente principale 
 function MainContent() {
   return (
@@ -72,7 +72,7 @@ function VolumeButton() {
 export default function Home() { 
   return ( 
     <div className={styles.container}> 
-    <SearchTestPage> 
+    <SearchTestPage>  </SearchTestPage> 
       <SpotifyHeader /> 
       <div className={styles.content}>
         {/* Prime 3 icone del menu */}
@@ -118,7 +118,7 @@ export default function Home() {
             <div className={styles.grid}>
               {[1, 2, 3, 4, 5, 6, 7].map((item) => (
                 <AlbumPage> </AlbumPage>
-                </div>
+               
               ))}
             </div>
           </section>
@@ -132,10 +132,10 @@ export default function Home() {
                   <div className={styles.cardImage}></div>
                   <div className={styles.cardContent}>
                     <h3>Daily Mix {item}</h3>
-                    <p>custom mix</p>
+                    <p>custom mix</p> 
                   </div>
                 </div> 
-              ))}
+              ))} 
             </div>
           </section>
           {/* Funzine bottone volume */}

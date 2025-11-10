@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // per redirect alla home
 import "./SearchBar.css";
 
 export default function SearchBar() {
@@ -9,17 +10,23 @@ export default function SearchBar() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); 
+  const router = useRouter();
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  // 🔹 ricerca live mentre scrivi
+  const handleChange = async (e) => {
+    const value = e.target.value;
+    setQuery(value);
+
+    if (!value.trim()) {
+      setResults([]);
+      return;
+    }
 
     setLoading(true);
     setError(null);
-    setResults([]);
 
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/search?q=${encodeURIComponent(value)}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore nella ricerca");
       setResults(data.results);
@@ -28,10 +35,18 @@ export default function SearchBar() {
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
-  return (
-    <div className="search-wrapper">
+  // 🔹 quando premi invio → redirect alla home
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    router.push(`/home?q=${encodeURIComponent(query)}`);
+  };
+
+  return ( 
+    <div className="search-wrapper"> 
+    
       <form className="search-bar" onSubmit={handleSearch} role="search" aria-label="Cerca brani artisti album">
         <button
           type="submit"
@@ -47,50 +62,55 @@ export default function SearchBar() {
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleChange}   // 🔹 live search
           placeholder="Cosa vuoi ascoltare?"
           className="search-input"
           aria-label="Termine di ricerca"
         />
       </form>
 
-      {error && <div className="search-error" role="alert">{error}</div>}
-      {loading && <div className="search-loading">⏳ Ricerca in corso...</div>}
+    {error && <div className="search-error" role="alert">{error}</div>}
+{loading && <div className="search-loading"></div>}
 
-      <div className="risultati">
-        {results.map((track) => (
-          <div
-            key={track.id}   
-           
-            className="result-card"
-            onClick={() => window.open(track.external_url, "_blank")}
-            role="button"  
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && window.open(track.external_url, "_blank")}
-          >
-            {track.image ? (
-              <img src={track.image} alt={track.name} className="result-image" />
-            ) : (
-              <div className="result-image placeholder" />
-            )}
-         
-            <div className="result-meta">
-              <div className="result-title">{track.name}</div>
-              <div className="result-artists">{track.artists}</div>
-              <div className="result-album">{track.album}</div>
-            </div> 
-            <button
-              className="result-action"
-              onClick={(e) => { e.stopPropagation(); window.open(track.external_url, "_blank"); }}
-              aria-label={`Apri ${track.name} su Spotify`}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            </button>
-          </div>
-        ))}
+{results.length > 0 && (
+  <div className="risultati">
+    {results.map((track) => (
+      <div
+        key={track.id}
+        className="result-card"
+        onClick={() => window.open(track.external_url, "_blank")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && window.open(track.external_url, "_blank")}
+      >
+        {track.image ? (
+          <img src={track.image} alt={track.name} className="result-image" />
+        ) : (
+          <div className="result-image placeholder" />
+        )}
+
+        <div className="result-meta">
+          <div className="result-title">{track.name}</div>
+          <div className="result-artists">{track.artists}</div>
+          <div className="result-album">{track.album}</div>
+        </div>
+
+        <button
+          className="result-action"
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open(track.external_url, "_blank");
+          }}
+          aria-label={`Apri ${track.name} su Spotify`}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
       </div>
-    </div>
-  );
-}
+    ))}
+  </div>
+)}
+ </div>   
+);   
+}        

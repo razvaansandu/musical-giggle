@@ -141,8 +141,8 @@ export default function Home() {
               ))}
             </div>
           </section>
-          {/* Funzine bottone volume */}
-          <VolumeButton />
+         
+          <VolumeButton />  
           </main> 
       </div>
     </div>
