@@ -1,26 +1,4 @@
-const clientId = '5979d3795e394bfaa968cd6e39f409d5';
-const redirectUri = 'http://localhost:3000/callback';
-
-const scope = 'user-read-private user-read-email';
-const authUrl = new URL("https://accounts.spotify.com/authorize")
-
-// generated in the previous step
-window.localStorage.setItem('code_verifier', codeVerifier);
-
-const params =  {
-  response_type: 'code',
-  client_id: clientId,
-  scope,
-  code_challenge_method: 'S256',
-  code_challenge: codeChallenge,
-  redirect_uri: redirectUri,
-}
-
-authUrl.search = new URLSearchParams(params).toString();
-window.location.href = authUrl.toString();
-
-
-/*import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 const generateRandomString = (length) => {
@@ -86,5 +64,6 @@ export async function POST() {
   const data = await res.json();
   const cookieStore = await cookies();
   cookieStore.set('auth_code', data.access_token);
-  return NextResponse.json({ message: "Token ottenuto e salvato nel cookie." });
-}*/ 
+  return NextResponse.json({ message: "Token ottenuto e salvato nel cookie." });*/
+
+}
