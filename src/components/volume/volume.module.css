@@ -1,0 +1,93 @@
+/* Stili del volume */
+.volumeWrapper {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.volumeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 999px;
+  background-color: #000000;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.12s, transform 0.12s;
+  border: none;
+}
+
+.volumeButton:hover {
+  background-color: #282828;
+  transform: scale(1.03);
+}
+
+.volumePopover {
+  position: relative;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.sliderContainer {
+  width: 180px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #121212;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+
+.volumeSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  height: 36px;
+  display: block;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.05);
+  margin-top: 0;
+  transform: translateY(-3px);
+}
+.volumeSlider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #171b19;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+}
+
+.volumeSlider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #535353;
+  border-radius: 999px;
+}
+.volumeSlider::-moz-range-track {
+  height: 6px;
+  background: #535353;
+  border-radius: 999px;
+}

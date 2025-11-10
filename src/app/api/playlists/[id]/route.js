@@ -15,7 +15,7 @@ async function refreshAccessToken() {
     spotifyApi.setAccessToken(data.body.access_token);
     console.log("✅ Token Spotify aggiornato");
   } catch (err) {
-    console.error("❌ Errore aggiornamento token Spotify:", err);
+    console.error("Errore aggiornamento token Spotify:", err);
   }
 }
 

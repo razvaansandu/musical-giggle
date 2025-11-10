@@ -10,7 +10,7 @@ async function getAccessToken() {
 
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
-  const res = await fetch("https://accounts.spotify.com/api/token", {
+  const res = await fetch(`https://accounts.spotify.com/api/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -34,7 +34,7 @@ export async function GET() {
     const token = await getAccessToken();
 
     const response = await fetch(
-      "https://api.spotify.com/v1/recommendations/available-genre-seeds",
+      "${process.env.SPOTIFY_API_URL}/recommendations/available-genre-seeds",
       {
         headers: { Authorization: `Bearer ${token}` },
       }
