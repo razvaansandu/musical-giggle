@@ -10,7 +10,8 @@
 }
 .logoSection {
   display: flex;
-  align-items: center;
+  align-items: center; 
+  color:white; 
 }
 .logo {
   height: 40px;
@@ -18,7 +19,8 @@
 .searchSection {
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: center; 
+  color:white; 
 }
 .searchInput {
   width: 300px;
@@ -61,3 +63,19 @@
   height: 100%;
   object-fit: cover;
 }
+.news{ 
+  color:white; 
+
+} 
+.news:hover{ 
+  color: green; 
+  background-color: green;
+} 
+.scritta{ 
+  color:white; 
+  background-color: transparent; 
+
+} 
+.scritta:hover{ 
+  color: green;
+} 

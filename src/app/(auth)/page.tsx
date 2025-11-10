@@ -1,8 +1,7 @@
 'use client';
 import { useState, useRef } from 'react';
-import styles from './home/home.module.css';
-import SpotifyHeader from 'components/SpotifyHeader'; 
-
+import styles from '../home/home.module.css'; 
+ 
 // Componente principale 
 function MainContent() { 
   return (
@@ -71,7 +70,7 @@ function VolumeButton() {
 export default function Home() { 
   return (
     <div className={styles.container}>
-      <SpotifyHeader />
+      
       <div className={styles.content}>
         {/* Prime 3 icone del menu */} 
         <nav className={styles.sidebar}>

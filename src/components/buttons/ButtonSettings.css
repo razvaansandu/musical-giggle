@@ -1,26 +1,25 @@
-.btn-settings {
+.btn-settings { 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   padding: 6px;
   border-radius: 8px;
   background: transparent;
-  border: none;
-  color: #b3b3b3;
-  cursor: pointer;
+  border: none; 
+  color: white;  
+  cursor: pointer; 
   transition: background-color .12s ease, transform .06s ease;
-  line-height: 0;
-}
-
-.btn-settings:hover {
-  background-color: black;
-  color: white;
-  transform: translateY(-1px);
+  line-height: 0;  
 } 
+
+.btn-settings:hover { 
+  color: rgb(30,215,97) ;
+  transform: translateY(-1px);
+}  
 .btn-settings:active {
-  background-color: black;
+  background-color: black; 
   color: rgb(30,215,97); 
   transform: translateY(0);
 }    

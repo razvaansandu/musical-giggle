@@ -12,8 +12,12 @@
   background: transparent;
   transition: background-color .12s ease, transform .06s ease;
   text-decoration: none;
-  line-height: 0;
-}
+  line-height: 0;  
+  color: white; 
+  font-size: 30px;
+  
+} 
+
 
 .btn-home svg {
   display: block;
