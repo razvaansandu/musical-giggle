@@ -82,18 +82,15 @@
 }
 
 /* lista risultati */
-.risultati {  
+.risultati { 
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  position:absolute;   
-  max-width: 100%; 
-  width: auto; 
-  background-color: #141414; 
+  position:absolute;  
 }  
 
 /* singola card risultato (stile Spotify) */
-.result-card { 
+.result-card {
   position: relative;
   display: flex;
   align-items: center;
@@ -107,7 +104,7 @@
 }
 
 .result-card:hover {
-  background: #1f1f1f; 
+  background: #1f1f1f;
 }
 
 /* immagine copertina */
@@ -115,7 +112,7 @@
   width: 64px;
   height: 64px;
   border-radius: 4px;
-  object-fit: cover; 
+  object-fit: cover;
   flex-shrink: 0;
   background: linear-gradient(135deg,#252525,#1b1b1b);
 }
@@ -185,4 +182,6 @@
 .result-action:hover {
   background: rgba(255,255,255,0.12);
 }
+
+
  

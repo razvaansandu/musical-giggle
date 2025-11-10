@@ -12,7 +12,7 @@ export async function PUT(request) {
   const { position_ms } = await request.json();
 
   const res = await fetch(
-    `https://api.spotify.com/v1/me/player/seek?position_ms=${position_ms}`,
+    `${process.env.SPOTIFY_API_URL}/me/player/seek?position_ms=${position_ms}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },

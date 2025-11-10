@@ -12,7 +12,7 @@ export async function PUT(request) {
   const { state } = await request.json(); // 'track', 'context', 'off'
 
   const res = await fetch(
-    `https://api.spotify.com/v1/me/player/repeat?state=${state}`,
+    `${process.env.SPOTIFY_API_URL}/me/player/repeat?state=${state}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
