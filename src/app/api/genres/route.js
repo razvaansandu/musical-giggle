@@ -1,4 +1,3 @@
-// app/api/spotify/genres/route.js
 import { NextResponse } from "next/server";
 
 async function getAccessToken() {
