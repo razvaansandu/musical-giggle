@@ -126,7 +126,7 @@ export default function Home() {
 
           {/* array daily mix */}
           <section className={styles.section}>
-            <h2>Made for you</h2>
+            <h2>Made fo you</h2> 
             <div className={styles.grid}>
               {[1, 2, 3, 4, 5, 6, 7].map((item) => (
                 <div key={item} className={styles.card}>
