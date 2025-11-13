@@ -3,14 +3,12 @@ import { NextResponse } from "next/server";
 
 const BASE_URL = process.env.SPOTIFY_API_URL || "https://api.spotify.com/v1";
 
-// Legge il token utente dal cookie "auth_code"
 export async function getUserAccessToken() {
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_code")?.value || null;
   return token;
 }
 
-// Se non c'è token, ritorna già una risposta 401
 export async function requireUserAccessToken() {
   const token = await getUserAccessToken();
   if (!token) {
@@ -25,10 +23,9 @@ export async function requireUserAccessToken() {
   return { token, response: null };
 }
 
-// Wrapper generico per chiamare Spotify con token utente
 export async function spotifyFetch(path, options = {}) {
   const { token, response } = await requireUserAccessToken();
-  if (!token) return response; // 401
+  if (!token) return response; 
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,

@@ -1,0 +1,68 @@
+.container {
+  padding: 40px;
+  color: white;
+  background: linear-gradient(to bottom, #222, #121212);
+  min-height: 100vh;
+}
+
+.subtitle {
+  opacity: 0.8;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.genreCard {
+  padding: 16px;
+  border-radius: 12px;
+  background: #181818;
+  border: 1px solid #262626;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: left;
+}
+
+.genreCard:hover {
+  background: #272727;
+}
+
+.genreCardActive {
+  border-color: #1db954;
+  box-shadow: 0 0 0 1px #1db954;
+}
+
+.tracksSection {
+  margin-top: 32px;
+}
+
+.tracksGrid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.trackCard {
+  background: #181818;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.trackCover {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.trackCard h3 {
+  font-size: 14px;
+}
+
+.trackCard p {
+  font-size: 12px;
+  opacity: 0.75;
+}
