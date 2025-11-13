@@ -6,7 +6,7 @@ export async function GET(_request, { params }) {
       headers: {
         Authorization: `Bearer ${process.env.SPOTIFY_ACCESS_TOKEN}`,
       },
-    });
+    }); 
 
     const data = await res.json();
 
@@ -19,7 +19,7 @@ export async function GET(_request, { params }) {
       image: data.images[0]?.url,
       url: data.external_urls.spotify,
       tracks: data.tracks.items.map((t) => ({
-        name: t.name,
+        name: t.name, 
         duration_ms: t.duration_ms,
       })), 
     };

@@ -13,7 +13,7 @@ async function refreshAccessToken() {
   } catch (err) {
     console.error(" Errore aggiornamento token Spotify:", err);
   }
-}
+} 
 
 await refreshAccessToken();
 
@@ -42,6 +42,7 @@ export async function GET(_request, { params }) {
     return Response.json(
       { error: "Errore nel server Spotify API" },
       { status: 500 }
-    );
+    );  
   }
 }
+ 

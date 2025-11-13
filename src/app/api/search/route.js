@@ -59,7 +59,7 @@ export async function GET(request) {
 
     const tracks = items.map((track) => ({
       id: track.id,
-      name: track.name,
+      name: track.name, 
       artists: track.artists.map((a) => a.name).join(", "),
       album: track.album.name,
       preview_url: track.preview_url,
