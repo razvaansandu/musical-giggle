@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  position: relative;
+}
+.time {
+  font-size: 12px;
+  color: #b3b3b3;
+  width: 44px;
+  text-align: center;
+}
+.track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.filled {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: #1DB954;
+  border-radius: 999px;
+  transition: width 0.08s linear;
+}
+.thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 0 6px rgba(29,185,84,0.08);
+  touch-action: none;
+}

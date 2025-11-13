@@ -7,7 +7,7 @@
   justify-content: center;
   padding: 6px;            /* spazio intorno all'icona */
   background: transparent; /* niente sfondo colorato */
-  color: #000;         /* colore icona (spotify green) */
+  color: #ffffff;         /* colore icona (spotify green) */
   border: none;           /* niente bordo */
   border-radius: 4px;     /* angoli lievi, non circolari */
   cursor: pointer;
