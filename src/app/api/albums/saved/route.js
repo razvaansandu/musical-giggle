@@ -1,68 +1,68 @@
+import { spotifyFetch, requireUserAccessToken } from "../../_lib/spotify";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
-const base = "https://api.spotify.com/v1/me/albums";
+const BASE = "/me/albums";
 
-function getToken() {
-  const cookieStore = cookies();
-  const cookieToken = cookieStore.get("spotify_token")?.value;
-  const envToken = process.env.SPOTIFY_TOKEN;
-  return cookieToken || envToken;
-}
+export async function GET(request) {
+  const { token, response } = await requireUserAccessToken();
+  if (!token) return response;
 
-export async function GET() {
-  const token = getToken();
+  const { searchParams } = new URL(request.url);
+  const limit = searchParams.get("limit") || "20";
+  const offset = searchParams.get("offset") || "0";
 
-  if (!token) {
-    return NextResponse.json(
-      { error: "Missing token" },
-      { status: 500 }
-    );
-  }
-
-  const r = await fetch(base, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-
-  const data = await r.json();
-  return NextResponse.json(data, { status: r.status });
+  const query = new URLSearchParams({ limit, offset }).toString();
+  return spotifyFetch(`${BASE}?${query}`);
 }
 
 export async function PUT(request) {
-  const { ids } = await request.json();
-  const token = getToken();
+  const { token, response } = await requireUserAccessToken();
+  if (!token) return response;
 
-  if (!token) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
+
+  const ids = body?.ids;
+  if (!ids || !ids.length) {
     return NextResponse.json(
-      { error: "Missing token" },
-      { status: 500 }
+      { error: "Missing ids in body" },
+      { status: 400 }
     );
   }
 
-  const r = await fetch(`${base}?ids=${ids}`, {
-    method: "PUT",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const idsParam = Array.isArray(ids) ? ids.join(",") : ids;
 
-  return NextResponse.json({}, { status: r.status });
+  return spotifyFetch(`${BASE}?ids=${encodeURIComponent(idsParam)}`, {
+    method: "PUT",
+  });
 }
 
 export async function DELETE(request) {
-  const { ids } = await request.json();
-  const token = getToken();
+  const { token, response } = await requireUserAccessToken();
+  if (!token) return response;
 
-  if (!token) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
+
+  const ids = body?.ids;
+  if (!ids || !ids.length) {
     return NextResponse.json(
-      { error: "Missing token" },
-      { status: 500 }
+      { error: "Missing ids in body" },
+      { status: 400 }
     );
   }
 
-  const r = await fetch(`${base}?ids=${ids}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const idsParam = Array.isArray(ids) ? ids.join(",") : ids;
 
-  return NextResponse.json({}, { status: r.status });
+  return spotifyFetch(`${BASE}?ids=${encodeURIComponent(idsParam)}`, {
+    method: "DELETE",
+  });
 }

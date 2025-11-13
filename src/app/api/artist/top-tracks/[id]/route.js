@@ -1,19 +1,9 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { spotifyFetch } from "../../../_lib/spotify";
 
-export async function GET(req, { params }) {
-  const url = new URL(req.url);
-  const market = url.searchParams.get("market") || "US";
+export async function GET(request, { params }) {
+  const { id } = await params;
+  const { searchParams } = new URL(request.url);
+  const market = searchParams.get("market") || "IT";
 
-  const token = cookies().get("spotify_token")?.value || process.env.SPOTIFY_TOKEN;
-
-  const r = await fetch(
-    `${process.env.SPOTIFY_API_URL}/artists/${params.id}/top-tracks?market=${market}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    }
-  );
-
-  return NextResponse.json(await r.json(), { status: r.status });
+  return spotifyFetch(`/artists/${id}/top-tracks?market=${market}`);
 }

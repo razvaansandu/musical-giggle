@@ -1,16 +1,6 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { spotifyFetch } from "../../_lib/spotify";
 
 export async function GET(_req, { params }) {
-  const token = cookies().get("spotify_token")?.value || process.env.SPOTIFY_TOKEN;
-
-  const r = await fetch(
-    `${process.env.SPOTIFY_API_URL}/artists/${params.id}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    }
-  );
-
-  return NextResponse.json(await r.json(), { status: r.status });
+  const { id } = await params;
+  return spotifyFetch(`/artists/${id}`);
 }
