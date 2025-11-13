@@ -1,21 +1,28 @@
+import { spotifyFetch, requireUserAccessToken } from "../../_lib/spotify";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
-export async function DELETE(req) {
-  const token = cookies().get("spotify_token")?.value || process.env.SPOTIFY_TOKEN;
+export async function POST(request) {
+  const { token, response } = await requireUserAccessToken();
+  if (!token) return response;
 
-  const { playlist_id, uris } = await req.json();
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
 
-  const r = await fetch(`${process.env.SPOTIFY_API_URL}/playlists/${playlist_id}/tracks`, {
+  const { playlist_id, uris } = body || {};
+
+  if (!playlist_id || !uris?.length) {
+    return NextResponse.json(
+      { error: "Missing playlist_id or uris" },
+      { status: 400 }
+    );
+  }
+
+  return spotifyFetch(`/playlists/${playlist_id}/tracks`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      tracks: uris.map((u) => ({ uri: u }))
-    }),
+    body: JSON.stringify({ tracks: uris.map((u) => ({ uri: u })) }),
   });
-
-  return NextResponse.json(await r.json(), { status: r.status });
 }

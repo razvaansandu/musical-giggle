@@ -1,23 +1,32 @@
+import { spotifyFetch, requireUserAccessToken } from "../../_lib/spotify";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
-export async function POST(req) {
-  const token = cookies().get("spotify_token")?.value || process.env.SPOTIFY_TOKEN;
+export async function POST(request) {
+  const { token, response } = await requireUserAccessToken();
+  if (!token) return response;
 
-  const { user_id, name, description, public: isPublic } = await req.json();
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
 
-  const r = await fetch(`${process.env.SPOTIFY_API_URL}/users/${user_id}/playlists`, {
+  const { user_id, name, description, public: isPublic } = body || {};
+
+  if (!user_id || !name) {
+    return NextResponse.json(
+      { error: "Missing user_id or name" },
+      { status: 400 }
+    );
+  }
+
+  return spotifyFetch(`/users/${user_id}/playlists`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({
       name,
-      description,
-      public: isPublic,
+      description: description || "",
+      public: isPublic ?? true,
     }),
   });
-
-  return NextResponse.json(await r.json(), { status: r.status });
 }

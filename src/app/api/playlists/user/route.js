@@ -1,13 +1,10 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { spotifyFetch } from "../../_lib/spotify";
 
-export async function GET(_req) {
-  const token = cookies().get("spotify_token")?.value || process.env.SPOTIFY_TOKEN;
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const limit = searchParams.get("limit") || "20";
+  const offset = searchParams.get("offset") || "0";
 
-  const r = await fetch(`${process.env.SPOTIFY_API_URL}/me/playlists`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-
-  return NextResponse.json(await r.json(), { status: r.status });
+  const query = new URLSearchParams({ limit, offset }).toString();
+  return spotifyFetch(`/me/playlists?${query}`);
 }
