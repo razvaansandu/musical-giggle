@@ -5,10 +5,13 @@ import {  useRef } from 'react';
 import { VolumeButton } from '../volume/Volume';
 import ButtonShuffle from './buttonShuffle';
 import SpotifyDevicesButton from './buttonDispositivi';
+import PlayButton from './PlayButton';
+import ButtonNextSong from './buttonNextSong';
+import ButtonPrevSong from './songButtonFirst';
+import PlaybackProgress from '../PlaybackProgress.jsx';
 
 export default function SpotifyControls() {
   const [isPlaying, setIsPlaying] = useState(false);
-  // const [isShuffle, setIsShuffle] = useState(false);
   const [isBack, setIsBack] = useState(false);
   const [isLater, setIsLater] = useState(false);
 
@@ -16,9 +19,6 @@ export default function SpotifyControls() {
     setIsPlaying(!isPlaying);
   };
 
-  // const handlePlayShuffle = () => {
-  //   setIsShuffle(!isShuffle);
-  // }
 
 const handlePlayBack = () => {
     setIsBack(!isBack);
@@ -27,16 +27,8 @@ const handlePlayBack = () => {
     setIsLater(!isLater);
   }
   return (
+<div>
+</div>
 
-    <div className="controls">
-      <ButtonShuffle ></ButtonShuffle>
-      <button onClick={handlePlayBack} >{isBack ? '⏮' : '⏮' }</button>  
-      <button onClick={handlePlayPause}>{isPlaying ? '⏸' : 'avvio'}</button>
-      <button onClick={handlePlayLater} >{isLater ? '⏭' : '⏭' }</button>
-      {/* <button onClick>loop</button> */}
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <SpotifyDevicesButton></SpotifyDevicesButton>
-     <VolumeButton ></VolumeButton>
-    </div>
   );
 }

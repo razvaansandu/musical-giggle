@@ -1,7 +1,7 @@
 import styles from './volume.module.css';
 import { useState, useRef } from 'react';
 
-export function VolumeButton() {
+export default function VolumeButton() {
   const [volume, setVolume] = useState(75);
   const prevVolume = useRef(75);
 
