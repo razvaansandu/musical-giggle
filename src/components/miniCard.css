@@ -73,16 +73,18 @@
   overflow: hidden;
 }
 
-.progress-row {
+.progress-row { 
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 4px;
-}
-
+  margin-top: 4px; 
+  width: 800px;
+} 
+ 
 .progress-row > * {
-  width: 100%;
-  max-width: 340px;
+  width: 100%; 
+  /* increase max width so the progress bar is longer (closer to Spotify) */
+  max-width: 720px;
 }
 
 /* ensure individual control buttons don't stretch and are centered as a group */
@@ -108,6 +110,32 @@
 .controls-row .playButton, .controls-row button.play {
   width: 52px;
   height: 52px;
+}
+
+/* enlarge other control icons slightly, and make the play icon smaller visually */
+.controls-row button svg,
+.controls-row .btn-next-flat svg,
+.controls-row .btn-shuffle svg {
+  width: 26px;
+  height: 26px;
+}
+.controls-row button svg,
+.controls-row .btn-next-flat svg
+{
+   width: 30px;
+  height: 30px;
+}
+.controls-row button.play svg,
+.controls-row .playButton svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ensure Play button inside controls-row has white background and black icon */
+.controls-row button.play {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
 }
 
 /* ensure meta area buttons are interactive */

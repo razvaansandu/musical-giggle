@@ -9,13 +9,13 @@
 
 .primary {
 
-  background-color: #000000;
-  color: #000000;
+  background-color: #ffffff;
+  color: #ffffff;
   padding: 14px 32px;
 }
 
 .primary:hover {
-  background-color: #000000;
+  background-color: #ffffff;
   transform: scale(1.04);
 }
 
@@ -41,11 +41,12 @@
 }
 
 .iconButton:hover {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(0, 0, 0);
 }
 
 .playButton {
-  background-color: #000000;
+  background-color: #ffffff;
+  color: #000000; /* icon color inside will use currentColor */
   width: 56px;
   height: 56px;
   display: flex;
@@ -56,5 +57,5 @@
 
 .playButton:hover {
   transform: scale(1.06);
-  background-color: #000000;
+  background-color: #ffffff;
 }

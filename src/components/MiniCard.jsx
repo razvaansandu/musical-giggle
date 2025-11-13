@@ -33,7 +33,7 @@ function MiniCard(props){
         </div> 
  
         <div className="progress-row">
-          <PlaybackProgress duration={duration} />
+          <PlaybackProgress duration={100} />
         </div> 
       </div>
 
@@ -44,7 +44,7 @@ function MiniCard(props){
         <VolumeButton />
         <SpotifyControls />
         
-</div>
+</div> 
       </div>
   
     </div>

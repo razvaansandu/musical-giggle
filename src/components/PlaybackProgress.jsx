@@ -28,7 +28,7 @@ export default function PlaybackProgress({ duration = 0, isPlaying = false, init
 
   useEffect(() => {
     // drive animation when isPlaying is true
-    function step(now) {
+    function step(now) { 
       const last = lastRef.current || now;
       const dt = (now - last) / 1000; // seconds
       lastRef.current = now;
