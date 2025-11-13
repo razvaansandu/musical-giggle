@@ -1,6 +1,6 @@
-export async function GET(_request, { params }) {
-  const { id } = params;
+import { spotifyFetch } from "../../_lib/spotify";
 
+<<<<<<< HEAD
   try {
     const res = await fetch(`https://api.spotify.com/v1/albums/${id}`, {
       headers: {
@@ -30,3 +30,9 @@ export async function GET(_request, { params }) {
     return Response.json({ error: "Errore nel server Spotify API" }, { status: 500 });
   }
 }
+=======
+export async function GET(_req, { params }) {
+  const { id } = await params;
+  return spotifyFetch(`/albums/${id}`);
+}
+>>>>>>> 8bf243f52993e31849d797a5ce2c97dfa52dce34

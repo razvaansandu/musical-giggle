@@ -1,23 +1,22 @@
-import { cookies } from "next/headers";
+import { spotifyFetch } from "../../_lib/spotify";
 import { NextResponse } from "next/server";
 
 export async function PUT(request) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_code")?.value;
+  const { searchParams } = new URL(request.url);
+  const state = searchParams.get("state"); // "off", "track", "context"
+  const device_id = searchParams.get("device_id");
 
-  if (!token) {
-    return NextResponse.json({ error: "Missing token" }, { status: 401 });
+  if (!state) {
+    return NextResponse.json(
+      { error: "Missing state parameter" },
+      { status: 400 }
+    );
   }
 
-  const { state } = await request.json(); // 'track', 'context', 'off'
+  const qs = new URLSearchParams({ state });
+  if (device_id) qs.set("device_id", device_id);
 
-  const res = await fetch(
-    `https://api.spotify.com/v1/me/player/repeat?state=${state}`,
-    {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-
-  return NextResponse.json({ status: res.status });
+  return spotifyFetch(`/me/player/repeat?${qs.toString()}`, {
+    method: "PUT",
+  });
 }

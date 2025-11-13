@@ -1,21 +1,27 @@
-import { cookies } from "next/headers";
+import { spotifyFetch } from "../../_lib/spotify";
 import { NextResponse } from "next/server";
 
 export async function DELETE(request) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("auth_code")?.value;
-  const { type, ids } = await request.json(); // type: "artist" | "user"
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    body = null;
+  }
 
-  if (!accessToken || !type || !ids)
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  const type = body?.type;
+  const ids = body?.ids;
 
-  const res = await fetch(`https://api.spotify.com/v1/me/following?type=${type}&ids=${ids}`, {
+  if (!type || !ids?.length) {
+    return NextResponse.json(
+      { error: "Missing type or ids" },
+      { status: 400 }
+    );
+  }
+
+  const idsParam = Array.isArray(ids) ? ids.join(",") : ids;
+
+  return spotifyFetch(`/me/following?type=${type}&ids=${encodeURIComponent(idsParam)}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${accessToken}` },
   });
-
-  if (!res.ok)
-    return NextResponse.json({ error: "Failed to unfollow" }, { status: res.status });
-
-  return NextResponse.json({ message: "Unfollow successful" });
 }
