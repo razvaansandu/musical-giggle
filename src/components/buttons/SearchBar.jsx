@@ -22,8 +22,8 @@ export default function SearchBar() {
       return;
     } 
 
-    setLoading(true);
-    setError(null);
+    setLoading(true); 
+    setError(null); 
 
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(value)}`);
@@ -38,7 +38,12 @@ export default function SearchBar() {
   }; 
 
   // 🔹 quando premi invio → redirect alla home
+<<<<<<< Updated upstream
 const handleSearch = (e) => {
+=======
+const handleSearch = (e) => { 
+  console.log(data.results); 
+>>>>>>> Stashed changes
   e.preventDefault();
   if (!query.trim()) return;
 
