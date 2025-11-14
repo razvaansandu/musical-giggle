@@ -24,4 +24,117 @@ button:hover {
   background-color: #000000;
   scale: 1.1;
 color :white;
+} 
+
+.card:hover { 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.95));
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+  transition: transform 0.16s ease, box-shadow 0.16s ease; 
+  overflow: hidden;
+  cursor: pointer; 
+  position: absolute; 
+  bottom: 0;  
+  left: 0;   
+  z-index: 100;
+}
+ 
+
+.card:hover { 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* album art */
+.card-image {
+  width: 56px;
+  height: 56px; 
+  border-radius: 6px;
+  object-fit: cover;
+  flex: 0 0 56px; 
+  background: #222;
+  display: block;
+}
+
+/* content (title + artist) */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0; /* allow truncation */
+  overflow: hidden;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.card-description {
+  font-size: 13px;
+  color: #b3b3b3; 
+  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* right area: duration / actions */
+.card-meta {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #b3b3b3;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* small circular play button that appears on hover */
+.card-play {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.9);
+  border: 1px solid black; 
+} 
+
+.card:hover .card-play {
+  opacity: 1; 
+  background-color: white;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background:  #000000;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+
+ 
