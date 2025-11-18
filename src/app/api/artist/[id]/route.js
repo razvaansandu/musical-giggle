@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 export async function GET(request, { params }) {
   const { id } = params;
 
@@ -7,7 +8,10 @@ export async function GET(request, { params }) {
 
     const response = await fetch(`${process.env.SPOTIFY_API_URL}/artists/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
-    });
+    })
+      .catch(err => {
+        throw new Error('Errore nella fetch dell\'artista: ' + err.message);
+      });
 
     const data = await response.json();
     return Response.json(data);
