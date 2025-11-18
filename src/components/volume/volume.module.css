@@ -83,11 +83,16 @@
 
 .volumeSlider::-webkit-slider-runnable-track {
   height: 6px;
-  background: #535353;
+  background: #5b5b5b; /* filled track color for WebKit */
   border-radius: 999px;
 }
 .volumeSlider::-moz-range-track {
   height: 6px;
-  background: #535353;
+  background: #5b5b5b; /* unfilled track for Firefox */
+  border-radius: 999px;
+}
+.volumeSlider::-moz-range-progress {
+  height: 6px;
+  background: #ffffff; /* filled progress (Firefox) */
   border-radius: 999px;
 }

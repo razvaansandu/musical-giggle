@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import styles from './home/home.module.css';
 import SpotifyHeader from 'components/SpotifyHeader'; 
 import MiniCard from '../components/MiniCard';
+import ChiamataRecenti from '@/components/chiamataRecenti';
 
 // Componente principale 
 function MainContent() { 
@@ -116,16 +117,8 @@ export default function Home() {
           <section className={styles.section}>
             <h2>Recently played</h2>
             <div className={styles.grid}>
-              {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-                <div key={item} className={styles.card}>
-                  <div className={styles.cardImage}></div>
-                  <div className={styles.cardContent}>
-                    <h3>Playlist {item}</h3>
-                    <p>Description</p>
+             <ChiamataRecenti/> 
                   </div>
-                </div>
-              ))}
-            </div>
           </section>
 
           {/* array daily mix */}
