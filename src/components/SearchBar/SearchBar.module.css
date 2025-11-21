@@ -1,0 +1,33 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 360px;
+  padding: 10px 16px;
+  background: #242424;
+  border-radius: 500px;
+  transition: 0.2s ease;
+}
+
+.bar:hover {
+  background: #2e2e2e;
+}
+
+.bar:focus-within {
+  background: #333;
+  box-shadow: 0 0 0 2px #1db95490;
+}
+
+.icon {
+  font-size: 18px;
+  opacity: 0.6;
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
