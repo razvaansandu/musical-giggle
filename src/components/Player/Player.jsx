@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
+import PlayButton from "../buttons/PlayButton";
+import StopButton from "../buttons/stopButton";
+import ButtonPrevSong from "../buttons/songButtonFirst";
+import ButtonNextSong from "../buttons/buttonNextSong";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -28,7 +32,7 @@ export default function Player() {
 
   useEffect(() => {
     fetchCurrent();
-    const id = setInterval(fetchCurrent, 5000); // aggiorna ogni 5s
+    const id = setInterval(fetchCurrent, 1000); // aggiorna ogni 5s
     return () => clearInterval(id);
   }, []);
 
@@ -103,29 +107,12 @@ export default function Player() {
       </div>
 
       <div className={styles.center}>
-        <button
-          onClick={handlePrev}
-          className={styles.iconBtn}
-          aria-label="Previous"
-        >
-          &#9664;&#9664;
-        </button>
+           <ButtonPrevSong></ButtonPrevSong>
 
-        <button
-          onClick={handlePlayPause}
-          className={styles.playBtn}
-          aria-label={isPlaying ? "Pause" : "Play"}
-        >
-          {isPlaying ? "⏸" : "▶"}
-        </button>
-
-        <button
-          onClick={handleNext}
-          className={styles.iconBtn}
-          aria-label="Next"
-        >
-          &#9654;&#9654;
-        </button>
+        
+ {isPlaying ? <StopButton></StopButton> : <PlayButton></PlayButton>}
+        
+        <ButtonNextSong></ButtonNextSong>
       </div>
 
       <div className={styles.right}>
