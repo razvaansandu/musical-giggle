@@ -1,72 +1,288 @@
 .container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: #000;
+  height: 100vh;
+  background-color: #000000;
+  color: white;
+  overflow: hidden;
 }
 
 .content {
   display: flex;
-  padding: 20px;
-  gap: 20px;
+  flex: 1;
+  gap: 8px;
+  padding: 8px;
+  padding-top: 0;
+  overflow: hidden;
 }
 
+/* Sidebar (Library) */
+.libraryContainer {
+  width: 320px;
+  background-color: #121212;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 12px;
+  height: 100%;
+}
+
+.libraryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.libraryTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  background: none;
+  border: none;
+  color: #a7a7a7;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.libraryTitle:hover {
+  color: white;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.roundButton {
+  background: none;
+  border-radius: 50%;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  color: #a7a7a7;
+  transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.roundButton:hover {
+  background-color: #1a1a1a;
+  color: white;
+}
+
+.libraryFilters {
+  display: flex;
+  gap: 8px;
+  padding: 0 4px;
+  overflow-x: auto;
+}
+
+.chip {
+  background-color: #232323;
+  border: none;
+  border-radius: 500px;
+  padding: 6px 12px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+.chip:hover {
+  background-color: #2a2a2a;
+}
+
+.libraryUtilities {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: #a7a7a7;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+.iconButton:hover {
+  background-color: #1a1a1a;
+  color: white;
+}
+
+.sortButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #a7a7a7;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.sortButton:hover {
+  color: white;
+}
+
+.libraryList {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.libraryList::-webkit-scrollbar {
+  width: 8px;
+}
+.libraryList::-webkit-scrollbar-thumb {
+  background-color: #5a5a5a;
+  border-radius: 4px;
+}
+.libraryList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.libraryItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.libraryItem:hover {
+  background-color: #1a1a1a;
+}
+
+.itemImagePlaylist {
+  width: 72px;
+  height: 72px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.itemImageArtist {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.itemTitle {
+  font-size: 17px;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemDetails {
+  font-size: 14px;
+  color: #a7a7a7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Main Content */
 .mainContent {
   flex: 1;
-  padding: 20px;
+  background: linear-gradient(to bottom, #202020, #121212);
+  border-radius: 8px;
+  padding: 24px;
   overflow-y: auto;
+  position: relative;
+}
+
+.section {
+  margin-bottom: 40px;
 }
 
 .section h2 {
-  font-size: 22px;
-  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
-/* QUI IL FIX DEL TUO PROBLEMA */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-  width: 100%;
-  padding: 10px 0;
+  gap: 24px;
 }
+
+/* Card Styles */
+.card {
+  background-color: #181818;
+  padding: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+.card:hover {
+  background-color: #282828;
+}
+.cardImage {
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: #282828;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+.cardContent h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.cardContent p {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+/* Hero Styles */
 .hero {
   display: flex;
   align-items: center;
   gap: 32px;
   margin-bottom: 32px;
 }
-
 .heroImageWrapper {
   width: 180px;
   height: 180px;
   overflow: hidden;
   border-radius: 8px;
 }
-
 .heroImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
-.heroText {
-  display: flex;
-  flex-direction: column;
-}
-
 .heroType {
   font-size: 14px;
   text-transform: uppercase;
   opacity: 0.7;
 }
-
 .heroTitle {
   font-size: 46px;
   font-weight: 900;
 }
-
 .heroFollowers {
   opacity: 0.8;
   margin-top: 8px;
