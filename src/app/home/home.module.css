@@ -1,485 +1,49 @@
 .container {
-<<<<<<< HEAD
-  width: 100%;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
-  background-color: #121212;
+  background-color: #000000;
   color: white;
-}
-
-.header { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  padding: 16px 32px; 
-  background-color: rgba(0, 0, 0, 0.5); 
-  position: sticky; 
-  top: 0; 
-  z-index: 100; 
-} 
-
-.searchContainer {
-  flex: 0 1 364px;
-}
-
-.searchInput {
-=======
-  display: flex;
-  flex-direction: column;
-  height: 100%;
->>>>>>> development
-  width: 100%;
-  background-color: #000;
-}
-
-.content {
-  display: flex;
-  padding: 20px;
-  gap: 20px;
-}
-
-.mainContent {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.section h2 {
-  font-size: 22px;
-  margin-bottom: 12px;
-}
-
-/* QUI IL FIX DEL TUO PROBLEMA */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-  width: 100%;
-  padding: 10px 0;
-}
-.hero {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  margin-bottom: 32px;
-}
-
-.heroImageWrapper {
-  width: 180px;
-  height: 180px;
   overflow: hidden;
-  border-radius: 8px;
-}
-
-.heroImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-<<<<<<< HEAD
-.mainContent {
-  padding: 24px 32px;
 }
 
 .content {
   display: flex;
-  height: 100%;
-}
-
-/* Stili barra laterale */
-.sidebar {
-  width: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 0;
-  background: transparent;
-=======
-.heroText {
-  display: flex;
-  flex-direction: column;
->>>>>>> development
-}
-
-.heroType {
-  font-size: 14px;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
-
-.heroTitle {
-  font-size: 46px;
-  font-weight: 900;
-}
-
-.heroFollowers {
-  opacity: 0.8;
-  margin-top: 8px;
-}
-<<<<<<< HEAD
-
-.playlists h2 {
-  font-size: 16px;
-  margin-bottom: 16px;
-  padding: 0 12px;
-}
-
-.createPlaylist {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.createPlaylist:hover {
-  opacity: 0.7;
-}
-
-/* Stili contenuto principale */
-.mainContent {
   flex: 1;
-  background: linear-gradient(to bottom, #404040, #121212);
-  padding: 24px;
-  overflow-y: auto;
-}
-
-.header {
-  margin-bottom: 40px;
-}
-
-.header h1 {
-  font-size: 32px;
-  font-weight: 700;
-}
-
-.section {
-  margin-bottom: 40px;
-}
-
-.section h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 24px;
-}
-
-/* Stili delle card */
-.card {
-  background-color: #181818;
-  padding: 16px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-  cursor: pointer;
-}
-
-.card:hover {
-  background-color: #282828;
-}
-
-.cardImage {
-  width: 100%;
-  padding-bottom: 100%;
-  background-color: #282828;
-  border-radius: 4px;
-  margin-bottom: 16px;
-}
-
-.cardContent h3 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.cardContent p {
-  font-size: 14px;
-  color: #b3b3b3;
-}
-
-/* Stili del volume */
-.volumeWrapper {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.volumeButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  gap: 8px;
   padding: 8px;
-  border-radius: 999px;
-  background-color: #181818;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.12s, transform 0.12s;
-  border: none;
+  padding-top: 0;
+  overflow: hidden;
 }
 
-.volumeButton:hover {
-  background-color: #282828;
-  transform: scale(1.03);
-}
-
-.volumePopover {
-  position: relative;
-  background: transparent;
-  padding: 6px 8px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-}
-
-.sliderContainer {
-  width: 180px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #121212;
-  padding: 6px 10px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
-}
-
-.volumeSlider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  cursor: pointer;
-  background: transparent;
-  height: 36px;
-  display: block;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-
-.volumeSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  background: #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.05);
-  margin-top: 0;
-  transform: translateY(-3px);
-}
-.volumeSlider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  background: #171b19;
-  border-radius: 50%;
-  border: none;
-  box-shadow: 0 0 0 6px rgba(29,185,84,0.12);
-  transform: translateY(-3px);
-}
-
-.volumeSlider::-webkit-slider-runnable-track {
-  height: 6px;
-  background: #535353;
-  border-radius: 999px;
-}
-.volumeSlider::-moz-range-track {
-  height: 6px;
-  background: #535353;
-  border-radius: 999px;
-} 
-.libraryHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.libraryTitle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 14px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-.headerButtons {
-  display: flex;
-  gap: 8px;
-}
-
-.createButton {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.createIcon {
-  font-size: 18px;
-}
-
-.roundButton {
-  background: #282828;
-  border-radius: 50%; 
-  padding: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s; 
-}
-
-.roundButton:hover {
-  background-color: #3e3e3e;
-}
-
-.libraryFilters {
-  display: flex;
-  gap: 8px; 
-  padding: 8px 0; 
- 
-}
-
-.chip {
-  background-color: #282828;
-  border: none; 
-  border-radius: 14px; 
-  padding: 6px 22px; 
-  color: white;
-  font-size: 12px; 
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.chip:hover {
-  background-color: #3e3e3e;
-}
-
-.libraryUtilities {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px; 
-}
-
-.iconButton {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-.sortButton {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 12px;
-  cursor: pointer;
-}
- .libraryActions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-  padding-left: 4px;
-}
-
-.actionButton {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 14px;
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.actionButton:hover {
-  background-color: #282828;
-}
-
-.searchContainer {
-  padding: 16px 32px;
-  background-color: #121212;
-}
-
-.searchInput {
-  width: 100%;
-  padding: 12px 20px;
-  border-radius: 500px;
-  border: none;
-  background-color: #242424;
-  color: white;
-  font-size: 14px;
-}
-
-.searchInput::placeholder {
-  color: #a7a7a7;
-}
- /* --- MODIFICA STILI ESISTENTI --- */
-/* (Sostituisci la tua classe .sidebar con questa) */
-
-.sidebar {
-  width: 320px; /* Larghezza fissa della sidebar */
-  display: flex;
-  flex-direction: column;
-  padding-top: 8px; /* Spazio per la barra superiore (se presente) */
-  padding-left: 8px; /* Spazio a sinistra */
-  padding-bottom: 8px; /* Spazio per il player (se presente) */
-  background: #000; /* Sfondo nero principale */
-  /* Altezza calcolata per lasciare spazio a un ipotetico player di 90px */
-  /* Modifica 90px se hai un player di altezza diversa */
-  height: calc(100vh - 90px); 
-}
-
-/* Container principale della libreria (riempie .sidebar) */
+/* Sidebar (Library) */
 .libraryContainer {
+  width: 320px;
+  background-color: #121212;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
-  background-color: #121212; /* Sfondo della sidebar interna */
-  border-radius: 8px; /* Angoli arrotondati */
-  padding: 8px 12px;
+  padding: 12px;
+  gap: 12px;
   height: 100%;
-  gap: 8px; /* Spazio tra le sezioni */
 }
 
-/* Header: "La tua libreria" */
 .libraryHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 4px; 
+  padding: 0 8px;
 }
 
 .libraryTitle {
   display: flex;
   align-items: center;
-  gap: 12px; /* Spazio tra icona e testo */
+  gap: 12px;
   font-weight: 700;
   font-size: 16px;
   background: none;
   border: none;
-  color: #a7a7a7; /* Colore grigio (non attivo) */
+  color: #a7a7a7;
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -495,7 +59,7 @@
 .roundButton {
   background: none;
   border-radius: 50%;
-  padding: 8px; /* Aumenta padding per cliccabilità */
+  padding: 8px;
   border: none;
   cursor: pointer;
   color: #a7a7a7;
@@ -509,36 +73,34 @@
   color: white;
 }
 
-/* Filtri: "Playlist", "Artisti"... */
 .libraryFilters {
   display: flex;
   gap: 8px;
   padding: 0 4px;
-  overflow-x: auto; /* Per schermi piccoli */
+  overflow-x: auto;
 }
 
 .chip {
   background-color: #232323;
   border: none;
-  border-radius: 500px; /* Completamente tondo */
+  border-radius: 500px;
   padding: 6px 12px;
   color: white;
-  font-size: 14px; /* Testo leggermente più grande */
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-  white-space: nowrap; /* Evita che il testo vada a capo */
+  white-space: nowrap;
 }
 .chip:hover {
   background-color: #2a2a2a;
 }
 
-/* Utility: Cerca e Ordina */
 .libraryUtilities {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 4px;
+  padding: 0 4px;
 }
 
 .iconButton {
@@ -553,9 +115,6 @@
 .iconButton:hover {
   background-color: #1a1a1a;
   color: white;
-}
-.searchIcon {
-  padding: 8px; /* Più grande come gli altri bottoni */
 }
 
 .sortButton {
@@ -574,17 +133,11 @@
   color: white;
 }
 
-
-/* --- NUOVI STILI PER LA LISTA (Da aggiungere) --- */
-
-/* La lista scrollabile */
 .libraryList {
-  flex: 1; /* Occupa tutto lo spazio verticale rimanente */
-  overflow-y: auto; /* Abilita lo scroll verticale */
-  padding-right: 8px; /* Spazio per la scrollbar, per non sovrapporsi */
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
 }
-
-/* Stile della scrollbar (opzionale ma fedele a Spotify) */
 .libraryList::-webkit-scrollbar {
   width: 8px;
 }
@@ -593,10 +146,9 @@
   border-radius: 4px;
 }
 .libraryList::-webkit-scrollbar-track {
-  background: transparent; /* Nasconde lo sfondo della traccia */
+  background: transparent;
 }
 
-/* Singolo elemento della lista */
 .libraryItem {
   display: flex;
   align-items: center;
@@ -610,60 +162,36 @@
   background-color: #1a1a1a;
 }
 
-/* Contenitore per icone speciali (Brani piaciuti, Episodi) */
-.itemIconWrapper {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px; /* Angoli squadrati per playlist */
-  flex-shrink: 0; /* Evita che si rimpicciolisca */
-}
-
-.likedIcon {
-  background: linear-gradient(135deg, #450af5, #c4efd9);
-}
-.episodesIcon {
-  background: #006450;
-}
-.defaultIcon {
-  background: #333333;
-}
-
-/* Immagine normale (playlist) */
 .itemImagePlaylist {
-  width: 48px;
-  height: 48px;
-  border-radius: 4px; /* Angoli squadrati per playlist */
+  width: 72px;
+  height: 72px;
+  border-radius: 4px;
   object-fit: cover;
   flex-shrink: 0;
 }
 
-/* Immagine (artista) */
 .itemImageArtist {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%; /* Tonde per artisti */
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
 }
 
-/* Info: Titolo e Dettagli */
 .itemInfo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  overflow: hidden; /* Fondamentale per troncare il testo */
+  gap: 4px;
+  overflow: hidden;
 }
 
 .itemTitle {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 500;
   color: #ffffff;
-  white-space: nowrap; /* Non manda a capo */
-  overflow: hidden; /* Nasconde testo in eccesso */
-  text-overflow: ellipsis; /* Aggiunge "..." */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .itemDetails {
@@ -672,6 +200,90 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-} 
-=======
->>>>>>> development
+}
+
+/* Main Content */
+.mainContent {
+  flex: 1;
+  background: linear-gradient(to bottom, #202020, #121212);
+  border-radius: 8px;
+  padding: 24px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+}
+
+/* Card Styles */
+.card {
+  background-color: #181818;
+  padding: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+.card:hover {
+  background-color: #282828;
+}
+.cardImage {
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: #282828;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+.cardContent h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.cardContent p {
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+/* Hero Styles */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+.heroImageWrapper {
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.heroType {
+  font-size: 14px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.heroTitle {
+  font-size: 46px;
+  font-weight: 900;
+}
+.heroFollowers {
+  opacity: 0.8;
+  margin-top: 8px;
+}

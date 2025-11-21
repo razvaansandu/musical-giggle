@@ -103,14 +103,7 @@ export default function HomePage() {
 
           {!loading && (
             <>
-              <header className={styles.header}>
-                <h1>
-                  {profile?.display_name
-                    ? `Good evening, ${profile.display_name}`
-                    : "Good evening"}
-                </h1>
-              </header>
-
+             
               {/* RECENTLY PLAYED */}
               <section className={styles.section}>
                 <h2>Recently played</h2>
