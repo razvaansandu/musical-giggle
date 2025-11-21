@@ -19,8 +19,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children} 
+      <head>
+        <script src="https://sdk.scdn.co/spotify-player.js" async></script>
+      </head>
+      <body>
+        {children}
       </body>
     </html>
   );

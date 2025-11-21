@@ -1,32 +1,19 @@
 "use client";
 
 import styles from "./Card.module.css";
+import { playTrack } from "../../lib/webPlayer";
 
 export default function TrackCard({ track }) {
   if (!track) return null;
 
   const img = track?.album?.images?.[0]?.url || "/default-track.png";
 
-  const handlePlay = async () => {
-    try {
-      if (!track.uri) {
-        console.warn("Nessuna URI per questa track:", track);
-        return;
-      }
+  
 
-      await fetch("/api/player/start-resume-playback", {
-        method: "PUT",              // 👉 se nel tuo route hai usato POST, cambia in "POST"
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uris: [track.uri],        // play solo quella traccia
-        }),
-      });
-    } catch (err) {
-      console.error("Errore avvio riproduzione", err);
-    }
-  };
+  const handlePlay = async () => {
+  if (!track.uri) return console.warn("Track senza URI!", track);
+  await playTrack(track.uri);
+};
 
   return (
     <button

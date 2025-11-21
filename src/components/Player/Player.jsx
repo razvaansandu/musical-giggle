@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
+import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -11,7 +12,6 @@ export default function Player() {
     try {
       const res = await fetch("/api/player/get-currently-playing-track");
 
-      // 204 = nessun brano in riproduzione
       if (res.status === 204) {
         setCurrent(null);
         setIsPlaying(false);
@@ -27,22 +27,26 @@ export default function Player() {
   };
 
   useEffect(() => {
-    fetchCurrent();
-    const id = setInterval(fetchCurrent, 5000); // aggiorna ogni 5s
-    return () => clearInterval(id);
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      initWebPlayer(async () => {
+        const cookie = document.cookie
+          .split("; ")
+          .find(r => r.startsWith("auth_code="));
+        return cookie?.split("=")[1] || "";
+      });
+    };
+
+    const interval = setInterval(fetchCurrent, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   const handlePlayPause = async () => {
     try {
       if (isPlaying) {
-        await fetch("/api/player/pause-playback", {
-          method: "PUT",        // se nel route hai messo POST, cambia anche qui
-        });
+        await fetch("/api/player/pause", { method: "PUT" });
         setIsPlaying(false);
       } else {
-        await fetch("/api/player/start-resume-playback", {
-          method: "PUT",        // idem sopra
-        });
+        await fetch("/api/player/play", { method: "PUT" });
         setIsPlaying(true);
       }
     } catch (err) {
@@ -52,9 +56,7 @@ export default function Player() {
 
   const handleNext = async () => {
     try {
-      await fetch("/api/player/skip-to-next", {
-        method: "POST",
-      });
+      await fetch("/api/player/next", { method: "POST" });
       fetchCurrent();
     } catch (err) {
       console.error("Errore next", err);
@@ -63,20 +65,29 @@ export default function Player() {
 
   const handlePrev = async () => {
     try {
-      await fetch("/api/player/skip-to-previous", {
-        method: "POST",
-      });
+      await fetch("/api/player/previous", { method: "POST" });
       fetchCurrent();
     } catch (err) {
       console.error("Errore previous", err);
     }
   };
 
+  const deviceId = getDeviceId();
+  if (!deviceId) {
+    return (
+      <div className={styles.playerBar}>
+        <div className={styles.empty}>
+          🎧 Sto inizializzando il player...
+        </div>
+      </div>
+    );
+  }
+
   if (!current) {
     return (
       <div className={styles.playerBar}>
         <div className={styles.empty}>
-          Nessun brano in riproduzione. Clicca una track per iniziare 💿
+          Nessun brano in riproduzione. Clicca una track per iniziare 
         </div>
       </div>
     );
@@ -129,7 +140,7 @@ export default function Player() {
       </div>
 
       <div className={styles.right}>
-        {/* qui in futuro puoi rimettere il tuo Volume.tsx */}
+        {}
       </div>
     </div>
   );
