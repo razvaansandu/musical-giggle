@@ -3,32 +3,27 @@ import { NextResponse } from "next/server";
 
 const BASE_URL = process.env.SPOTIFY_API_URL || "https://api.spotify.com/v1";
 
-// Legge il token utente dal cookie "auth_code"
 export async function getUserAccessToken() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("auth_code")?.value || null;
-  return token;
+  return cookieStore.get("auth_code")?.value || null;
 }
 
-// Se non c'è token, ritorna già una risposta 401
 export async function requireUserAccessToken() {
   const token = await getUserAccessToken();
+
   if (!token) {
     return {
       token: null,
-      response: NextResponse.json(
-        { error: "Not authenticated" },
-        { status: 401 }
-      ),
+      response: NextResponse.json({ error: "Not authenticated" }, { status: 401 }),
     };
   }
+
   return { token, response: null };
 }
 
-// Wrapper generico per chiamare Spotify con token utente
 export async function spotifyFetch(path, options = {}) {
   const { token, response } = await requireUserAccessToken();
-  if (!token) return response; // 401
+  if (!token) return response;
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
@@ -40,6 +35,12 @@ export async function spotifyFetch(path, options = {}) {
     cache: "no-store",
   });
 
+  // 🔥 FIX 204 - Nessun contenuto → ritorno una normalissima Response senza JSON
+  if (res.status === 204) {
+    return new Response(null, { status: 204 });
+  }
+
+  // Provo a leggere JSON
   let data = null;
   try {
     data = await res.json();

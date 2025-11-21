@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './SpotifyHeader.module.css';
-import SearchBar from "components/buttons/SearchBar";
+import SearchBar from "../SearchBar/SearchBar";
 
 export default function SpotifyHeader() {
   return (

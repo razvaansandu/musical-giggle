@@ -1,143 +1,127 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function SearchTestPage() {
-  const searchParams = useSearchParams();
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+import styles from "../home/home.module.css";
 
-  async function performSearch(q) {
-    if (!q || !q.trim()) return;
-    setLoading(true);
-    setError(null);
-    setResults([]);
-    try {
+import SpotifyHeader from "../../components/Header/SpotifyHeader";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import Player from "../../components/Player/Player";
+
+import TrackCard from "../../components/Cards/TrackCard";
+import ArtistCard from "../../components/Cards/ArtistCard";
+import PlaylistCard from "../../components/Cards/PlaylistCard";
+import Loader from "../../components/Loader/Loader";
+
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q") || "";
+
+  const [tracks, setTracks] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [albums, setAlbums] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!q) return;
+
+    const doSearch = async () => {
+      setLoading(true);
+
       const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Errore nella ricerca");
 
-      // Normalize possible Spotify search shapes: tracks/albums/artists/playlists
-      let items = [];
-      if (Array.isArray(data.results)) items = data.results;
-      else if (data.tracks && Array.isArray(data.tracks.items)) items = data.tracks.items;
-      else if (data.albums && Array.isArray(data.albums.items)) items = data.albums.items;
-      else if (data.artists && Array.isArray(data.artists.items)) items = data.artists.items;
-      else if (data.playlists && Array.isArray(data.playlists.items)) items = data.playlists.items;
-      else if (Array.isArray(data.items)) items = data.items;
-      else if (data.items && Array.isArray(data.items.items)) items = data.items.items; // defensive
+      setTracks(data.tracks?.items || []);
+      setArtists(data.artists?.items || []);
+      setAlbums(data.albums?.items || []);
+      setPlaylists(data.playlists?.items || []);
 
-      setResults(items || []);
-    } catch (err) {
-      setError(err.message || String(err));
-    } finally {
       setLoading(false);
-    }
-  }
+    };
 
-  const handleSearch = async (e) => {
-    e && e.preventDefault();
-    await performSearch(query);
-  };
-
-  // when the page loads with ?q=..., auto-run the search
-  useEffect(() => {
-    const q = searchParams.get("q");
-    if (q) {
-      setQuery(q);
-      performSearch(q);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+    doSearch();
+  }, [q]);
 
   return (
-    <main className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6 text-center">🎧 Cerca su Spotify</h1>
+    <div className={styles.container}>
+      <SpotifyHeader />
 
-      <form onSubmit={handleSearch} className="flex justify-center mb-6">
-        <input
-          type="text"
-          placeholder="Cerca un artista o una canzone..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="border border-gray-300 rounded-l-lg px-4 py-2 w-80 focus:outline-none"
-        />
-        <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded-r-lg hover:bg-green-600"
-        >
-          Cerca
-        </button>
-      </form>
+      <div className={styles.content}>
+        <Sidebar />
 
-      {loading && <p className="text-center">⏳ Ricerca in corso...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+        <main className={styles.mainContent}>
+          <h1>Search results for “{q}”</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {results.map((track) => {
-          // helper formatters to avoid rendering [object Object]
-          const formatArtists = (a) => {
-            if (!a) return "";
-            if (Array.isArray(a)) return a.map((it) => (it && (it.name || it)) || "").join(", ");
-            if (typeof a === "object") return a.name || JSON.stringify(a);
-            return String(a);
-          };
+          {!loading && (
+            <>
+              {/* TRACKS */}
+              {tracks.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Tracks</h2>
+                  <div className={styles.grid}>
+                    {tracks.map(t => (
+                      <TrackCard key={t.id} track={t} />
+                    ))}
+                  </div>
+                </section>
+              )}
 
-          const formatAlbum = (al) => {
-            if (!al) return "";
-            if (typeof al === "string") return al;
-            if (Array.isArray(al)) return al.map((it) => it.name || it).join(", ");
-            if (typeof al === "object") return al.name || JSON.stringify(al);
-            return String(al);
-          };
+              {/* ARTISTS */}
+              {artists.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Artists</h2>
+                  <div className={styles.grid}>
+                    {artists.map(a => (
+                      <ArtistCard key={a.id} artist={a} />
+                    ))}
+                  </div>
+                </section>
+              )}
 
-          const resolveImage = (img) => {
-            if (!img) return null;
-            // possible shapes: string URL, { url }, [ { url } ], images: [..]
-            if (typeof img === "string") return img;
-            if (img.url) return img.url;
-            if (Array.isArray(img) && img[0] && img[0].url) return img[0].url;
-            if (track.images && Array.isArray(track.images) && track.images[0]) return track.images[0].url;
-            return null;
-          };
+              {/* PLAYLISTS */}
+              {playlists.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Playlists</h2>
+                  <div className={styles.grid}>
+                    {playlists
+                      .filter(p => p && p.id)   
+                      .map(p => (
+                        <PlaylistCard key={p.id} playlist={p} />
+                      ))}
 
-          const imageUrl = resolveImage(track.image);
+                  </div>
+                </section>
+              )}
 
-          return (
-            <div
-              key={track.id || track.uri || Math.random()}
-              className="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition"
-            >
-              <div className="searchConteiner">
-                {imageUrl ? (
-                  <img src={imageUrl} alt={track.name} className="w-full h-48 object-cover" />
-                ) : null}
-                <div className="p-4">
-                  <h2 className="font-semibold text-lg">{track.name}</h2>
-                  <p className="text-gray-600">{formatArtists(track.artists)}</p>
-                  <p className="text-sm text-gray-500">{formatAlbum(track.album)}</p>
-                  {track.preview_url && (
-                    <audio controls src={track.preview_url} className="mt-2 w-full" />
-                  )}
-                  {track.external_url && (
-                    <a
-                      href={track.external_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-3 text-green-600 font-medium hover:underline"
-                    >
-                      Apri su Spotify →
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+              {/* ALBUMS */}
+              {albums.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Albums</h2>
+                  <div className={styles.grid}>
+                    {albums.map(al => (
+                      <TrackCard
+                        key={al.id}
+                        track={{
+                          name: al.name,
+                          album: { images: al.images },
+                          artists: al.artists,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
+
+          {loading && <Loader />}
+        </main>
       </div>
-    </main>
+
+      <Player />
+    </div>
   );
 }
