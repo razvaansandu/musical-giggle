@@ -1,0 +1,84 @@
+.playerBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: #181818;
+  border-top: 1px solid #282828;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  color: #fff;
+  z-index: 200;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cover {
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.artist {
+  font-size: 12px;
+  color: #b3b3b3;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconBtn {
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.playBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: #1db954;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.playBtn:hover {
+  transform: scale(1.05);
+}
+
+.right {
+  min-width: 80px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.empty {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #b3b3b3;
+}

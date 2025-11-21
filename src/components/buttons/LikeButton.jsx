@@ -8,7 +8,7 @@ import SpotifyDevicesButton from './buttonDispositivi';
 import PlayButton from './PlayButton';
 import ButtonNextSong from './buttonNextSong';
 import ButtonPrevSong from './songButtonFirst';
-import PlaybackProgress from '../PlaybackProgress.jsx';
+import PlaybackProgress from '../Player/PlaybackProgress.jsx';
 
 export default function SpotifyControls() {
   const [isPlaying, setIsPlaying] = useState(false);

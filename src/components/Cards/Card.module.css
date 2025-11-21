@@ -1,0 +1,38 @@
+.card {
+  background-color: #181818;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  overflow: hidden;
+
+  border: none;
+  outline: none;
+  text-align: left;
+}
+
+
+.card:hover {
+  background-color: #282828;
+}
+
+.imageWrapper {
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: white;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #b3b3b3;
+}
