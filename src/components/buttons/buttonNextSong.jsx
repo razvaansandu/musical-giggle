@@ -3,6 +3,7 @@
 
 import React from "react";
 import "./buttonNextSong.css";
+
 export default function ButtonNextSong({ onNext, disabled = false, title = "Next", className = "" }) {
   return (
     <button

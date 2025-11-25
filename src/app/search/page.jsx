@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+
 import styles from "../home/home.module.css";
+
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
+
 import TrackCard from "../../components/Cards/TrackCard";
 import ArtistCard from "../../components/Cards/ArtistCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
@@ -54,6 +57,7 @@ export default function SearchPage() {
 
           {!loading && (
             <>
+              {/* TRACKS */}
               {tracks.length > 0 && (
                 <section className={styles.section}>
                   <h2>Tracks</h2>
@@ -65,6 +69,7 @@ export default function SearchPage() {
                 </section>
               )}
 
+              {/* ARTISTS */}
               {artists.length > 0 && (
                 <section className={styles.section}>
                   <h2>Artists</h2>
@@ -76,6 +81,7 @@ export default function SearchPage() {
                 </section>
               )}
 
+              {/* PLAYLISTS */}
               {playlists.length > 0 && (
                 <section className={styles.section}>
                   <h2>Playlists</h2>
@@ -90,6 +96,7 @@ export default function SearchPage() {
                 </section>
               )}
 
+              {/* ALBUMS */}
               {albums.length > 0 && (
                 <section className={styles.section}>
                   <h2>Albums</h2>
@@ -110,11 +117,11 @@ export default function SearchPage() {
             </>
           )}
 
-          {loading && <Loader />} 
-            <Player/>   
+          {loading && <Loader />}
         </main>
       </div>
-    
+
+      <Player />
     </div>
   );
 }

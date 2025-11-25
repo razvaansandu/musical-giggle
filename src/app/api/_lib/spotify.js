@@ -35,10 +35,12 @@ export async function spotifyFetch(path, options = {}) {
     cache: "no-store",
   });
 
+  // 🔥 FIX 204 - Nessun contenuto → ritorno una normalissima Response senza JSON
   if (res.status === 204) {
     return new Response(null, { status: 204 });
   }
 
+  // Provo a leggere JSON
   let data = null;
   try {
     data = await res.json();
