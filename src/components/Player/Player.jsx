@@ -1,8 +1,11 @@
 "use client";
-
 import { useEffect, useState, useRef } from "react";
-import styles from "./Player.module.css";
+ import styles from './Player.module.css';
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
+import StopButton from "../buttons/stopButton";
+import PlayButton from "../buttons/PlayButton";
+import ButtonPrevSong from "../buttons/songButtonFirst";
+import ButtonNextSong from "../buttons/buttonNextSong";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -136,15 +139,15 @@ export default function Player() {
         </button>
 
         <button onClick={handlePrev} className={styles.iconBtn}>
-          ⏮
+          <ButtonPrevSong/>
         </button>
 
         <button onClick={handlePlayPause} className={styles.playBtn}>
-          {isPlaying ? "⏸" : "▶"}
-        </button>
+          {isPlaying ? <StopButton/> : <PlayButton/>}
+        </button>    
 
         <button onClick={handleNext} className={styles.iconBtn}>
-          ⏭
+          <ButtonNextSong/>
         </button>
 
         <button onClick={() => handleSeek(+10000)} className={styles.iconBtn}>
