@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function PUT(request) {
   const { searchParams } = new URL(request.url);
-  const state = searchParams.get("state"); // "off", "track", "context"
+  const state = searchParams.get("state"); 
   const device_id = searchParams.get("device_id");
 
   if (!state) {
