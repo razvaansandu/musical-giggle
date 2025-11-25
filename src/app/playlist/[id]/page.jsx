@@ -8,7 +8,7 @@ import styles from "../../home/home.module.css";
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
-import TrackCard from "../../../components/Cards/TrackCard";
+import TrackList from "../../../components/TrackList/TrackList";
 import Loader from "../../../components/Loader/Loader";
 
 export default function PlaylistPage() {
@@ -26,20 +26,35 @@ export default function PlaylistPage() {
         setLoading(true);
         setError(null);
 
-        const [plRes, tracksRes] = await Promise.all([
-          fetch(`/api/playlists/${id}`),
-          fetch(`/api/playlists/tracks/${id}`),
-        ]);
-
-        const plJson = await plRes.json();
-        const tracksJson = await tracksRes.json();
-
+        const plRes = await fetch(`/api/playlists/${id}`);
         if (!plRes.ok) throw new Error("Errore caricamento playlist");
-        if (!tracksRes.ok) throw new Error("Errore caricamento brani playlist");
+        const plJson = await plRes.json();
 
+        // Fetch di tutti i brani della playlist con paginazione
+        const allItems = [];
+        let offset = 0;
+        const limit = 100; // Max limit per richiesta Spotify
+
+        while (true) {
+          const res = await fetch(
+            `/api/playlists/tracks/${id}?limit=${limit}&offset=${offset}`
+          );
+          if (!res.ok) throw new Error("Errore caricamento brani playlist");
+          const json = await res.json();
+
+          const items = json.items || [];
+          allItems.push(...items);
+
+          // Controlla se ci sono altri brani da caricare
+          const total = json.total ?? allItems.length;
+
+          offset += items.length;
+          if (allItems.length >= total || items.length === 0) break;
+        }
+
+        // Imposta lo stato con i dati della playlist e i brani
         setPlaylist(plJson);
-        const items = tracksJson.items || [];
-        setTracks(items.map((it) => it.track || it));
+        setTracks(allItems.map((it) => it.track || it));
       } catch (err) {
         console.error(err);
         setError(err.message || "Errore caricamento playlist");
@@ -71,18 +86,32 @@ export default function PlaylistPage() {
 
           {!loading && playlist && (
             <>
-              <section className={styles.section}>
-                <h2>{playlist.name}</h2>
-                <p>{playlist.description}</p>
+              {/* Playlist dell'hero */}
+              <section className={styles.hero}>
+                <div className={styles.heroImageWrapper}>
+                  <img
+                    src={playlist.images?.[0]?.url || "/placeholder.png"}
+                    alt={playlist.name}
+                    className={styles.heroImage}
+                  />
+                </div>
+
+                <div className={styles.heroText}>
+                  <p className={styles.heroType}>Playlist</p>
+                  <h1 className={styles.heroTitle}>{playlist.name}</h1>
+                  <p className={styles.heroFollowers}>
+                    {playlist.description || "No description"}
+                  </p>
+                  <p className={styles.heroFollowers}>
+                    {tracks.length} tracks
+                  </p>
+                </div>
               </section>
 
+              {/* Tracklist della playlist */}
               <section className={styles.section}>
-                <h2>Tracks</h2>
-                <div className={styles.grid}>
-                  {tracks.map((t) => (
-                    <TrackCard key={t.id} track={t} />
-                  ))}
-                </div>
+                <h2>Brani</h2>
+                <TrackList tracks={tracks} />
               </section>
             </>
           )}

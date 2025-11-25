@@ -5,8 +5,10 @@ import styles from "./Card.module.css";
 export default function TrackCard({ track }) {
   if (!track) return null;
 
+  // Ottieni l'immagine della traccia o usa un'immagine di default
   const img = track?.album?.images?.[0]?.url || "/default-track.png";
 
+  // Funzione per gestire il click sulla traccia
   const handlePlay = async () => {
     try {
       if (!track.uri) {
@@ -15,7 +17,7 @@ export default function TrackCard({ track }) {
       }
 
       await fetch("/api/player/start-resume-playback", {
-        method: "PUT",              // 👉 se nel tuo route hai usato POST, cambia in "POST"
+        method: "PUT",              //  se nel tuo route hai usato POST, cambia in "POST"
         headers: {
           "Content-Type": "application/json",
         },
@@ -28,12 +30,14 @@ export default function TrackCard({ track }) {
     }
   };
 
+  // Render della scheda della traccia
   return (
     <button
       type="button"
       className={styles.card}
       onClick={handlePlay}
     >
+      {/* Immagine della traccia */}
       <div
         className={styles.imageWrapper}
         style={{ backgroundImage: `url(${img})` }}
