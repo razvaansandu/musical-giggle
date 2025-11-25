@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
+import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -72,8 +73,39 @@ export default function Player() {
     }
   };
 
+  const handleSeek = async (ms) => {
+    try {
+      const newPos = Math.max(0, progress + ms);
+
+      await fetch(`/api/player/seek-to-position?position_ms=${newPos}`, {
+        method: "PUT"
+      });
+
+      setProgress(newPos);
+    } catch (err) {
+      console.error("Errore seek", err);
+    }
+  };
+
+  // Controllo se il deviceId è disponibile
+  const deviceId = getDeviceId();
+  if (!deviceId) {
+    return (
+      <div className={styles.playerBar}>
+        <div className={styles.empty}>
+          Sto inizializzando il Web Player...
+        </div>
+      </div>
+    );
+  }
+
+  // Controllo se c'è un brano in riproduzione
   if (!current) {
-    return null;
+    return (
+      <div className={styles.playerBar}>
+        <div className={styles.empty}>Nessun brano in riproduzione.</div>
+      </div>
+    );
   }
 
   const img = current?.album?.images?.[0]?.url;
@@ -97,33 +129,33 @@ export default function Player() {
       </div>
 
       <div className={styles.center}>
-        <button
-          onClick={handlePrev}
-          className={styles.iconBtn}
-          aria-label="Previous"
-        >
-          &#9664;&#9664;
+        <button onClick={() => handleSeek(-10000)} className={styles.iconBtn}>
+          -10s
         </button>
 
-        <button
-          onClick={handlePlayPause}
-          className={styles.playBtn}
-          aria-label={isPlaying ? "Pause" : "Play"}
-        >
+        <button onClick={handlePrev} className={styles.iconBtn}>
+          ⏮
+        </button>
+
+        <button onClick={handlePlayPause} className={styles.playBtn}>
           {isPlaying ? "⏸" : "▶"}
         </button>
 
-        <button
-          onClick={handleNext}
-          className={styles.iconBtn}
-          aria-label="Next"
-        >
-          &#9654;&#9654;
+        <button onClick={handleNext} className={styles.iconBtn}>
+          ⏭
         </button>
+
+        <button onClick={() => handleSeek(+10000)} className={styles.iconBtn}>
+          +10s
+        </button>
+
       </div>
 
-      <div className={styles.right}>
-        {/* qui in futuro puoi rimettere il tuo Volume.tsx */}
+      <div className={styles.progressBar}>
+        <div
+          className={styles.progressFill}
+          style={{ width: `${(progress / duration) * 100}%` }}
+        ></div>
       </div>
     </div>
   );
