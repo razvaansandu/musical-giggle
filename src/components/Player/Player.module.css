@@ -1,23 +1,5 @@
-.playerBar1 {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: #181818;
-  border-top: 1px solid #282828;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  color: #979797;
-  z-index: 200; 
-  text-align: center;
-
-}
-
 .playerBar {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -29,7 +11,7 @@
   justify-content: space-between;
   padding: 0 16px;
   color: #fff;
-  z-index: 200; 
+  z-index: 200;
 }
 
 .left {
