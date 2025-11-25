@@ -5,7 +5,7 @@ import styles from "./home.module.css";
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
-import Footer from "../../components/footer/footer";
+import UserErrorModal from "../../components/Modal/UserErrorModal";
 
 import ArtistCard from "../../components/Cards/ArtistCard";
 import TrackCard from "../../components/Cards/TrackCard";
@@ -20,6 +20,7 @@ export default function HomePage() {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -72,7 +73,13 @@ export default function HomePage() {
         setPlaylists(playlistsJson.items ?? playlistsJson ?? []);
       } catch (err) {
         console.error("Errore nella home:", err);
-        setError(err.message || "Errore nel caricamento della home");
+        const errorMsg = err.message || "Errore nel caricamento della home";
+        setError(errorMsg);
+        
+        // Mostra il modal se è l'errore del profilo utente
+        if (errorMsg === "Errore profilo utente") {
+          setShowErrorModal(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -84,6 +91,11 @@ export default function HomePage() {
   return (
     <div className={styles.container}>
       <SpotifyHeader />
+
+      <UserErrorModal 
+        isOpen={showErrorModal} 
+        onClose={() => setShowErrorModal(false)} 
+      />
 
       <div className={styles.content}>
         <Sidebar />
