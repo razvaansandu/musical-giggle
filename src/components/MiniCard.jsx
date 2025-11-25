@@ -1,20 +1,14 @@
-import SpotifyControls from "./buttons/LikeButton";
-import "./miniCard.css";   
+import "./miniCard.css";
 
-function MiniCard(props){
-  const title=props.title; 
-    const description=props.description; 
-    const imageUrl=props.imageUrl; 
-    const numOfViews=props.numOfViews; 
-    const numOfTime=props.time;  
-  return (  
-
-    <div className="card"> 
-    <img src={imageUrl} alt={title} className="card-image" /> 
-    &nbsp; 
-     <h2 className="card-title">{title}</h2> 
-     <SpotifyControls />
-    </div>  
-  ); 
+function MiniCard() {
+  return (
+    <div className="mini-card">
+      {/* Placeholder content for MiniCard */}
+      <div className="mini-card-content">
+        <p>No track playing</p>
+      </div>
+    </div>
+  );
 }
-export default MiniCard;     
+
+export default MiniCard;

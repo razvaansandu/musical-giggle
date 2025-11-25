@@ -1,90 +1,141 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-export default function SearchTestPage() {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+import styles from "../home/home.module.css";
+
+import SpotifyHeader from "../../components/Header/SpotifyHeader";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import Player from "../../components/Player/Player";
+
+import TrackCard from "../../components/Cards/TrackCard";
+import ArtistCard from "../../components/Cards/ArtistCard";
+import PlaylistCard from "../../components/Cards/PlaylistCard";
+import Loader from "../../components/Loader/Loader";
+
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q") || "";
+
+  const [tracks, setTracks] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [albums, setAlbums] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
+<<<<<<< HEAD
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!query.trim()) return;
+=======
+  useEffect(() => {
+    if (!q) return;
+>>>>>>> origin/development
 
-    setLoading(true);
-    setError(null);
-    setResults([]); 
+    const doSearch = async () => {
+      setLoading(true);
 
-    try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
       const data = await res.json();
+<<<<<<< HEAD
       if (!res.ok) throw new Error(data.error || "Errore nella ricerca");
       setResults(data.results);
     } catch (err) {
       setError(err.message);
     } finally {
+=======
+
+      setTracks(data.tracks?.items || []);
+      setArtists(data.artists?.items || []);
+      setAlbums(data.albums?.items || []);
+      setPlaylists(data.playlists?.items || []);
+
+>>>>>>> origin/development
       setLoading(false);
-    }
-  };
+    };
+
+    doSearch();
+  }, [q]);
 
   return (
-    <main className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6 text-center">🎧 Cerca su Spotify</h1>
+    <div className={styles.container}>
+      <SpotifyHeader />
 
-      <form onSubmit={handleSearch} className="flex justify-center mb-6">
-        <input
-          type="text"
-          placeholder="Cerca un artista o una canzone..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="border border-gray-300 rounded-l-lg px-4 py-2 w-80 focus:outline-none"
-        />
-        <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded-r-lg hover:bg-green-600"
-        >
-          Cerca
-        </button>
-      </form>
+      <div className={styles.content}>
+        <Sidebar />
 
-      {loading && <p className="text-center">⏳ Ricerca in corso...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+        <main className={styles.mainContent}>
+          <h1>Search results for “{q}”</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {results.map((track) => (
-          <div
-            key={track.id}
-            className="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition"
-          > 
-          <div className="searchConteiner"> 
-            {track.image && (
-              <img
-                src={track.image} 
-                alt={track.name}
-                className="w-full h-48 object-cover"
-              />
-            )} 
-            <div className="p-4">
-              <h2 className="font-semibold text-lg">{track.name}</h2>
-              <p className="text-gray-600">{track.artists}</p>
-              <p className="text-sm text-gray-500">{track.album}</p>
-              {track.preview_url && (
-                <audio controls src={track.preview_url} className="mt-2 w-full" />
+          {!loading && (
+            <>
+              {/* TRACKS */}
+              {tracks.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Tracks</h2>
+                  <div className={styles.grid}>
+                    {tracks.map(t => (
+                      <TrackCard key={t.id} track={t} />
+                    ))}
+                  </div>
+                </section>
               )}
-              <a
-                href={track.external_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-3 text-green-600 font-medium hover:underline"
-              >
-                Apri su Spotify →
-              </a>
-            </div>
-          </div> 
-          </div> 
-        ))}
+
+              {/* ARTISTS */}
+              {artists.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Artists</h2>
+                  <div className={styles.grid}>
+                    {artists.map(a => (
+                      <ArtistCard key={a.id} artist={a} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* PLAYLISTS */}
+              {playlists.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Playlists</h2>
+                  <div className={styles.grid}>
+                    {playlists
+                      .filter(p => p && p.id)   
+                      .map(p => (
+                        <PlaylistCard key={p.id} playlist={p} />
+                      ))}
+
+                  </div>
+                </section>
+              )}
+
+              {/* ALBUMS */}
+              {albums.length > 0 && (
+                <section className={styles.section}>
+                  <h2>Albums</h2>
+                  <div className={styles.grid}>
+                    {albums.map(al => (
+                      <TrackCard
+                        key={al.id}
+                        track={{
+                          name: al.name,
+                          album: { images: al.images },
+                          artists: al.artists,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
+
+          {loading && <Loader />}
+        </main>
       </div>
-    </main>
+
+      <Player />
+    </div>
   );
 }

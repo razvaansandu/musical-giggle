@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { cookies } from 'next/headers';
 export async function GET(request, { params }) {
   const { id } = params;
@@ -20,4 +21,11 @@ export async function GET(request, { params }) {
     console.error('Errore nel prendere artista:', err);
     return new Response(JSON.stringify({ error: 'Errore nel prendere artista' }), { status: 500 });
   }
+=======
+import { spotifyFetch } from "../../_lib/spotify";
+
+export async function GET(_req, { params }) {
+  const { id } = await params;
+  return spotifyFetch(`/artists/${id}`);
+>>>>>>> origin/development
 }

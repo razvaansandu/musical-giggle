@@ -12,11 +12,26 @@ export async function POST() {
   const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
 
   const scopes = [
-    "user-read-private",
-    "user-read-email",
-    "user-read-playback-state",
-    "user-modify-playback-state",
-  ].join(" ");
+  "user-read-private",
+  "user-read-email",
+
+  "user-read-playback-state",
+  "user-modify-playback-state",
+  "user-read-currently-playing",
+
+  "user-read-recently-played",
+  "user-library-read",
+  "user-library-modify",
+
+  "playlist-read-private",
+  "playlist-modify-public",
+  "playlist-modify-private",
+
+  "user-follow-read",
+  "user-follow-modify",
+
+  "user-top-read"
+].join(" ");
 
     var state = generateRandomString(16);
 

@@ -1,0 +1,105 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background: #242424;
+  border-radius: 500px;
+  transition: 0.2s ease;
+}
+
+.bar:hover {
+  background: #2e2e2e;
+}
+
+.bar:focus-within {
+  background: #333;
+  box-shadow: 0 0 0 2px #1db95490;
+}
+
+.icon {
+  font-size: 18px;
+  opacity: 0.6;
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+
+.container {
+  position: relative;
+  width: 360px;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #242424;
+  border-radius: 8px;
+  margin-top: 8px;
+  padding: 8px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto; 
+  scrollbar-color:  white transparent; 
+} 
+
+.sectionTitle {
+  padding: 8px 16px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #a7a7a7;
+  text-transform: uppercase;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdownItem:hover {
+  background: #333;
+}
+
+.itemImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.itemImageRound {
+  border-radius: 50%;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.itemName {
+  font-size: 14px;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemSub {
+  font-size: 12px;
+  color: #a7a7a7;
+}
