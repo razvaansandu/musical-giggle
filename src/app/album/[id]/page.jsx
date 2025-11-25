@@ -19,7 +19,7 @@ export default function AlbumPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) return; 
 
     const fetchData = async () => {
       try {
@@ -46,8 +46,9 @@ export default function AlbumPage() {
 
   if (loading) return <Loader />;
   if (error) return <p style={{ color: "#f87171" }}>{error}</p>;
-
-  return (
+console.log(tracks); 
+  return (  
+    
     <div className={styles.container}>
       <SpotifyHeader />
 

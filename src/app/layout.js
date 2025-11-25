@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono} from "next/font/google";
+﻿import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,4 +23,4 @@ export default function RootLayout({ children }) {
       </body>
     </html>
   );
-}
+} 

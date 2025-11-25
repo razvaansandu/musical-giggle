@@ -77,13 +77,7 @@ export default function Player() {
   };
 
   if (!current) {
-    return (
-      <div className={styles.playerBar}>
-        <div className={styles.empty}>
-          Nessun brano in riproduzione. Clicca una track per iniziare 💿
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const img = current?.album?.images?.[0]?.url;
