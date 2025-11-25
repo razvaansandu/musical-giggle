@@ -10,21 +10,22 @@ export default function TrackCard({ track }) {
   const handlePlay = async () => {
     try {
       if (!track.uri) {
-        console.warn("Nessuna URI per questa track:", track);
+        console.warn("Nessuna URI per questa traccia:", track);
         return;
       }
 
       await fetch("/api/player/start-resume-playback", {
-        method: "PUT",              // 👉 se nel tuo route hai usato POST, cambia in "POST"
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          uris: [track.uri],        // play solo quella traccia
+          uris: [track.uri],   // ✔ usa la tua API corretta
         }),
       });
+
     } catch (err) {
-      console.error("Errore avvio riproduzione", err);
+      console.error("Errore avvio riproduzione:", err);
     }
   };
 
