@@ -1,22 +1,17 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
-import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [repeat, setRepeat] = useState("off");
-
-  const intervalRef = useRef(null);
 
   const fetchCurrent = async () => {
     try {
       const res = await fetch("/api/player/get-currently-playing-track");
 
+      // 204 = nessun brano in riproduzione
       if (res.status === 204) {
         setCurrent(null);
         setIsPlaying(false);
@@ -24,36 +19,30 @@ export default function Player() {
       }
 
       const data = await res.json();
-      setCurrent(data.item);
-      setIsPlaying(data.is_playing);
-      setProgress(data.progress_ms);
-      setDuration(data.item?.duration_ms || 0);
+      setCurrent(data.item || null);
+      setIsPlaying(data.is_playing || false);
     } catch (err) {
       console.error("Errore stato player", err);
     }
   };
 
   useEffect(() => {
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      initWebPlayer(async () => {
-        const cookie = document.cookie
-          .split("; ")
-          .find(r => r.startsWith("auth_code="));
-        return cookie?.split("=")[1] || "";
-      });
-    };
-
-    intervalRef.current = setInterval(fetchCurrent, 1500);
-    return () => clearInterval(intervalRef.current);
+    fetchCurrent();
+    const id = setInterval(fetchCurrent, 5000); // aggiorna ogni 5s
+    return () => clearInterval(id);
   }, []);
 
   const handlePlayPause = async () => {
     try {
       if (isPlaying) {
-        await fetch("/api/player/pause-playback", { method: "PUT" });
+        await fetch("/api/player/pause-playback", {
+          method: "PUT",        // se nel route hai messo POST, cambia anche qui
+        });
         setIsPlaying(false);
       } else {
-        await fetch("/api/player/start-resume-playback", { method: "PUT" });
+        await fetch("/api/player/start-resume-playback", {
+          method: "PUT",        // idem sopra
+        });
         setIsPlaying(true);
       }
     } catch (err) {
@@ -63,7 +52,9 @@ export default function Player() {
 
   const handleNext = async () => {
     try {
-      await fetch("/api/player/skip-to-next", { method: "POST" });
+      await fetch("/api/player/skip-to-next", {
+        method: "POST",
+      });
       fetchCurrent();
     } catch (err) {
       console.error("Errore next", err);
@@ -72,56 +63,31 @@ export default function Player() {
 
   const handlePrev = async () => {
     try {
-      await fetch("/api/player/skip-to-previous", { method: "POST" });
+      await fetch("/api/player/skip-to-previous", {
+        method: "POST",
+      });
       fetchCurrent();
     } catch (err) {
       console.error("Errore previous", err);
     }
   };
 
-  const handleSeek = async (ms) => {
-    try {
-      const newPos = Math.max(0, progress + ms);
-
-      await fetch(`/api/player/seek-to-position?position_ms=${newPos}`, {
-        method: "PUT"
-      });
-
-      setProgress(newPos);
-    } catch (err) {
-      console.error("Errore seek", err);
-    }
-  };
-
-  // Controllo se il deviceId è disponibile
-  const deviceId = getDeviceId();
-  if (!deviceId) {
-    return (
-      <div className={styles.playerBar}>
-        <div className={styles.empty}>
-          Sto inizializzando il Web Player...
-        </div>
-      </div>
-    );
-  }
-
-  // Controllo se c'è un brano in riproduzione
   if (!current) {
-    return (
-      <div className={styles.playerBar}>
-        <div className={styles.empty}>Nessun brano in riproduzione.</div>
-      </div>
-    );
+    return null;
   }
 
   const img = current?.album?.images?.[0]?.url;
 
-  // Render del player
   return (
     <div className={styles.playerBar}>
       <div className={styles.left}>
-        {img && <img src={img} alt={current.name} className={styles.cover} />}
-
+        {img && (
+          <img
+            src={img}
+            alt={current.name}
+            className={styles.cover}
+          />
+        )}
         <div>
           <div className={styles.title}>{current.name}</div>
           <div className={styles.artist}>
@@ -131,33 +97,33 @@ export default function Player() {
       </div>
 
       <div className={styles.center}>
-        <button onClick={() => handleSeek(-10000)} className={styles.iconBtn}>
-          -10s
+        <button
+          onClick={handlePrev}
+          className={styles.iconBtn}
+          aria-label="Previous"
+        >
+          &#9664;&#9664;
         </button>
 
-        <button onClick={handlePrev} className={styles.iconBtn}>
-          ⏮
-        </button>
-
-        <button onClick={handlePlayPause} className={styles.playBtn}>
+        <button
+          onClick={handlePlayPause}
+          className={styles.playBtn}
+          aria-label={isPlaying ? "Pause" : "Play"}
+        >
           {isPlaying ? "⏸" : "▶"}
         </button>
 
-        <button onClick={handleNext} className={styles.iconBtn}>
-          ⏭
+        <button
+          onClick={handleNext}
+          className={styles.iconBtn}
+          aria-label="Next"
+        >
+          &#9654;&#9654;
         </button>
-
-        <button onClick={() => handleSeek(+10000)} className={styles.iconBtn}>
-          +10s
-        </button>
-
       </div>
 
-      <div className={styles.progressBar}>
-        <div
-          className={styles.progressFill}
-          style={{ width: `${(progress / duration) * 100}%` }}
-        ></div>
+      <div className={styles.right}>
+        {/* qui in futuro puoi rimettere il tuo Volume.tsx */}
       </div>
     </div>
   );
