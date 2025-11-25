@@ -7,6 +7,7 @@ import StopButton from "../buttons/stopButton";
 import ButtonPrevSong from "../buttons/songButtonFirst";
 import ButtonNextSong from "../buttons/buttonNextSong";
 
+
 export default function Player() {
   const [current, setCurrent] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -75,9 +76,12 @@ export default function Player() {
       console.error("Errore previous", err);
     }
   };
-
+  //Player prima che si clicchi la canzone
   if (!current) {
-    return null;
+    return (
+      <p className={styles.playerBar1}>cosa vuoi ascoltare?</p>
+
+    )
   }
 
   const img = current?.album?.images?.[0]?.url;
@@ -101,17 +105,13 @@ export default function Player() {
       </div>
 
       <div className={styles.center}>
-           <ButtonPrevSong></ButtonPrevSong>
-
-        
- {isPlaying ? <StopButton></StopButton> : <PlayButton></PlayButton>}
-        
+        <ButtonPrevSong></ButtonPrevSong>
+        {isPlaying ? <StopButton></StopButton> : <PlayButton></PlayButton>}
         <ButtonNextSong></ButtonNextSong>
       </div>
-
       <div className={styles.right}>
         {/* qui in futuro puoi rimettere il tuo Volume.tsx */}
       </div>
     </div>
   );
-}
+} 

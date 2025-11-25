@@ -2,13 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-
 import styles from "../home/home.module.css";
-
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
-
 import TrackCard from "../../components/Cards/TrackCard";
 import ArtistCard from "../../components/Cards/ArtistCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
@@ -117,11 +114,11 @@ export default function SearchPage() {
             </>
           )}
 
-          {loading && <Loader />}
+          {loading && <Loader />} 
+            <Player/>   
         </main>
       </div>
-
-      <Player />
+    
     </div>
   );
 }

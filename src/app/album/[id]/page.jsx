@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-
 import styles from "../../home/home.module.css";
-
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
