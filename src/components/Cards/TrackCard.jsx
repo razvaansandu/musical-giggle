@@ -5,39 +5,36 @@ import styles from "./Card.module.css";
 export default function TrackCard({ track }) {
   if (!track) return null;
 
-  // Ottieni l'immagine della traccia o usa un'immagine di default
   const img = track?.album?.images?.[0]?.url || "/default-track.png";
 
-  // Funzione per gestire il click sulla traccia
   const handlePlay = async () => {
     try {
       if (!track.uri) {
-        console.warn("Nessuna URI per questa track:", track);
+        console.warn("Nessuna URI per questa traccia:", track);
         return;
       }
 
       await fetch("/api/player/start-resume-playback", {
-        method: "PUT",              //  se nel tuo route hai usato POST, cambia in "POST"
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          uris: [track.uri],        // play solo quella traccia
+          uris: [track.uri],   // ✔ usa la tua API corretta
         }),
       });
+
     } catch (err) {
-      console.error("Errore avvio riproduzione", err);
+      console.error("Errore avvio riproduzione:", err);
     }
   };
 
-  // Render della scheda della traccia
   return (
     <button
       type="button"
       className={styles.card}
       onClick={handlePlay}
     >
-      {/* Immagine della traccia */}
       <div
         className={styles.imageWrapper}
         style={{ backgroundImage: `url(${img})` }}
