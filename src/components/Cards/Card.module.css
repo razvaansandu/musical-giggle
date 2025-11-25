@@ -5,12 +5,11 @@
   cursor: pointer;
   transition: background-color 0.2s;
   overflow: hidden;
-
   border: none;
   outline: none;
   text-align: left;
+  pointer-events: auto;
 }
-
 
 .card:hover {
   background-color: #282828;
@@ -23,6 +22,7 @@
   background-size: cover;
   background-position: center;
   margin-bottom: 12px;
+  pointer-events: none;
 }
 
 .title {
@@ -30,9 +30,11 @@
   font-weight: 700;
   margin-bottom: 4px;
   color: white;
+  pointer-events: none;
 }
 
 .subtitle {
   font-size: 14px;
   color: #b3b3b3;
+  pointer-events: none;
 }

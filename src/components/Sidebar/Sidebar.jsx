@@ -1,14 +1,19 @@
 "use client";
 
-import { Library, Plus, Search, ListMusic } from "lucide-react";
+import { Library, Search, ListMusic } from "lucide-react";
+import ButtonAddToPlaylist from "../buttons/ButtonAddToPlaylist";
+import ContextMenu from "../ContextMenu/ContextMenu";
 import styles from "../../app/home/home.module.css"; 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useContextMenu } from "../../hooks/useContextMenu";
 
 export default function AppSidebar() {
   const router = useRouter();
   const [filter, setFilter] = useState("Playlists");
   const [libraryItems, setLibraryItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const contextMenu = useContextMenu();
 
   useEffect(() => {
     async function fetchData() {
@@ -82,6 +87,10 @@ export default function AppSidebar() {
         key={key} 
         className={styles.libraryItem} 
         onClick={() => router.push(linkUrl)}
+        onContextMenu={(e) => {
+          contextMenu.handleContextMenu(e);
+          setSelectedItem({ item, type: filter });
+        }}
       >
         {image && <img src={image} alt={title} className={imageClass} />}
         <div className={styles.itemInfo}>
@@ -100,9 +109,16 @@ export default function AppSidebar() {
           <span>Your Library</span>
         </button>
         <div className={styles.headerButtons}>
-          <button className={styles.roundButton}>
-            <Plus />
-          </button>
+          <ButtonAddToPlaylist
+            variant="sidebar"
+            className={styles.roundButton}
+            onSuccess={(created) => {
+              // if we're viewing Playlists, prepend the new playlist to the list
+              if (filter === "Playlists") {
+                setLibraryItems((prev) => [created, ...(prev || [])]);
+              }
+            }}
+          />
         </div>
       </div>
 
@@ -135,7 +151,261 @@ export default function AppSidebar() {
       <div className={styles.libraryList}>
         {libraryItems.map(renderLibraryItem)}
       </div>
+
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={getContextMenuItems()}
+        onClose={contextMenu.close}
+      />
     </div>
   );
+
+  function getContextMenuItems() {
+    if (!selectedItem) return [];
+    const { item, type } = selectedItem;
+
+    const items = [];
+
+    if (type === "Playlists") {
+      items.push({
+        id: "follow-playlist",
+        label: "Segui questa playlist",
+        icon: "➕",
+        action: async () => {
+          try {
+            const res = await fetch("/api/spotify/follow-playlist", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ playlist_id: item.id }),
+            });
+            if (res.ok) {
+              console.log("✅ Playlist seguita");
+              alert("Playlist aggiunta ai tuoi preferiti");
+            } else {
+              throw new Error("Errore nel seguire la playlist");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Errore: " + err.message);
+          }
+        },
+      });
+      items.push({
+        id: "unfollow-playlist",
+        label: "Smetti di seguire",
+        icon: "✖️",
+        action: async () => {
+          try {
+            const res = await fetch("/api/spotify/unfollow-playlist", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ playlist_id: item.id }),
+            });
+            if (res.ok) {
+              console.log("✅ Playlist non più seguita");
+              alert("Playlist rimossa dai tuoi preferiti");
+            } else {
+              throw new Error("Errore nel smettere di seguire");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Errore: " + err.message);
+          }
+        },
+      });
+      items.push({
+        id: "copy-link",
+        label: "Copia link a playlist",
+        icon: "🔗",
+        action: () => {
+          const link = `https://open.spotify.com/playlist/${item.id}`;
+          navigator.clipboard.writeText(link);
+          alert("Link copiato!");
+        },
+      });
+      items.push({
+        id: "go-to-playlist",
+        label: "Vai alla playlist",
+        icon: "▶️",
+        action: () => router.push(`/playlist/${item.id}`),
+      });
+    } else if (type === "Artists") {
+      items.push({
+        id: "follow",
+        label: "Segui artista",
+        icon: "➕",
+        action: async () => {
+          try {
+            const res = await fetch("/api/spotify/follow", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ type: "artist", ids: [item.id] }),
+            });
+            if (res.ok) {
+              console.log("✅ Artista seguito");
+              alert("Artista aggiunto ai tuoi preferiti");
+            } else {
+              throw new Error("Errore nel seguire l'artista");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Errore: " + err.message);
+          }
+        },
+      });
+      items.push({
+        id: "unfollow",
+        label: "Smetti di seguire",
+        icon: "✖️",
+        action: async () => {
+          try {
+            const res = await fetch("/api/spotify/unfollow", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ type: "artist", ids: [item.id] }),
+            });
+            if (res.ok) {
+              console.log("✅ Artista non più seguito");
+              alert("Artista rimosso dai tuoi preferiti");
+            } else {
+              throw new Error("Errore nel smettere di seguire");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Errore: " + err.message);
+          }
+        },
+      });
+      items.push({
+        id: "go-to-profile",
+        label: "Vai al profilo",
+        icon: "👤",
+        action: () => router.push(`/artist/${item.id}`),
+      });
+      items.push({
+        id: "share",
+        label: "Condividi",
+        icon: "📤",
+        action: () => {
+          const link = `https://open.spotify.com/artist/${item.id}`;
+          navigator.clipboard.writeText(link);
+          alert("Link copiato!");
+        },
+      });
+      items.push({
+        id: "copy-link",
+        label: "Copia link",
+        icon: "�",
+        action: () => {
+          const link = `https://open.spotify.com/artist/${item.id}`;
+          navigator.clipboard.writeText(link);
+          alert("Link copiato!");
+        },
+      });
+      items.push({ divider: true });
+      items.push({
+        id: "report",
+        label: "Segnala artista",
+        icon: "⚠️",
+        danger: true,
+        action: () => {
+          alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");
+          console.log("Segnala artista:", item.id);
+        },
+      });
+    } else if (type === "Albums") {
+      items.push({
+        id: "save",
+        label: "Salva album",
+        icon: "💾",
+        action: async () => {
+          try {
+            const albumId = item.album?.id || item.id;
+            const res = await fetch("/api/albums/saved", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ids: [albumId] }),
+            });
+            if (res.ok) {
+              console.log("✅ Album salvato");
+              alert("Album aggiunto alla tua libreria");
+            } else {
+              throw new Error("Errore nel salvare l'album");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Errore: " + err.message);
+          }
+        },
+      });
+      items.push({
+        id: "unsave",
+        label: "Rimuovi album",
+        icon: "🗑️",
+        action: async () => {
+          try {
+            const albumId = item.album?.id || item.id;
+            const res = await fetch("/api/albums/saved", {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ids: [albumId] }),
+            });
+            if (res.ok) {
+              console.log("✅ Album rimosso");
+              alert("Album rimosso dalla tua libreria");
+            } else {
+              throw new Error("Errore nel rimuovere l'album");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Errore: " + err.message);
+          }
+        },
+      });
+      items.push({
+        id: "go-to-album",
+        label: "Vai all'album",
+        icon: "💿",
+        action: () => router.push(`/albums/${item.album?.id || item.id}`),
+      });
+      items.push({
+        id: "share",
+        label: "Condividi",
+        icon: "📤",
+        action: () => {
+          const albumId = item.album?.id || item.id;
+          const link = `https://open.spotify.com/album/${albumId}`;
+          navigator.clipboard.writeText(link);
+          alert("Link copiato!");
+        },
+      });
+      items.push({
+        id: "copy-link",
+        label: "Copia link",
+        icon: "�",
+        action: () => {
+          const albumId = item.album?.id || item.id;
+          const link = `https://open.spotify.com/album/${albumId}`;
+          navigator.clipboard.writeText(link);
+          alert("Link copiato!");
+        },
+      });
+      items.push({ divider: true });
+      items.push({
+        id: "report",
+        label: "Segnala album",
+        icon: "⚠️",
+        danger: true,
+        action: () => {
+          alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");
+          console.log("Segnala album:", item.id);
+        },
+      });
+    }
+
+    return items;
+  }
 }
  

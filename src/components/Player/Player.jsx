@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
-import PlayButton from "../buttons/PlayButton";
+/*import PlayButton from "../buttons/PlayButton";
 import StopButton from "../buttons/stopButton";
 import ButtonPrevSong from "../buttons/songButtonFirst";
-import ButtonNextSong from "../buttons/buttonNextSong";
+import ButtonNextSong from "../buttons/buttonNextSong";*/
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
