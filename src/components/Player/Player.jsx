@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
+import PlayButton from "../buttons/PlayButton";
+import StopButton from "../buttons/stopButton";
+import ButtonPrevSong from "../buttons/songButtonFirst";
+import ButtonNextSong from "../buttons/buttonNextSong";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -34,7 +38,7 @@ export default function Player() {
   }, []);
 
   const handlePlayPause = async () => {
-    try {
+    try { 
       if (isPlaying) {
         await fetch("/api/player/pause-playback", {
           method: "PUT",        // se nel route hai messo POST, cambia anche qui
@@ -134,15 +138,15 @@ export default function Player() {
         </button>
 
         <button onClick={handlePrev} className={styles.iconBtn}>
-          ⏮
+          <ButtonPrevSong/>
         </button>
 
         <button onClick={handlePlayPause} className={styles.playBtn}>
-          {isPlaying ? "⏸" : "▶"}
-        </button>
+          {isPlaying ? <PlayButton/> : <StopButton/>}
+        </button> 
 
         <button onClick={handleNext} className={styles.iconBtn}>
-          ⏭
+          <ButtonNextSong/>
         </button>
 
         <button onClick={() => handleSeek(+10000)} className={styles.iconBtn}>
