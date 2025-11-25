@@ -1,8 +1,7 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
 import styles from "./home.module.css";
-
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
@@ -172,7 +171,7 @@ export default function HomePage() {
           )}
         </main>
       </div>
-
+  {/* <Footer /> */}
       <Player />
     </div>
   );
