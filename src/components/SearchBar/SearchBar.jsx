@@ -56,7 +56,7 @@ export default function SearchBar() {
       if (urlQuery !== query) {
         setQuery(urlQuery);
       }
-    }
+    } 
   }, [pathname, searchParams]);
 
   const handleSubmit = (e) => {
@@ -69,7 +69,7 @@ export default function SearchBar() {
 
   const handleItemClick = (path) => {
     setShowDropdown(false);
-    push(path);
+    push(path); 
   };
 
   return (
@@ -91,8 +91,7 @@ export default function SearchBar() {
       </form>
 
       {showDropdown && results && (
-        <div className={styles.dropdown}>
-          {/* Top Results / Tracks */}
+        <div className={styles.dropdown}> 
           {results.tracks?.items?.slice(0, 3).length > 0 && (
             <>
               <div className={styles.sectionTitle}>Songs</div>
