@@ -72,7 +72,6 @@ export default function ArtistPage() {
 
           {!loading && artist && (
             <>
-              {/* HERO ARTISTA */}
               <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                   <img
@@ -91,7 +90,6 @@ export default function ArtistPage() {
                 </div>
               </section>
 
-              {/* TOP TRACKS */}
               <section className={styles.section}>
                 <h2>Top tracks</h2>
                 <div className={styles.grid}>
@@ -101,7 +99,6 @@ export default function ArtistPage() {
                 </div>
               </section>
 
-              {/* ALBUMS */}
               <section className={styles.section}>
                 <h2>Albums</h2>
                 <div className={styles.grid}>

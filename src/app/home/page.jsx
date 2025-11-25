@@ -116,7 +116,6 @@ export default function HomePage() {
           {!loading && (
             <>
              
-              {/* RECENTLY PLAYED */}
               <section className={styles.section}>
                 <h2>Recently played</h2>
                 <div className={styles.grid}>
@@ -129,7 +128,6 @@ export default function HomePage() {
                 </div>
               </section>
 
-              {/* TOP ARTISTS */}
               <section className={styles.section}>
                 <h2>Your top artists</h2>
                 <div className={styles.grid}>
@@ -142,7 +140,6 @@ export default function HomePage() {
                 </div>
               </section>
 
-              {/* TOP TRACKS */}
               <section className={styles.section}>
                 <h2>Your top tracks</h2>
                 <div className={styles.grid}>
@@ -155,7 +152,6 @@ export default function HomePage() {
                 </div>
               </section>
 
-              {/* PLAYLISTS */}
               <section className={styles.section}>
                 <h2>Your playlists</h2>
                 <div className={styles.grid}>
@@ -171,7 +167,6 @@ export default function HomePage() {
           )}
         </main>
       </div>
-  {/* <Footer /> */}
       <Player />
     </div>
   );

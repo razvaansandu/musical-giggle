@@ -54,7 +54,6 @@ export default function SearchPage() {
 
           {!loading && (
             <>
-              {/* TRACKS */}
               {tracks.length > 0 && (
                 <section className={styles.section}>
                   <h2>Tracks</h2>
@@ -66,7 +65,6 @@ export default function SearchPage() {
                 </section>
               )}
 
-              {/* ARTISTS */}
               {artists.length > 0 && (
                 <section className={styles.section}>
                   <h2>Artists</h2>
@@ -78,7 +76,6 @@ export default function SearchPage() {
                 </section>
               )}
 
-              {/* PLAYLISTS */}
               {playlists.length > 0 && (
                 <section className={styles.section}>
                   <h2>Playlists</h2>
@@ -93,7 +90,6 @@ export default function SearchPage() {
                 </section>
               )}
 
-              {/* ALBUMS */}
               {albums.length > 0 && (
                 <section className={styles.section}>
                   <h2>Albums</h2>

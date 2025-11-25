@@ -10,7 +10,6 @@ export async function GET() {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // Recently played
     const recentlyPlayed = await fetch(
       "https://api.spotify.com/v1/me/player/recently-played?limit=6",
       {
@@ -20,7 +19,6 @@ export async function GET() {
       }
     ).then((r) => r.json());
 
-    // Recommendations / Daily Mix mock
     const topArtists = await fetch(
       "https://api.spotify.com/v1/me/top/artists?limit=2",
       {

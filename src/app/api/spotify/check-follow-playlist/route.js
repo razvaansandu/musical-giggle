@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const playlist_id = searchParams.get("playlist_id");
-  const ids = searchParams.get("ids"); // user IDs
+  const ids = searchParams.get("ids"); 
 
   if (!playlist_id || !ids) {
     return NextResponse.json(

@@ -1,4 +1,3 @@
-// components/Sidebar/AppSidebar.tsx
 "use client";
 import {
   Library,
@@ -20,10 +19,8 @@ export default function AppSidebar() {
     async function fetchData() {
       let url = "";
       if (filter === "Playlists") { 
-        // Assuming this endpoint returns the user's playlists
         url = "/api/playlists/user?limit=50";
       } else if (filter === "Albums") {
-        // Assuming this endpoint returns the user's saved albums
         url = "/api/albums/saved?limit=50";
       } else if (filter === "Artists") {
         url = "/api/spotify/get-followed-artists?limit=50";
@@ -43,7 +40,7 @@ export default function AppSidebar() {
           }
         } catch (error) {
           console.error(error);
-          setLibraryItems([]); // Clear items on error
+          setLibraryItems([]);
         }
       } else {
         setLibraryItems([]);
@@ -66,21 +63,21 @@ export default function AppSidebar() {
     let key, image, title, details, imageTypeClass;
 
     if (isPlaylist) {
-      if (!item.owner) return null; // Safety check
+      if (!item.owner) return null; 
       key = item.id;
       image = item.images && item.images[0]?.url;
       title = item.name;
       details = `Playlist • ${item.owner.display_name}`;
       imageTypeClass = styles.itemImagePlaylist;
     } else if (isArtist) {
-      if (item.type !== "artist") return null; // Safety check
+      if (item.type !== "artist") return null;
       key = item.id;
       image = item.images && item.images[0]?.url;
       title = item.name;
       details = "Artist";
       imageTypeClass = styles.itemImageArtist;
     } else if (isAlbum) {
-      if (!item.album) return null; // Safety check
+      if (!item.album) return null;
       key = item.album.id;
       image = item.album.images && item.album.images[0]?.url;
       title = item.album.name;
