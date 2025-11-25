@@ -1,93 +1,215 @@
 .card {
-  display: flex;
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 540px;
-  padding: 12px 14px;
+  gap: 16px;
+  padding: 8px 16px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(40,40,40,0.95), rgba(30,30,30,0.95));
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.5);
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
-  position: relative; 
-  overflow: hidden;
-  cursor: pointer;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(30, 30, 30, 0.2));
+  color: var(--text-secondary);
+  cursor: default;
+  transition: all 0.2s ease;
+  height: 56px;
+  border: 1px solid transparent;
+  position: relative;
 }
 
-.card:hover { 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+.card:hover {
+  background: linear-gradient(135deg, rgba(50, 50, 50, 0.4), rgba(40, 40, 40, 0.3));
+  border-color: var(--primary);
+  transform: translateX(4px);
 }
 
-/* album art */
-.card-image {
-  width: 56px;
-  height: 56px; 
-  border-radius: 6px;
-  object-fit: cover;
-  flex: 0 0 56px; 
-  background: #222;
-  display: block;
+.card-image { 
+  display: none; 
 }
 
-/* content (title + artist) */
 .card-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
-  min-width: 0; /* allow truncation */
   overflow: hidden;
+  min-width: 0;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
 }
 
 .card-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
   margin: 0;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.card-title.playable {
+  color: var(--text-primary);
+}
+
+.card-artist-row {
+  display: flex;
+  align-items: center;
 }
 
 .card-description {
   font-size: 13px;
-  color: #b3b3b3; /* secondary text like Spotify */
+  color: var(--text-secondary);
   margin: 0;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  line-height: 1.4;
+  transition: color 0.2s ease;
 }
 
-/* right area: duration / actions */
-.card-meta {
-  margin-left: auto;
+.card:hover .card-description {
+  color: var(--primary);
+}
+
+/* === LEFT: Index & Play === */
+.card-left {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #b3b3b3;
-  font-size: 13px;
-  flex-shrink: 0;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
-/* small circular play button that appears on hover */
-.card-play {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  display: inline-flex;
+.card-index {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.card-play-icon {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  animation: scaleIn 0.2s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.card:hover .card-index {
+  display: none;
+}
+.card:hover .card-play-icon {
+  display: block;
+}
+
+.card-play-icon .play {
+  width: 28px !important;
+  height: 28px !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+  color: black !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4) !important;
+}
+
+.card-play-icon .play:hover {
+  transform: scale(1.15) !important;
+  box-shadow: 0 6px 16px rgba(29, 185, 84, 0.6) !important;
+}
+
+/* === RIGHT: Actions (Heart, Duration, Options) === */
+.card-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-width: 120px;
+}
+
+.card-heart, .card-options {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  opacity: 0;
+  cursor: pointer;
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  opacity: 0;
-  transform: scale(0.9);
-  border: 1px solid black; 
-} 
+  padding: 6px;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
 
-.card:hover .card-play {
-  opacity: 1; 
-  background-color: white;
+.card:hover .card-heart,
+.card:hover .card-options {
+  opacity: 1;
+}
+
+.card-heart:hover, .card-options:hover {
+  color: var(--primary);
+  transform: scale(1.1);
+  background: rgba(29, 185, 84, 0.1);
+}
+
+.card-heart:active, .card-options:active {
+  transform: scale(0.95);
+}
+
+.card-duration {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: right;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.card:hover .card-duration {
+  color: var(--accent);
+}
+
+/* Heart specific styling */
+.card-heart svg {
+  width: 18px;
+  height: 18px;
+  transition: all 0.2s ease;
+}
+
+.card-heart[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+.card-heart[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+
+/* Options button styling */
+.card-options svg {
+  width: 18px;
+  height: 18px;
 }
 
 

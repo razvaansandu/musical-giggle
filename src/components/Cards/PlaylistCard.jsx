@@ -10,7 +10,7 @@ export default function PlaylistCard({ playlist }) {
 
   return (
     <Link href={`/playlists/${playlist.id}`} className={styles.card}>
-      <div
+      <div 
         className={styles.imageWrapper}
         style={{ backgroundImage: `url(${img})` }}
       />
@@ -18,6 +18,6 @@ export default function PlaylistCard({ playlist }) {
       <p className={styles.subtitle}>
         {playlist.tracks?.total || 0} songs
       </p>
-    </Link>
+    </Link> 
   );
 }

@@ -27,6 +27,24 @@
   overflow-y: auto; 
   background: linear-gradient(to bottom, #222, #121212 300px);
   padding: 24px;
+  scrollbar-color: transparent transparent;
+}
+.mainContent:hover {
+  scrollbar-color: #ffffff transparent;
+}
+
+.mainContent::-webkit-scrollbar {
+  width: 10px;
+}
+.mainContent::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+.mainContent:hover::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
+}
+.mainContent::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .header {
@@ -244,6 +262,10 @@
   flex: 1; /* Occupa tutto lo spazio verticale rimanente */
   overflow-y: auto; /* Abilita lo scroll verticale */
   padding-right: 8px; /* Spazio per la scrollbar, per non sovrapporsi */
+  scrollbar-color: transparent transparent;
+}
+.libraryList:hover {
+  scrollbar-color: #ffffff transparent;
 }
 
 /* Stile della scrollbar (opzionale ma fedele a Spotify) */
@@ -251,8 +273,11 @@
   width: 8px;
 }
 .libraryList::-webkit-scrollbar-thumb {
-  background-color: #5a5a5a;
+  background-color: transparent;
   border-radius: 4px;
+}
+.libraryList:hover::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
 }
 .libraryList::-webkit-scrollbar-track {
   background: transparent; /* Nasconde lo sfondo della traccia */
