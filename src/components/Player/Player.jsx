@@ -93,6 +93,7 @@ export default function Player() {
     }
   };
 
+  // Controllo se il deviceId è disponibile
   const deviceId = getDeviceId();
   if (!deviceId) {
     return (
@@ -104,6 +105,7 @@ export default function Player() {
     );
   }
 
+  // Controllo se c'è un brano in riproduzione
   if (!current) {
     return (
       <div className={styles.playerBar}>
@@ -114,6 +116,7 @@ export default function Player() {
 
   const img = current?.album?.images?.[0]?.url;
 
+  // Render del player
   return (
     <div className={styles.playerBar}>
       <div className={styles.left}>
