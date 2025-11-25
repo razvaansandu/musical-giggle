@@ -53,18 +53,16 @@
 }
 
 .playBtn {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  border: none;
-  background: #1db954;
-  color: #000;
+  background-color: #ffffff;
+  color: #000000; /* icon color inside will use currentColor */
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
+  border-radius: 50%;
 }
+
 
 .playBtn:hover {
   transform: scale(1.05);
@@ -82,3 +80,5 @@
   font-size: 14px;
   color: #b3b3b3;
 }
+
+
