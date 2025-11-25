@@ -19,6 +19,6 @@ export default function PlaylistCard({ playlist }) {
       <p className={styles.subtitle}>
         {playlist.tracks?.total || 0} songs
       </p>
-    </Link>
+    </Link> 
   );
 }

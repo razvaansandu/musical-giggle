@@ -15,7 +15,6 @@ export default function SearchBar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
@@ -26,7 +25,6 @@ export default function SearchBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch preview results
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (query.trim()) {
@@ -49,7 +47,6 @@ export default function SearchBar() {
     return () => clearTimeout(timeoutId);
   }, [query]);
 
-  // Sync input with URL
   useEffect(() => {
     if (pathname === '/search') {
       const urlQuery = searchParams.get('q') || '';
@@ -99,7 +96,7 @@ export default function SearchBar() {
                 <div 
                   key={track.id} 
                   className={styles.dropdownItem}
-                  onClick={() => handleItemClick(`/album/${track.album.id}`)} // Go to album for now
+                  onClick={() => handleItemClick(`/album/${track.album.id}`)}
                 >
                   <img src={track.album.images[0]?.url} alt={track.name} className={styles.itemImage} />
                   <div className={styles.itemInfo}>
@@ -111,7 +108,6 @@ export default function SearchBar() {
             </>
           )}
 
-          {/* Artists */}
           {results.artists?.items?.slice(0, 3).length > 0 && (
             <>
               <div className={styles.sectionTitle}>Artists</div>
@@ -131,7 +127,6 @@ export default function SearchBar() {
             </>
           )}
 
-          {/* Albums */}
           {results.albums?.items?.slice(0, 3).length > 0 && (
             <>
               <div className={styles.sectionTitle}>Albums</div>

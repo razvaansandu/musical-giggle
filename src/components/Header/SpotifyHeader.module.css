@@ -3,67 +3,113 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 32px;
-  background:  #000000;
+  background: linear-gradient(135deg, rgba(18, 18, 18, 0.6), rgba(24, 24, 24, 0.4));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-subtle);
   position: sticky;
   top: 0;
   z-index: 100;
 }
+
 .logoSection {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
+
 .logo {
   height: 40px;
 }
+
 .searchSection {
   flex: 1;
   display: flex;
   justify-content: center;
-}
-.searchInput {
-  width: 300px;
-  padding: 10px 20px;
-  border-radius: 500px;
-  border: none;
-  background-color: #242424;
-  color: white;
-  font-size: 15px;
-}
-.searchInput::placeholder {
-  color: #a7a7a7;
-}
-.userSection {
-  display: flex;
   align-items: center;
   gap: 16px;
 }
+
+.searchInput {
+  width: 320px;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: 1px solid var(--border-medium);
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(30, 30, 30, 0.2));
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(50, 50, 50, 0.4), rgba(40, 40, 40, 0.3));
+  box-shadow: 0 0 20px rgba(29, 185, 84, 0.2);
+}
+
+.searchInput::placeholder {
+  color: var(--text-tertiary);
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .installButton {
-  padding: 8px 16px;
-  border-radius: 500px;
-  border: none;
-  background-color: transparent;
-  color: #c0bfbf;
-  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 1px solid var(--border-medium);
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(30, 30, 30, 0.2));
+  color: var(--text-secondary);
+  font-weight: 600;
   font-size: 14px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
+
+.installButton:hover {
+  background: linear-gradient(135deg, rgba(50, 50, 50, 0.4), rgba(40, 40, 40, 0.3));
+  color: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.installButton:active {
+  transform: translateY(0);
+}
+
 .profileButton {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: none;
+  border: 2px solid var(--primary);
   padding: 0;
   overflow: hidden;
   cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
 }
+
+.profileButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(29, 185, 84, 0.3);
+}
+
 .profileImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .homeButton {
-  background: #1f1f1f;
-  border: none;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(30, 30, 30, 0.2));
+  border: 1px solid var(--border-medium);
   border-radius: 50%;
   width: 48px;
   height: 48px;
@@ -71,13 +117,19 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #b3b3b3;
-  transition: 0.2s;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
   margin-right: 8px;
 }
 
 .homeButton:hover {
-  background: #2a2a2a;
-  color: white;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: black;
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(29, 185, 84, 0.3);
+  border-color: var(--primary);
+}
+
+.homeButton:active {
+  transform: scale(0.95);
 }

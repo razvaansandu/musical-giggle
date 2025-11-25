@@ -40,7 +40,7 @@ export default function AppSidebar() {
 
   const handleFilterChange = (newFilter) => {
     setLibraryItems([]); 
-    setFilter(newFilter);
+    setFilter(newFilter); 
   };
 
   const renderLibraryItem = (item) => {
@@ -53,7 +53,7 @@ export default function AppSidebar() {
       title = item.name;
       details = `Playlist • ${item.owner.display_name}`;
       imageClass = styles.itemImagePlaylist;
-      linkUrl = `/playlists/${key}`;
+      linkUrl = `/playlist/${key}`;
     } 
     else if (filter === "Artists") {
       if (item.type !== "artist") return null;
@@ -71,8 +71,8 @@ export default function AppSidebar() {
       title = item.album.name;
       details = `Album • ${item.album.artists.map(a => a.name).join(", ")}`;
       imageClass = styles.itemImagePlaylist;
-      linkUrl = `/albums/${key}`;
-    } 
+      linkUrl = `/album/${key}`;
+    }  
     else {
       return null;
     }
@@ -108,8 +108,8 @@ export default function AppSidebar() {
 
       <div className={styles.libraryFilters}>
         {["Playlists", "Artists", "Albums"].map((f) => (
-          <button
-            key={f}
+          <button 
+            key={f} 
             className={styles.chip}
             onClick={() => handleFilterChange(f)}
             style={{
@@ -119,7 +119,7 @@ export default function AppSidebar() {
           >
             {f}
           </button>
-        ))}
+        ))} 
       </div>
 
       <div className={styles.libraryUtilities}>
@@ -130,7 +130,7 @@ export default function AppSidebar() {
           <span>Recents</span>
           <ListMusic size={16} />
         </button>
-      </div>
+      </div> 
 
       <div className={styles.libraryList}>
         {libraryItems.map(renderLibraryItem)}
@@ -138,4 +138,3 @@ export default function AppSidebar() {
     </div>
   );
 }
- 

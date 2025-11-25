@@ -2,16 +2,16 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #000000;
-  color: white;
+  background: linear-gradient(to bottom, #1a1a1a, #121212);
+  color: var(--text-primary);
   overflow: hidden;
 }
 
 .content {
   display: flex;
   flex: 1;
-  gap: 8px;
-  padding: 8px;
+  gap: 12px;
+  padding: 12px;
   padding-top: 0;
   overflow: hidden;
 }
@@ -19,13 +19,15 @@
 /* Sidebar (Library) */
 .libraryContainer {
   width: 320px;
-  background-color: #121212;
-  border-radius: 8px;
+  background: rgba(18, 18, 18, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  gap: 12px;
+  padding: 16px;
+  gap: 16px;
   height: 100%;
+  backdrop-filter: blur(10px);
 }
 
 .libraryHeader {
@@ -43,12 +45,13 @@
   font-size: 16px;
   background: none;
   border: none;
-  color: #a7a7a7;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
 }
 .libraryTitle:hover {
-  color: white;
+  color: var(--accent);
+  transform: translateX(2px);
 }
 
 .headerButtons {
@@ -57,20 +60,22 @@
 }
 
 .roundButton {
-  background: none;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   border-radius: 50%;
   padding: 8px;
   border: none;
   cursor: pointer;
-  color: #a7a7a7;
-  transition: background-color 0.2s, color 0.2s;
+  color: black;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
 }
 .roundButton:hover {
-  background-color: #1a1a1a;
-  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.5);
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
 }
 
 .libraryFilters {
@@ -81,19 +86,21 @@
 }
 
 .chip {
-  background-color: #232323;
-  border: none;
-  border-radius: 500px;
-  padding: 6px 12px;
-  color: white;
+  background-color: rgba(40, 40, 40, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: 50px;
+  padding: 8px 16px;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
   white-space: nowrap;
 }
 .chip:hover {
-  background-color: #2a2a2a;
+  background-color: rgba(60, 60, 60, 0.8);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .libraryUtilities {
@@ -106,15 +113,15 @@
 .iconButton {
   background: none;
   border: none;
-  color: #a7a7a7;
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   border-radius: 50%;
-  transition: background-color 0.2s, color 0.2s;
+  transition: all 0.3s ease;
 }
 .iconButton:hover {
-  background-color: #1a1a1a;
-  color: white;
+  background-color: var(--bg-hover);
+  color: var(--accent);
 }
 
 .sortButton {
@@ -123,27 +130,34 @@
   gap: 8px;
   background: none;
   border: none;
-  color: #a7a7a7;
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
 }
 .sortButton:hover {
-  color: white;
+  color: var(--primary);
 }
 
 .libraryList {
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
+  scrollbar-color: transparent transparent;
+}
+.libraryList:hover {
+  scrollbar-color: #ffffff transparent;
 }
 .libraryList::-webkit-scrollbar {
   width: 8px;
 }
 .libraryList::-webkit-scrollbar-thumb {
-  background-color: #5a5a5a;
+  background-color: transparent;
   border-radius: 4px;
+}
+.libraryList:hover::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
 }
 .libraryList::-webkit-scrollbar-track {
   background: transparent;
@@ -153,21 +167,27 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 12px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  background: transparent;
+  border: 1px solid transparent;
 }
 .libraryItem:hover {
-  background-color: #1a1a1a;
+  background: rgba(29, 185, 84, 0.15);
+  border-color: var(--border-subtle);
+  transform: translateX(4px);
 }
 
 .itemImagePlaylist {
   width: 72px;
   height: 72px;
-  border-radius: 4px;
+  border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
+  border: 2px solid var(--border-subtle);
+  transition: all 0.3s ease;
 }
 
 .itemImageArtist {
@@ -176,6 +196,14 @@
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
+  border: 2px solid var(--border-subtle);
+  transition: all 0.3s ease;
+}
+
+.libraryItem:hover .itemImagePlaylist,
+.libraryItem:hover .itemImageArtist {
+  border-color: var(--accent);
+  transform: scale(1.05);
 }
 
 .itemInfo {
@@ -186,17 +214,17 @@
 }
 
 .itemTitle {
-  font-size: 17px;
-  font-weight: 500;
-  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .itemDetails {
-  font-size: 14px;
-  color: #a7a7a7;
+  font-size: 13px;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -205,21 +233,41 @@
 /* Main Content */
 .mainContent {
   flex: 1;
-  background: linear-gradient(to bottom, #202020, #121212);
-  border-radius: 8px;
-  padding: 24px;
+  background: linear-gradient(to bottom, #1a1a1a, #121212);
+  border-radius: 16px;
+  padding: 32px;
   overflow-y: auto;
   position: relative;
+  border: 1px solid var(--border-subtle);
+  scrollbar-color: transparent transparent;
+}
+.mainContent:hover {
+  scrollbar-color: #ffffff transparent;
+}
+
+.mainContent::-webkit-scrollbar {
+  width: 10px;
+}
+.mainContent::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+.mainContent:hover::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
+}
+.mainContent::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .section {
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .section h2 {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  color: var(--text-primary);
 }
 
 .grid {
@@ -230,30 +278,60 @@
 
 /* Card Styles */
 .card {
-  background-color: #181818;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.4), rgba(30, 30, 30, 0.3));
   padding: 16px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  border-radius: 12px;
+  transition: all 0.3s ease;
   cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
 }
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(29, 185, 84, 0.2), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 .card:hover {
-  background-color: #282828;
+  background: linear-gradient(135deg, rgba(50, 50, 50, 0.5), rgba(40, 40, 40, 0.4));
+  border-color: var(--primary);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(29, 185, 84, 0.2);
 }
+
+.card:hover::before {
+  opacity: 1;
+}
+
 .cardImage {
   width: 100%;
   padding-bottom: 100%;
-  background-color: #282828;
-  border-radius: 4px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: 8px;
   margin-bottom: 16px;
+  overflow: hidden;
 }
+
 .cardContent h3 {
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
+
 .cardContent p {
-  font-size: 14px;
-  color: #b3b3b3;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 /* Hero Styles */
@@ -263,27 +341,184 @@
   gap: 32px;
   margin-bottom: 32px;
 }
+
 .heroImageWrapper {
   width: 180px;
   height: 180px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.3);
 }
+
 .heroImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .heroType {
   font-size: 14px;
   text-transform: uppercase;
   opacity: 0.7;
+  color: var(--primary);
+  font-weight: 600;
+  letter-spacing: 1px;
 }
+
 .heroTitle {
-  font-size: 46px;
+  font-size: 48px;
   font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
+
 .heroFollowers {
   opacity: 0.8;
   margin-top: 8px;
+  color: var(--text-secondary);
+}
+
+/* Album Hero Styles */
+.heroAlbumSection {
+  background: linear-gradient(180deg, rgba(29, 185, 84, 0.15), transparent);
+  padding: 48px 0 32px 0;
+  margin: -32px -32px 0 -32px;
+  padding-left: 32px;
+  padding-right: 32px;
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 16px 16px 0 0;
+}
+
+.heroAlbumContainer {
+  display: flex;
+  align-items: flex-end;
+  gap: 32px;
+}
+
+.heroAlbumImage {
+  width: 240px;
+  height: 240px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  border: 2px solid var(--border-medium);
+  transition: all 0.3s ease;
+}
+
+.heroAlbumImage:hover {
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+.heroAlbumImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroAlbumText {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.heroAlbumType {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroAlbumTitle {
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text-primary);
+  margin: 0;
+  word-break: break-word;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.heroAlbumMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.heroAlbumDot {
+  font-size: 20px;
+}
+
+/* Tracklist Header */
+.tracklistHeader {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  height: 40px;
+  border-bottom: 1px solid var(--border-medium);
+  margin-top: 32px;
+  margin-bottom: 8px;
+}
+
+.tracklistHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.tracklistNumber {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  text-align: center;
+  width: 100%;
+  letter-spacing: 0.5px;
+}
+
+.tracklistTitle {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+}
+
+.tracklistHeaderRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-width: 120px;
+}
+
+.tracklistDuration {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  min-width: 40px;
+  text-align: right;
+  letter-spacing: 0.5px;
+}
+
+/* Tracklist */
+.tracklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
