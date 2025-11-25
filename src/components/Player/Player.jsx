@@ -40,7 +40,6 @@ export default function Player() {
     return () => clearInterval(interval);
   }, []);
 
-  // ▶ PLAY / PAUSE
   const handlePlayPause = async () => {
     try {
       if (isPlaying) {
@@ -55,7 +54,6 @@ export default function Player() {
     }
   };
 
-  // ▶ NEXT
   const handleNext = async () => {
     try {
       await fetch("/api/player/skip-to-next", { method: "POST" });
@@ -65,7 +63,6 @@ export default function Player() {
     }
   };
 
-  // ▶ PREVIOUS
   const handlePrev = async () => {
     try {
       await fetch("/api/player/skip-to-previous", { method: "POST" });
@@ -75,10 +72,8 @@ export default function Player() {
     }
   };
 
-  // ------------- FIX MESSAGGIO ERRATO -------------
   const deviceId = getDeviceId();
 
-  // 1) Player non pronto → mostra solo "inizializzo"
   if (!deviceId) {
     return (
       <div className={styles.playerBar}>
@@ -87,7 +82,6 @@ export default function Player() {
     );
   }
 
-  // 2) Device pronto ma nessuna traccia in playback
   if (!current) {
     return (
       <div className={styles.playerBar}>
@@ -100,7 +94,6 @@ export default function Player() {
 
   const img = current?.album?.images?.[0]?.url;
 
-  // ------------- PLAYER UI -------------
   return (
     <div className={styles.playerBar}>
       <div className={styles.left}>
