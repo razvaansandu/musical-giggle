@@ -21,4 +21,4 @@ export default function ArtistCard({ artist }) {
       <p className={styles.subtitle}>Artist</p>
     </Link>
   );
-}
+} 

@@ -9,7 +9,7 @@ export async function PUT(request) {
     body = null;
   }
 
-  const type = body?.type;
+  const type = body?.type; // "artist" o "user"
   const ids = body?.ids;
 
   if (!type || !ids?.length) {

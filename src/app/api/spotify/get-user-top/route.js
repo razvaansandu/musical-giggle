@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const type = searchParams.get("type") || "tracks"; 
+  const type = searchParams.get("type") || "tracks"; // "tracks" o "artists"
   const timeRange = searchParams.get("time_range") || "medium_term";
   const limit = searchParams.get("limit") || "20";
   const offset = searchParams.get("offset") || "0";

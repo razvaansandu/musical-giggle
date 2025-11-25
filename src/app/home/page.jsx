@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import styles from "./home.module.css";
+
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
-import UserErrorModal from "../../components/Modal/UserErrorModal";
 
 import ArtistCard from "../../components/Cards/ArtistCard";
 import TrackCard from "../../components/Cards/TrackCard";
@@ -20,7 +20,6 @@ export default function HomePage() {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -73,13 +72,7 @@ export default function HomePage() {
         setPlaylists(playlistsJson.items ?? playlistsJson ?? []);
       } catch (err) {
         console.error("Errore nella home:", err);
-        const errorMsg = err.message || "Errore nel caricamento della home";
-        setError(errorMsg);
-        
-        // Mostra il modal se è l'errore del profilo utente
-        if (errorMsg === "Errore profilo utente") {
-          setShowErrorModal(true);
-        }
+        setError(err.message || "Errore nel caricamento della home");
       } finally {
         setLoading(false);
       }
@@ -91,11 +84,6 @@ export default function HomePage() {
   return (
     <div className={styles.container}>
       <SpotifyHeader />
-
-      <UserErrorModal 
-        isOpen={showErrorModal} 
-        onClose={() => setShowErrorModal(false)} 
-      />
 
       <div className={styles.content}>
         <Sidebar />
@@ -116,6 +104,7 @@ export default function HomePage() {
           {!loading && (
             <>
              
+              {/* RECENTLY PLAYED */}
               <section className={styles.section}>
                 <h2>Recently played</h2>
                 <div className={styles.grid}>
@@ -128,6 +117,7 @@ export default function HomePage() {
                 </div>
               </section>
 
+              {/* TOP ARTISTS */}
               <section className={styles.section}>
                 <h2>Your top artists</h2>
                 <div className={styles.grid}>
@@ -140,6 +130,7 @@ export default function HomePage() {
                 </div>
               </section>
 
+              {/* TOP TRACKS */}
               <section className={styles.section}>
                 <h2>Your top tracks</h2>
                 <div className={styles.grid}>
@@ -152,6 +143,7 @@ export default function HomePage() {
                 </div>
               </section>
 
+              {/* PLAYLISTS */}
               <section className={styles.section}>
                 <h2>Your playlists</h2>
                 <div className={styles.grid}>
@@ -167,6 +159,7 @@ export default function HomePage() {
           )}
         </main>
       </div>
+
       <Player />
     </div>
   );

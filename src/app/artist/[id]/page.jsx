@@ -11,9 +11,10 @@ import Player from "../../../components/Player/Player";
 import TrackCard from "../../../components/Cards/TrackCard";
 import PlaylistCard from "../../../components/Cards/PlaylistCard";
 import AlbumCard from "../../../components/Cards/AlbumCard";
-import Loader from "../../../components/Loader/Loader";
+import ArtistHero from "../../../components/Cards/ArtistHero";
+import Loader from "../../../components/Loader/Loader"; 
 
-export default function ArtistPage() {
+export default function ArtistPage() { 
   const { id } = useParams();
 
   const [artist, setArtist] = useState(null);
@@ -72,24 +73,10 @@ export default function ArtistPage() {
 
           {!loading && artist && (
             <>
-              <section className={styles.hero}>
-                <div className={styles.heroImageWrapper}>
-                  <img
-                    src={artist.images?.[0]?.url || "/placeholder.png"}
-                    className={styles.heroImage}
-                    alt={artist.name}
-                  />
-                </div>
+              {/* HERO ARTISTA */}
+              <ArtistHero artist={artist} />
 
-                <div className={styles.heroText}>
-                  <p className={styles.heroType}>Artist</p>
-                  <h1 className={styles.heroTitle}>{artist.name}</h1>
-                  <p className={styles.heroFollowers}>
-                    {artist.followers?.total.toLocaleString()} followers
-                  </p>
-                </div>
-              </section>
-
+              {/* TOP TRACKS */}
               <section className={styles.section}>
                 <h2>Top tracks</h2>
                 <div className={styles.grid}>
@@ -99,6 +86,7 @@ export default function ArtistPage() {
                 </div>
               </section>
 
+              {/* ALBUMS */}
               <section className={styles.section}>
                 <h2>Albums</h2>
                 <div className={styles.grid}>

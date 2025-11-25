@@ -16,6 +16,7 @@
   overflow: hidden;
 }
 
+/* Sidebar (Library) */
 .libraryContainer {
   width: 320px;
   background-color: #121212;
@@ -201,6 +202,7 @@
   text-overflow: ellipsis;
 }
 
+/* Main Content */
 .mainContent {
   flex: 1;
   background: linear-gradient(to bottom, #202020, #121212);
@@ -226,6 +228,7 @@
   gap: 24px;
 }
 
+/* Card Styles */
 .card {
   background-color: #181818;
   padding: 16px;
@@ -253,6 +256,7 @@
   color: #b3b3b3;
 }
 
+/* Hero Styles */
 .hero {
   display: flex;
   align-items: center;
