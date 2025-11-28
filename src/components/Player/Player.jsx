@@ -3,14 +3,40 @@
 import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
-/*import PlayButton from "../buttons/PlayButton";
+import PlayButton from "../buttons/PlayButton";
 import StopButton from "../buttons/stopButton";
 import ButtonPrevSong from "../buttons/songButtonFirst";
-import ButtonNextSong from "../buttons/buttonNextSong";*/
+import ButtonNextSong from "../buttons/buttonNextSong";  
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showLyrics, setShowLyrics] = useState(false);
+  const [lyrics, setLyrics] = useState("");
+  const [loadingLyrics, setLoadingLyrics] = useState(false);
+
+  const fetchLyrics = async (artist, track) => {
+    if (!artist || !track) return; 
+    setLoadingLyrics(true);
+    try {
+      const res = await fetch(`/api/lyrics?artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}`);
+      const data = await res.json();
+      setLyrics(data.lyrics || "Testo non disponibile.");
+    } catch (error) {
+      console.error("Error fetching lyrics:", error);
+      setLyrics("Errore nel caricamento del testo.");
+    } finally {
+      setLoadingLyrics(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showLyrics && current) {
+      const artist = current.artists?.[0]?.name;
+      const track = current.name;
+      fetchLyrics(artist, track);
+    }
+  }, [current?.id, showLyrics]);
 
   const fetchCurrent = async () => {
     try {
@@ -78,12 +104,12 @@ export default function Player() {
 
   const deviceId = getDeviceId();
 
-  if (!deviceId) {
+  if (deviceId) {
     return (
       <div className={styles.playerBar}>
         <div className={styles.empty}>🎧 Sto inizializzando il player...</div>
-      </div>
-    );
+      </div> 
+    ); 
   }
 
   if (!current) {
@@ -115,22 +141,39 @@ export default function Player() {
           </div>
         </div>
       </div>
-
+     
       <div className={styles.center}>
-        <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
-          &#9664;&#9664;
-        </button>
+        <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} />
 
-        <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
-          {isPlaying ? "⏸" : "▶"}
-        </button>
+        <PlayButton isPlaying={isPlaying} onClick={handlePlayPause} />
 
-        <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
-          &#9654;&#9654;
-        </button>
+        <ButtonNextSong onNext={handleNext} className={styles.iconBtn} />
       </div>
+      <div className={styles.right}>
+        <button 
+          className={`${styles.lyricsButton} ${showLyrics ? styles.active : ''}`}
+          onClick={() => setShowLyrics(!showLyrics)}
+          title="Testo" 
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
 
-      <div className={styles.right}></div>
+<path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path> 
+
+</svg> 
+        </button>
+      </div> 
+
+      <div className={`${styles.lyricsOverlay} ${showLyrics ? styles.open : ''}`}>
+        {current && (
+          <div className={styles.lyricsHeader}>
+            <div className={styles.lyricsTitle}>{current.name}</div>
+            <div className={styles.lyricsArtist}>{current.artists?.map(a => a.name).join(", ")}</div>
+          </div>
+        )}
+        <div className={styles.lyricsContent}>
+          {loadingLyrics ? "Caricamento testo..." : lyrics}
+        </div>
+      </div>
     </div>
-  );
-}
+  ); 
+} 
