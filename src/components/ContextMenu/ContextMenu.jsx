@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import styles from "./ContextMenu.module.css";
 
-export default function ContextMenu({ 
-  visible, 
-  x, 
-  y, 
-  items = [], 
-  onClose 
+export default function ContextMenu({
+  visible,
+  x,
+  y,
+  items = [],
+  onClose,
 }) {
   const menuRef = useRef(null);
 
@@ -27,6 +28,7 @@ export default function ContextMenu({
 
     document.addEventListener("mousedown", handleClick);
     document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.removeEventListener("mousedown", handleClick);
       document.removeEventListener("keydown", handleKeyDown);
@@ -35,7 +37,7 @@ export default function ContextMenu({
 
   if (!visible) return null;
 
-  return (
+  return createPortal(
     <div
       ref={menuRef}
       className={styles.contextMenu}
@@ -49,21 +51,27 @@ export default function ContextMenu({
         if (item.divider) {
           return <div key={`divider-${idx}`} className={styles.divider} />;
         }
+
         return (
           <button
             key={item.id || idx}
-            className={`${styles.menuItem} ${item.danger ? styles.danger : ""}`}
+            className={`${styles.menuItem} ${
+              item.danger ? styles.danger : ""
+            }`}
             onClick={() => {
               item.action?.();
               onClose();
             }}
             role="menuitem"
           >
-            {item.icon && <span className={styles.icon}>{item.icon}</span>}
+            {item.icon && (
+              <span className={styles.icon}>{item.icon}</span>
+            )}
             <span>{item.label}</span>
           </button>
         );
       })}
-    </div>
+    </div>,
+    document.body
   );
 }
