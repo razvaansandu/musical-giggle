@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import styles from "../../home/home.module.css";
 
@@ -16,6 +16,7 @@ import Loader from "../../../components/Loader/Loader";
  
 export default function ArtistPage() { 
   const { id } = useParams();
+  const router = useRouter();
 
   const [artist, setArtist] = useState(null);
   const [topTracks, setTopTracks] = useState([]);
@@ -81,7 +82,11 @@ export default function ArtistPage() {
                 <h2>Top tracks</h2>
                 <div className={styles.grid}>
                   {topTracks.map((t) => (
-                    <TrackCard key={t.id} track={t} />
+                    <TrackCard 
+                      key={t.id} 
+                      track={t}
+                      onClick={(track) => router.push(`/track/${track.id}`)}
+                    />
                   ))}
                 </div>
               </section>
@@ -91,7 +96,11 @@ export default function ArtistPage() {
                 <h2>Albums</h2>
                 <div className={styles.grid}>
                   {albums.map((a) => (
-                  <AlbumCard key={a.id} album={a} />
+                  <AlbumCard 
+                    key={a.id} 
+                    album={a}
+                    onClick={() => router.push(`/album/${a.id}`)}
+                  />
                   ))}
                 </div>
               </section>
