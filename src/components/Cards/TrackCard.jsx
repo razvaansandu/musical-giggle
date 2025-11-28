@@ -26,7 +26,7 @@ export default function TrackCard({ track, onClick }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          uris: [track.uri],   
+          uris: [track.uri],
         }),
       });
 
@@ -36,15 +36,12 @@ export default function TrackCard({ track, onClick }) {
   };
 
   return (
-    <button
-      type="button"
-      className={styles.card}
-      onClick={handlePlay}
-    >
+    <button type="button" className={styles.card} onClick={handlePlay}>
       <div
         className={styles.imageWrapper}
         style={{ backgroundImage: `url(${img})` }}
-      />       <h3 className={styles.title}>{track.name}</h3>
+      />
+      <h3 className={styles.title}>{track.name}</h3>
       <p className={styles.subtitle}>
         {track.artists?.map((a) => a.name).join(", ") || "Unknown Artist"}
       </p>
