@@ -30,7 +30,7 @@ export default function HomePage() {
         setLoading(true);
         setError(null);
 
-        const [
+        const [ 
           profileRes,
           topArtistsRes,
           topTracksRes,

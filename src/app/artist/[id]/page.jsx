@@ -13,7 +13,7 @@ import PlaylistCard from "../../../components/Cards/PlaylistCard";
 import AlbumCard from "../../../components/Cards/AlbumCard";
 import ArtistHero from "../../../components/Cards/ArtistHero";
 import Loader from "../../../components/Loader/Loader"; 
-
+ 
 export default function ArtistPage() { 
   const { id } = useParams();
   const router = useRouter();

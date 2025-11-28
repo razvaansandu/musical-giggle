@@ -16,7 +16,6 @@ export default function Player() {
     try {
       const res = await fetch("/api/player/get-currently-playing-track");
 
-      // 204 = nessun brano in riproduzione
       if (res.status === 204) {
         setCurrent(null);
         setIsPlaying(false);
@@ -32,22 +31,26 @@ export default function Player() {
   };
 
   useEffect(() => {
-    fetchCurrent();
-    const id = setInterval(fetchCurrent, 5000); // aggiorna ogni 5s
-    return () => clearInterval(id);
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      initWebPlayer(async () => {
+        const cookie = document.cookie
+          .split("; ")
+          .find(r => r.startsWith("auth_code="));
+        return cookie?.split("=")[1] || "";
+      });
+    };
+
+    const interval = setInterval(fetchCurrent, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   const handlePlayPause = async () => {
-    try { 
+    try {
       if (isPlaying) {
-        await fetch("/api/player/pause-playback", {
-          method: "PUT",        // se nel route hai messo POST, cambia anche qui
-        });
+        await fetch("/api/player/pause-playback", { method: "PUT" });
         setIsPlaying(false);
       } else {
-        await fetch("/api/player/start-resume-playback", {
-          method: "PUT",        // idem sopra
-        });
+        await fetch("/api/player/start-resume-playback", { method: "PUT" });
         setIsPlaying(true);
       }
     } catch (err) {
@@ -57,9 +60,7 @@ export default function Player() {
 
   const handleNext = async () => {
     try {
-      await fetch("/api/player/skip-to-next", {
-        method: "POST",
-      });
+      await fetch("/api/player/skip-to-next", { method: "POST" });
       fetchCurrent();
     } catch (err) {
       console.error("Errore next", err);
@@ -68,46 +69,29 @@ export default function Player() {
 
   const handlePrev = async () => {
     try {
-      await fetch("/api/player/skip-to-previous", {
-        method: "POST",
-      });
+      await fetch("/api/player/skip-to-previous", { method: "POST" });
       fetchCurrent();
     } catch (err) {
       console.error("Errore previous", err);
     }
   };
 
-  const handleSeek = async (ms) => {
-    try {
-      const newPos = Math.max(0, progress + ms);
-
-      await fetch(`/api/player/seek-to-position?position_ms=${newPos}`, {
-        method: "PUT"
-      });
-
-      setProgress(newPos);
-    } catch (err) {
-      console.error("Errore seek", err);
-    }
-  };
-
-  // Controllo se il deviceId è disponibile
   const deviceId = getDeviceId();
+
   if (!deviceId) {
     return (
       <div className={styles.playerBar}>
-        <div className={styles.empty}>
-          Sto inizializzando il Web Player...
-        </div>
+        <div className={styles.empty}>🎧 Sto inizializzando il player...</div>
       </div>
     );
   }
 
-  // Controllo se c'è un brano in riproduzione
   if (!current) {
     return (
       <div className={styles.playerBar}>
-        <div className={styles.empty}>Nessun brano in riproduzione.</div>
+        <div className={styles.empty}>
+          Nessun brano in riproduzione. Clicca una track per iniziare 💿
+        </div>
       </div>
     );
   }
@@ -133,34 +117,20 @@ export default function Player() {
       </div>
 
       <div className={styles.center}>
-        <button onClick={() => handleSeek(-10000)} className={styles.iconBtn}>
-          -10s
+        <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
+          &#9664;&#9664;
         </button>
 
-        <button onClick={handlePrev} className={styles.iconBtn}>
-          <ButtonPrevSong/>
+        <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
+          {isPlaying ? "⏸" : "▶"}
         </button>
 
-        <button onClick={handlePlayPause} className={styles.playBtn}>
-          {isPlaying ? <PlayButton/> : <StopButton/>}
-        </button> 
-
-        <button onClick={handleNext} className={styles.iconBtn}>
-          <ButtonNextSong/>
+        <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
+          &#9654;&#9654;
         </button>
-
-        <button onClick={() => handleSeek(+10000)} className={styles.iconBtn}>
-          +10s
-        </button>
-
       </div>
 
-      <div className={styles.progressBar}>
-        <div
-          className={styles.progressFill}
-          style={{ width: `${(progress / duration) * 100}%` }}
-        ></div>
-      </div>
+      <div className={styles.right}></div>
     </div>
   );
 }

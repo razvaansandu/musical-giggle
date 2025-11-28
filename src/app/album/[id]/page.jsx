@@ -8,7 +8,7 @@ import styles from "../../home/home.module.css";
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
-import TrackCard from "../../../components/Cards/TrackCard";
+import Card from "../../../components/Cards/Card";
 import Loader from "../../../components/Loader/Loader";
 
 export default function AlbumPage() {
@@ -58,35 +58,46 @@ console.log(tracks);
         <main className={styles.mainContent}>
 
           {/* --- HERO ALBUM --- */}
-          <section className={styles.hero}>
-            <div className={styles.heroImageWrapper}>
-              <img
-                src={album.images?.[0]?.url || "/placeholder.png"}
-                alt={album.name}
-                className={styles.heroImage}
-              />
-            </div>
+          <section className={styles.heroAlbumSection}>
+            <div className={styles.heroAlbumContainer}>
+              <div className={styles.heroAlbumImage}>
+                <img
+                  src={album.images?.[0]?.url || "/placeholder.png"}
+                  alt={album.name}
+                  className={styles.heroAlbumImg}
+                />
+              </div>
 
-            <div className={styles.heroText}>
-              <p className={styles.heroType}>Album</p>
-              <h1 className={styles.heroTitle}>{album.name}</h1>
-              <p className={styles.heroFollowers}>
-                {album.release_date} • {album.total_tracks} tracks
-              </p>
-              <p className={styles.heroFollowers}>
-                {album.artists?.map((a) => a.name).join(", ")}
-              </p>
+              <div className={styles.heroAlbumText}>
+                <span className={styles.heroAlbumType}>Album</span>
+                <h1 className={styles.heroAlbumTitle}>{album.name}</h1>
+                <div className={styles.heroAlbumMeta}>
+                  <span>{album.artists?.map((a) => a.name).join(", ")}</span>
+                  <span className={styles.heroAlbumDot}>•</span>
+                  <span>{album.release_date}</span>
+                  <span className={styles.heroAlbumDot}>•</span>
+                  <span>{album.total_tracks} songs</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* --- TRACKLIST HEADER --- */}
+          <section className={styles.tracklistHeader}>
+            <div className={styles.tracklistHeaderLeft}>
+              <span className={styles.tracklistNumber}>#</span>
+              <span className={styles.tracklistTitle}>TITLE</span>
+            </div>
+            <div className={styles.tracklistHeaderRight}>
+              <span className={styles.tracklistDuration}>DURATION</span>
             </div>
           </section>
 
           {/* --- TRACKLIST --- */}
-          <section className={styles.section}>
-            <h2>Tracks</h2>
-            <div className={styles.grid}>
-              {tracks.map((t) => (
-                <TrackCard key={t.id} track={t} />
-              ))}
-            </div>
+          <section className={styles.tracklist}>
+            {tracks.map((t, i) => (
+              <Card key={t.id} item={t} index={i + 1} />
+            ))}
           </section>
 
         </main>
