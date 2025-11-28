@@ -53,14 +53,13 @@ export default function SearchPage() {
         <Sidebar />
 
         <main className={styles.mainContent}>
-          <h1>Search results for “{q}”</h1>
-
+          <h1 className="">Results For: “{q}”</h1> 
           {!loading && (
             <>
               {/* TRACKS */}
               {tracks.length > 0 && (
                 <section className={styles.section}>
-                  <h2>Tracks</h2>
+               
                   <div className={styles.grid}>
                     {tracks.map(t => (
                       <TrackCard key={t.id} track={t} />

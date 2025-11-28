@@ -1,17 +1,37 @@
 "use client";
 
 import styles from "./Card.module.css";
-
+  
 export default function TrackCard({ track, onClick }) {
   if (!track) return null;
 
   const img = track?.album?.images?.[0]?.url || "/default-track.png";
 
-  const handleClick = () => {
-    console.log("Track clicked:", track.id);
-    debugger
+  const handlePlay = async () => { 
     if (onClick) {
-      onClick();
+      onClick(track);
+      return;
+    }
+
+   
+    try {
+      if (!track.uri) {
+        console.warn("Nessuna URI per questa traccia:", track);
+        return;
+      }
+
+      await fetch("/api/player/start-resume-playback", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uris: [track.uri],   
+        }),
+      });
+
+    } catch (err) {
+      console.error("Errore avvio riproduzione:", err);
     }
   };
 
@@ -19,7 +39,7 @@ export default function TrackCard({ track, onClick }) {
     <button
       type="button"
       className={styles.card}
-      onClick={handleClick}
+      onClick={handlePlay}
     >
       <div
         className={styles.imageWrapper}
@@ -31,3 +51,4 @@ export default function TrackCard({ track, onClick }) {
     </button>
   );
 }
+ 
