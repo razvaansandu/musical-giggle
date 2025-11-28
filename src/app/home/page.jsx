@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./home.module.css";
 
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
@@ -11,8 +12,10 @@ import ArtistCard from "../../components/Cards/ArtistCard";
 import TrackCard from "../../components/Cards/TrackCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
 import Loader from "../../components/Loader/Loader";
+import ButtonAddToPlaylist from "../../components/buttons/ButtonAddToPlaylist";
 
 export default function HomePage() {
+  const router = useRouter();
   const [profile, setProfile] = useState(null);
   const [topArtists, setTopArtists] = useState([]);
   const [topTracks, setTopTracks] = useState([]);
@@ -106,12 +109,21 @@ export default function HomePage() {
              
               {/* RECENTLY PLAYED */}
               <section className={styles.section}>
-                <h2>Recently played</h2>
+                <div className={styles.sectionHeader}>
+                  <h2>Recently played</h2>
+                  <a href="/search" className={styles.seeAllLink}>
+                    See all →
+                  </a>
+                </div>
                 <div className={styles.grid}>
                   {recentTracks.slice(0, 8).map((track, index) => (
                     <TrackCard
                       key={`${track.id || "track"}-${index}`}
                       track={track}
+                      onClick={() => {
+                        console.log("HOME: Navigating to /track/", track.id);
+                        router.push(`/track/${track.id}`);
+                      }}
                     />
                   ))}
                 </div>
@@ -119,12 +131,18 @@ export default function HomePage() {
 
               {/* TOP ARTISTS */}
               <section className={styles.section}>
-                <h2>Your top artists</h2>
+                <div className={styles.sectionHeader}>
+                  <h2>Your top artists</h2>
+                  <a href="/search" className={styles.seeAllLink}>
+                    See all →
+                  </a>
+                </div>
                 <div className={styles.grid}>
                   {topArtists.slice(0, 6).map((artist, index) => (
                     <ArtistCard
                       key={`${artist.id || "artist"}-${index}`}
                       artist={artist}
+                      onClick={() => router.push(`/artist/${artist.id}`)}
                     />
                   ))}
                 </div>
@@ -132,12 +150,18 @@ export default function HomePage() {
 
               {/* TOP TRACKS */}
               <section className={styles.section}>
-                <h2>Your top tracks</h2>
+                <div className={styles.sectionHeader}>
+                  <h2>Your top tracks</h2>
+                  <a href="/search" className={styles.seeAllLink}>
+                    See all →
+                  </a>
+                </div>
                 <div className={styles.grid}>
                   {topTracks.slice(0, 6).map((track, index) => (
                     <TrackCard
                       key={`${track.id || "top-track"}-${index}`}
                       track={track}
+                      onClick={() => router.push(`/track/${track.id}`)}
                     />
                   ))}
                 </div>
@@ -145,12 +169,22 @@ export default function HomePage() {
 
               {/* PLAYLISTS */}
               <section className={styles.section}>
-                <h2>Your playlists</h2>
+                <div className={styles.sectionHeader}>
+                  <h2>Your playlists</h2>
+                  <ButtonAddToPlaylist
+                    onSuccess={(created) => {
+                      // Prepend the newly created playlist so it's visible immediately
+                      setPlaylists((prev) => [created, ...(prev || [])]);
+                    }}
+                  />
+                </div>
+
                 <div className={styles.grid}>
                   {playlists.slice(0, 8).map((pl, index) => (
                     <PlaylistCard
                       key={`${pl.id || "playlist"}-${index}`}
                       playlist={pl}
+                      onClick={() => router.push(`/playlist/${pl.id}`)}
                     />
                   ))}
                 </div>

@@ -1,10 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './SpotifyHeader.module.css';
 import SearchBar from "../SearchBar/SearchBar";
 
 export default function SpotifyHeader() {
   const router = useRouter();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState({ albums: [], playlists: [], tracks: [] });
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const bellRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  const toggleNotifications = async () => {
+    if (!showNotifications) {
+      setShowNotifications(true);
+      if (notifications.albums.length === 0 && notifications.playlists.length === 0 && notifications.tracks.length === 0) {
+        setLoadingNotifications(true);
+        try {
+          const res = await fetch('/api/notifications');
+          if (res.ok) {
+            const data = await res.json();
+            setNotifications(data);
+          }
+        } catch (error) {
+          console.error("Error fetching notifications", error);
+        } finally {
+          setLoadingNotifications(false);
+        }
+      }
+    } else {
+      setShowNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        bellRef.current &&
+        !bellRef.current.contains(event.target)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className={styles.header}>
@@ -39,7 +81,11 @@ export default function SpotifyHeader() {
       <div className={styles.userSection}>
         <button className={styles.installButton}>Installa app</button>
 
-        <button className={styles.installButton}>
+        <button 
+          className={styles.installButton} 
+          ref={bellRef}
+          onClick={toggleNotifications}
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-bell" viewBox="0 0 16 16">
             <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
           </svg>
@@ -55,6 +101,82 @@ export default function SpotifyHeader() {
           <img src="/default-profile.png" alt="Profilo" className={styles.profileImage} />
         </button>
       </div>
+
+      {showNotifications && (
+        <div className={styles.notificationDropdown} ref={dropdownRef}>
+          {loadingNotifications ? (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#b3b3b3' }}>Caricamento...</div>
+          ) : (
+            <>
+              {notifications.albums.length > 0 && (
+                <div className={styles.notificationSection}>
+                  <h3>Nuove Uscite</h3>
+                  {notifications.albums.map(album => (
+                    <div 
+                      key={album.id} 
+                      className={styles.notificationItem}
+                      onClick={() => {
+                        router.push(`/album/${album.id}`);
+                        setShowNotifications(false);
+                      }}
+                    >
+                      <img src={album.images[0]?.url} alt={album.name} className={styles.notificationImage} />
+                      <div className={styles.notificationInfo}>
+                        <span className={styles.notificationTitle}>{album.name}</span>
+                        <span className={styles.notificationSubtitle}>{album.artists.map(a => a.name).join(', ')}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {notifications.tracks.length > 0 && (
+                <div className={styles.notificationSection}>
+                  <h3>Nuovi Brani</h3>
+                  {notifications.tracks.map(track => (
+                    <div 
+                      key={track.id} 
+                      className={styles.notificationItem}
+                      onClick={() => {
+                        router.push(`/album/${track.album.id}`);
+                        setShowNotifications(false);
+                      }}
+                    >
+                      <img src={track.album.images[0]?.url} alt={track.name} className={styles.notificationImage} />
+                      <div className={styles.notificationInfo}>
+                        <span className={styles.notificationTitle}>{track.name}</span>
+                        <span className={styles.notificationSubtitle}>{track.artists.map(a => a.name).join(', ')}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {notifications.playlists.length > 0 && (
+                <div className={styles.notificationSection}>
+                  <h3>Playlist Consigliate</h3>
+                  {notifications.playlists.map(playlist => (
+                    <div 
+                      key={playlist.id} 
+                      className={styles.notificationItem}
+                      onClick={() => {
+                        // router.push(`/playlist/${playlist.id}`);
+                        setShowNotifications(false);
+                      }}
+                    >
+                      <img src={playlist.images[0]?.url} alt={playlist.name} className={styles.notificationImage} />
+                      <div className={styles.notificationInfo}>
+                        <span className={styles.notificationTitle}>{playlist.name}</span>
+                        <span className={styles.notificationSubtitle}>{playlist.owner.display_name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 }

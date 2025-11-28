@@ -1,13 +1,19 @@
 "use client";
 
 import styles from "./Card.module.css";
-
-export default function TrackCard({ track }) {
+  
+export default function TrackCard({ track, onClick }) {
   if (!track) return null;
 
   const img = track?.album?.images?.[0]?.url || "/default-track.png";
 
-  const handlePlay = async () => {
+  const handlePlay = async () => { 
+    if (onClick) {
+      onClick(track);
+      return;
+    }
+
+   
     try {
       if (!track.uri) {
         console.warn("Nessuna URI per questa traccia:", track);
@@ -20,7 +26,7 @@ export default function TrackCard({ track }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          uris: [track.uri],   // ✔ usa la tua API corretta
+          uris: [track.uri],   
         }),
       });
 
@@ -38,11 +44,11 @@ export default function TrackCard({ track }) {
       <div
         className={styles.imageWrapper}
         style={{ backgroundImage: `url(${img})` }}
-      />
-      <h3 className={styles.title}>{track.name}</h3>
+      />       <h3 className={styles.title}>{track.name}</h3>
       <p className={styles.subtitle}>
         {track.artists?.map((a) => a.name).join(", ") || "Unknown Artist"}
       </p>
     </button>
   );
 }
+ 
