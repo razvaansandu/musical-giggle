@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
+import PlayButton from "../buttons/PlayButton";
+import ButtonNextSong from "../buttons/buttonNextSong";
+import ButtonPrevSong from "../buttons/songButtonFirst";
+import StopButton from "../buttons/stopButton";
+import VolumeButton from "../volume/Volume";
+import ButtonShuffle from "../buttons/buttonShuffle";
+
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -74,7 +81,7 @@ export default function Player() {
 
   const deviceId = getDeviceId();
 
-  if (!deviceId) {
+  if (deviceId) {
     return (
       <div className={styles.playerBar}>
         <div className={styles.empty}>🎧 Sto inizializzando il player...</div>
@@ -114,16 +121,22 @@ export default function Player() {
 
       <div className={styles.center}>
         <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
-          &#9664;&#9664;
+       <ButtonPrevSong/>
         </button>
 
         <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
-          {isPlaying ? "⏸" : "▶"}
+          {isPlaying ? <StopButton/> : <PlayButton/>}
         </button>
 
         <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
-          &#9654;&#9654;
+          <ButtonNextSong/>
         </button>
+        <button onClick={handleNext} className={styles.iconBtn}>
+          <ButtonShuffle/>
+        </button>
+      </div>
+      <div>
+          <VolumeButton></VolumeButton>
       </div>
 
       <div className={styles.right}></div>
