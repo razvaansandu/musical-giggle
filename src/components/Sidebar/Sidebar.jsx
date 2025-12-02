@@ -103,41 +103,41 @@ export default function AppSidebar() {
     );
   };
 
-  // ✅ FUNZIONE MANCANTE
-  const getContextMenuItems = () => {
-    if (!selectedItem) return [];
+  // FUNZIONE MANCANTE
+  // const getContextMenuItems = () => {
+  //   if (!selectedItem) return [];
 
-    const { item, type } = selectedItem;
+  //   const { item, type } = selectedItem;
 
-    switch (type) {
-      case "Playlists":
-        return [
-          {
-            label: "Open playlist",
-            onClick: () => router.push(`/playlist/${item.id}`),
-          },
-        ];
+  //   switch (type) {
+  //     case "Playlists":
+  //       return [
+  //         {
+  //           label: "Open playlist",
+  //           onClick: () => router.push(`/playlist/${item.id}`),
+  //         },
+  //       ];
 
-      case "Artists":
-        return [
-          {
-            label: "Go to artist",
-            onClick: () => router.push(`/artist/${item.id}`),
-          },
-        ];
+  //     case "Artists":
+  //       return [
+  //         {
+  //           label: "Go to artist",
+  //           onClick: () => router.push(`/artist/${item.id}`),
+  //         },
+  //       ];
 
-      case "Albums":
-        return [
-          {
-            label: "Go to album",
-            onClick: () => router.push(`/album/${item.album.id}`),
-          },
-        ];
+  //     case "Albums":
+  //       return [
+  //         {
+  //           label: "Go to album",
+  //           onClick: () => router.push(`/album/${item.album.id}`),
+  //         },
+  //       ];
 
-      default:
-        return [];
-    }
-  };
+  //     default:
+  //       return [];
+  //   }
+  // };
 
   return (
     <div className={styles.libraryContainer}>
