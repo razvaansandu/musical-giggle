@@ -7,20 +7,20 @@
   padding: 6px;
   border-radius: 6px;
   background: transparent;
-  color: #b3b3b3;
+  color: white;
   border: none;
   cursor: pointer;
   transition: background-color .12s ease, color .12s ease, transform .06s ease;
   line-height: 0;
 }
 .btn-shuffle:hover{ 
-    background-color: black; 
-  color:white; 
+    /* background-color: black; 
+  color:white;  */
   
     transform: translateY(-1px); 
 } 
 .btn-shuffle:active {
   transform: translateY(0);
-   color:black;  
-    background-color: white;
+   color:white;  
+    /* background-color: white; */
 }  
