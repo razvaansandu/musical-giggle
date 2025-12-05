@@ -1,34 +1,99 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 import PlayButton from "../buttons/PlayButton";
 import StopButton from "../buttons/stopButton";
 import ButtonPrevSong from "../buttons/songButtonFirst";
 import ButtonNextSong from "../buttons/buttonNextSong";  
+import ButtonShuffle from "../buttons/buttonShuffle";
+import ButtonLoop from "../buttons/ButtonLoop";
+import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
+import { MonitorPlay } from "lucide-react";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [repeatMode, setRepeatMode] = useState("off");
   const [showLyrics, setShowLyrics] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const [lyrics, setLyrics] = useState("");
+  const [syncedLyrics, setSyncedLyrics] = useState([]);
+  const [isSynced, setIsSynced] = useState(false);
   const [loadingLyrics, setLoadingLyrics] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const activeLineRef = useRef(null);
+
+  const parseLrc = (lrc) => {
+    const lines = lrc.split("\n");
+    const result = [];
+    for (const line of lines) {
+      // Match [mm:ss.xx] or [mm:ss.xxx]
+      const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
+      if (match) {
+        const minutes = parseInt(match[1], 10);
+        const seconds = parseInt(match[2], 10);
+        // If 3 digits (milliseconds), use as is. If 2 digits (hundredths), multiply by 10.
+        const rawMs = match[3];
+        const ms = rawMs.length === 3 ? parseInt(rawMs, 10) : parseInt(rawMs, 10) * 10;
+        
+        const time = minutes * 60 * 1000 + seconds * 1000 + ms;
+        const text = match[4].trim();
+        if (text) result.push({ time, text });
+      }
+    }
+    return result;
+  };
+
+  const handleSeek = async (e) => {
+    const newTime = parseInt(e.target.value, 10);
+    setProgress(newTime);
+    try {
+      await fetch(`/api/player/seek-to-position?position_ms=${newTime}`, { method: "PUT" });
+    } catch (err) {
+      console.error("Errore seek", err);
+    }
+  };
+
+  const formatTime = (ms) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   const fetchLyrics = async (artist, track) => {
     if (!artist || !track) return; 
     setLoadingLyrics(true);
+    setSyncedLyrics([]);
+    setIsSynced(false);
     try {
       const res = await fetch(`/api/lyrics?artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}`);
       const data = await res.json();
-      setLyrics(data.lyrics || "Testo non disponibile.");
+      
+      if (data.synced) {
+        setSyncedLyrics(parseLrc(data.lyrics));
+        setIsSynced(true);
+      } else {
+        setLyrics(data.lyrics || "Testo non disponibile.");
+        setIsSynced(false);
+      }
     } catch (error) {
       console.error("Error fetching lyrics:", error);
       setLyrics("Errore nel caricamento del testo.");
+      setIsSynced(false);
     } finally {
       setLoadingLyrics(false);
     }
   };
+
+  useEffect(() => {
+    if (showLyrics && isSynced && activeLineRef.current) {
+      activeLineRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [progress, showLyrics, isSynced]);
 
   useEffect(() => {
     if (showLyrics && current) {
@@ -40,7 +105,7 @@ export default function Player() {
 
   const fetchCurrent = async () => {
     try {
-      const res = await fetch("/api/player/get-currently-playing-track");
+      const res = await fetch("/api/player/get-playback-state");
 
       if (res.status === 204) {
         setCurrent(null);
@@ -51,10 +116,25 @@ export default function Player() {
       const data = await res.json();
       setCurrent(data.item || null);
       setIsPlaying(data.is_playing || false);
+      setIsShuffle(data.shuffle_state || false);
+      setRepeatMode(data.repeat_state || "off");
+      if (data.progress_ms) {
+        setProgress(data.progress_ms);
+      }
     } catch (err) {
       console.error("Errore stato player", err);
     }
   };
+
+  useEffect(() => {
+    let interval;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setProgress((p) => p + 1000);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
 
   useEffect(() => {
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -102,6 +182,30 @@ export default function Player() {
     }
   };
 
+  const handleShuffle = async () => {
+    try {
+      const newState = !isShuffle;
+      setIsShuffle(newState); // Optimistic update
+      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: "PUT" });
+      fetchCurrent();
+    } catch (err) {
+      console.error("Errore shuffle", err);
+      setIsShuffle(!isShuffle); // Revert on error
+    }
+  };
+
+  const handleRepeat = async (newMode) => {
+    try {
+      setRepeatMode(newMode); // Optimistic update
+      await fetch(`/api/player/set-repeat-mode?state=${newMode}`, { method: "PUT" });
+      fetchCurrent();
+    } catch (err) {
+      console.error("Errore repeat", err);
+      // Revert logic could be complex here, just refetch
+      fetchCurrent();
+    }
+  };
+
   const deviceId = getDeviceId();
 
   if (deviceId) {
@@ -143,25 +247,53 @@ export default function Player() {
       </div>
      
       <div className={styles.center}>
-        <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} />
-
-        <PlayButton isPlaying={isPlaying} onClick={handlePlayPause} />
-
-        <ButtonNextSong onNext={handleNext} className={styles.iconBtn} />
+        <div className={styles.controls}>
+          <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
+          <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} />
+          <PlayButton isPlaying={isPlaying} onClick={handlePlayPause} />
+          <ButtonNextSong onNext={handleNext} className={styles.iconBtn} />
+          <ButtonLoop mode={repeatMode} onChange={handleRepeat} className={styles.iconBtn} />
+        </div>
+        
+        <div className={styles.progressBarContainer}>
+          <span className={styles.time}>{formatTime(progress)}</span>
+          <input
+            type="range"
+            min="0"
+            max={current?.duration_ms || 0}
+            value={progress}
+            onChange={handleSeek}
+            className={styles.progressBar}
+            style={{ '--progress-percent': `${(progress / (current?.duration_ms || 1)) * 100}%` }}
+          />
+          <span className={styles.time}>{formatTime(current?.duration_ms || 0)}</span>
+        </div>
       </div>
       <div className={styles.right}>
+        <button 
+          className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`}
+          onClick={() => setShowVideo(!showVideo)}
+          title="Miniplayer YouTube" 
+        >
+          <MonitorPlay size={16} />
+        </button>
         <button 
           className={`${styles.lyricsButton} ${showLyrics ? styles.active : ''}`}
           onClick={() => setShowLyrics(!showLyrics)}
           title="Testo" 
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
-
-<path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path> 
-
-</svg> 
+            <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path> 
+          </svg> 
         </button>
       </div> 
+
+      {showVideo && current && (
+        <YouTubePlayer 
+          query={`${current.artists?.[0]?.name} ${current.name}`} 
+          onClose={() => setShowVideo(false)} 
+        />
+      )}
 
       <div className={`${styles.lyricsOverlay} ${showLyrics ? styles.open : ''}`}>
         {current && (
@@ -171,7 +303,25 @@ export default function Player() {
           </div>
         )}
         <div className={styles.lyricsContent}>
-          {loadingLyrics ? "Caricamento testo..." : lyrics}
+          {loadingLyrics ? "Caricamento testo..." : (
+            isSynced ? (
+              syncedLyrics.map((line, i) => {
+                // Determine if this line is active
+                // It is active if progress >= line.time AND (it's the last line OR progress < nextLine.time)
+                const isActive = progress >= line.time && (i === syncedLyrics.length - 1 || progress < syncedLyrics[i+1].time);
+                return (
+                  <div 
+                    key={i} 
+                    ref={isActive ? activeLineRef : null}
+                    className={`${styles.lyricsLine} ${isActive ? styles.lyricsLineActive : ''}`}
+                    onClick={() => handleSeek({ target: { value: line.time } })}
+                  >
+                    {line.text}
+                  </div>
+                )
+              })
+            ) : lyrics
+          )}
         </div>
       </div>
     </div>
