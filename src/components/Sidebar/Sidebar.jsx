@@ -109,7 +109,7 @@ export default function AppSidebar() {
           <span>Your Library</span>
         </button>
         <div className={styles.headerButtons}>
-          <ButtonAddToPlaylist
+          {/* <ButtonAddToPlaylist
             variant="sidebar"
             className={styles.roundButton}
             onSuccess={(created) => {
@@ -118,7 +118,7 @@ export default function AppSidebar() {
                 setLibraryItems((prev) => [created, ...(prev || [])]);
               }
             }}
-          />
+          /> */}
         </div>
       </div>
 

@@ -116,7 +116,7 @@ export default function HomePage() {
                   </a>
                 </div>
                 <div className={styles.grid}>
-                  {recentTracks.slice(0, 8).map((track, index) => (
+                  {recentTracks.slice(0, 7).map((track, index) => (
                     <TrackCard
                       key={`${track.id || "track"}-${index}`}
                       track={track}

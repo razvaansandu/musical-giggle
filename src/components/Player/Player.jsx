@@ -155,7 +155,7 @@ export default function Player() {
       </div>
 
       <div className={styles.left}>
-        <button onClick={handlePrev} className={styles.iconBtn}>
+        <button onClick={ButtonLoop} className={styles.iconBtn}>
           <ButtonLoop />
         </button>
         <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
@@ -169,7 +169,7 @@ export default function Player() {
         <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
           <ButtonNextSong />
         </button>
-        <button onClick={handleNext} className={styles.iconBtn}>
+        <button onClick={ButtonShuffle} className={styles.iconBtn}>
           <ButtonShuffle />
         </button>
         {/* button per le lyrics */}

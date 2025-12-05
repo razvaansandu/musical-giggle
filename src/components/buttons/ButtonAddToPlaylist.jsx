@@ -122,18 +122,8 @@ export default function ButtonAddToPlaylist({ onSuccess, className = "", variant
 
           <button className={styles.menuItem} onClick={() => { setShowMenu(false); }}>
             <span className={styles.menuIcon} aria-hidden>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 7h4a4 4 0 0 1 4 4v0a4 4 0 0 0 4 4h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M20 17v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
-            <div>
-              <div className={styles.menuTitle}>Blend</div>
-              <div className={styles.menuDesc}>Fondi i gusti dei tuoi amici in una playlist</div>
-            </div>
-          </button>
-
-          <button className={styles.menuItem} onClick={() => { setShowMenu(false); }}>
+              {/*menu a tendina di trishi*/}
+              {/* <button className={styles.menuItem} onClick={() => { setShowMenu(false); }}>
             <span className={styles.menuIcon} aria-hidden>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -142,6 +132,20 @@ export default function ButtonAddToPlaylist({ onSuccess, className = "", variant
             <div>
               <div className={styles.menuTitle}>Cartella</div>
               <div className={styles.menuDesc}>Organizza le tue playlist</div>
+            </div>
+          </button> */}
+              {/* <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 7h4a4 4 0 0 1 4 4v0a4 4 0 0 0 4 4h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M20 17v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg> */}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart" viewBox="0 0 16 16">
+                <path d="M20 17v4h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+              </svg>
+            </span>
+            <div>
+              <div className={styles.menuTitle}>Brani piaciuti</div>
+              <div className={styles.menuDesc}>clicca qui per aggiungere il brano ascoltato</div>
             </div>
           </button>
         </div>
