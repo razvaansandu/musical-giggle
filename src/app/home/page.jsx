@@ -116,7 +116,7 @@ export default function HomePage() {
                   </a>
                 </div>
                 <div className={styles.grid}>
-                  {recentTracks.slice(0, 8).map((track, index) => (
+                  {recentTracks.slice(0, 7).map((track, index) => (
                     <TrackCard
                       key={`${track.id || "track"}-${index}`}
                       track={track}
@@ -171,12 +171,12 @@ export default function HomePage() {
               <section className={styles.section}>
                 <div className={styles.sectionHeader}>
                   <h2>Your playlists</h2>
-                  <ButtonAddToPlaylist
+                  {/* <ButtonAddToPlaylist
                     onSuccess={(created) => {
                       // Prepend the newly created playlist so it's visible immediately
                       setPlaylists((prev) => [created, ...(prev || [])]);
                     }}
-                  />
+                  />  */}
                 </div>
 
                 <div className={styles.grid}>
