@@ -10,6 +10,7 @@ import ButtonNextSong from "../buttons/buttonNextSong";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
+import VolumeButton from "../volume/Volume";
 import { MonitorPlay } from "lucide-react";
 
 export default function Player() {
@@ -47,14 +48,21 @@ export default function Player() {
     return result;
   };
 
-  const handleSeek = async (e) => {
+  const seekTimeoutRef = useRef(null);
+
+  const handleSeek = (e) => {
     const newTime = parseInt(e.target.value, 10);
     setProgress(newTime);
-    try {
-      await fetch(`/api/player/seek-to-position?position_ms=${newTime}`, { method: "PUT" });
-    } catch (err) {
-      console.error("Errore seek", err);
-    }
+    
+    if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current);
+    
+    seekTimeoutRef.current = setTimeout(async () => {
+      try {
+        await fetch(`/api/player/seek-to-position?position_ms=${newTime}`, { method: "PUT" });
+      } catch (err) {
+        console.error("Errore seek", err);
+      }
+    }, 500);
   };
 
   const formatTime = (ms) => {
@@ -286,6 +294,7 @@ export default function Player() {
             <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path> 
           </svg> 
         </button>
+        <VolumeButton />
       </div> 
 
       {showVideo && current && (

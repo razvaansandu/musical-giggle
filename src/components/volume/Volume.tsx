@@ -1,55 +1,84 @@
 import styles from './volume.module.css';
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Volume2, Volume1, VolumeX } from 'lucide-react';
 
 export default function VolumeButton() {
-  const [volume, setVolume] = useState(75);
-  const prevVolume = useRef(75);
+  const [volume, setVolume] = useState(50);
+  const [isMuted, setIsMuted] = useState(false);
+  const [prevVolume, setPrevVolume] = useState(50);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  function toggleMute() {
-    if (volume > 0) {
-      prevVolume.current = volume;
-      setVolume(0);
-    } else {
-      setVolume(prevVolume.current || 75);
+  // Sync volume with Spotify API (debounced)
+  useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(async () => {
+      try {
+        const volToSend = isMuted ? 0 : volume;
+        await fetch(`/api/player/set-volume?volume_percent=${volToSend}`, {
+          method: 'PUT',
+        });
+      } catch (error) {
+        console.error('Error setting volume:', error);
+      }
+    }, 200); // 200ms debounce
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [volume, isMuted]);
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVol = Number(e.target.value);
+    setVolume(newVol);
+    if (newVol > 0 && isMuted) {
+      setIsMuted(false);
     }
-  }
+    if (newVol === 0) {
+      setIsMuted(true);
+    }
+  };
+
+  const toggleMute = () => {
+    if (isMuted) {
+      setIsMuted(false);
+      setVolume(prevVolume || 50);
+    } else {
+      setPrevVolume(volume);
+      setVolume(0);
+      setIsMuted(true);
+    }
+  };
+
+  const getIcon = () => {
+    if (isMuted || volume === 0) return <VolumeX size={20} strokeWidth={1.5} />;
+    if (volume < 50) return <Volume1 size={20} strokeWidth={1.5} />;
+    return <Volume2 size={20} strokeWidth={1.5} />;
+  };
 
   return (
-    <div className={styles.volumeWrapper}>
-      <button
-        className={styles.volumeButton}
+    <div className={styles.container}>
+      <button 
+        className={styles.iconButton} 
         onClick={toggleMute}
-        aria-label={volume === 0 ? 'Unmute' : 'Mute'}
-        title={volume === 0 ? 'Unmute' : 'Mute'}
+        aria-label={isMuted ? "Unmute" : "Mute"}
       >
-        {volume === 0 ? (
-          //bottone mutato
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M5 9v6h4l5 5V4l-5 5H5z" fill="currentColor" />
-            <line x1="16" y1="8" x2="20" y2="16" stroke="currentColor" strokeWidth="2" />
-            <line x1="20" y1="8" x2="16" y2="16" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        ) : (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M5 9v6h4l5 5V4l-5 5H5z" fill="currentColor" />
-            <path d="M15.5 12c0-1.5-.9-2.8-2.2-3.4v6.8c1.3-.6 2.2-1.9 2.2-3.4z" fill="currentColor" />
-            <path d="M17.5 12c0 2.2-1.3 4.1-3.2 4.9v-9.8c1.9.8 3.2 2.7 3.2 4.9z" fill="currentColor" />
-          </svg>
-        )}
+        {getIcon()}
       </button>
-
-      <div className={styles.volumePopover} role="group" aria-label="Volume control">
-        <div className={styles.sliderContainer}>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
-            className={styles.volumeSlider}
-            aria-label="Volume slider"
-          />
-        </div>
+      
+      <div className={styles.sliderContainer}>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={isMuted ? 0 : volume}
+          onChange={handleVolumeChange}
+          className={styles.slider}
+          style={{
+            '--volume-percent': `${isMuted ? 0 : volume}%`
+          } as React.CSSProperties}
+          aria-label="Volume"
+        />
       </div>
     </div>
   );
