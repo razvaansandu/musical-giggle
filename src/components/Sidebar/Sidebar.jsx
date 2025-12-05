@@ -1,19 +1,14 @@
 "use client";
 
-import { Library, Search, ListMusic } from "lucide-react";
-import ButtonAddToPlaylist from "../buttons/ButtonAddToPlaylist";
-import ContextMenu from "../ContextMenu/ContextMenu";
+import { Library, Plus, Search, ListMusic } from "lucide-react";
 import styles from "../../app/home/home.module.css"; 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useContextMenu } from "../../hooks/useContextMenu";
 
 export default function AppSidebar() {
   const router = useRouter();
   const [filter, setFilter] = useState("Playlists");
   const [libraryItems, setLibraryItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const contextMenu = useContextMenu();
 
   useEffect(() => {
     async function fetchData() {
@@ -24,7 +19,7 @@ export default function AppSidebar() {
 
       if (!url) return;
 
-      try {
+      try { 
         const res = await fetch(url);
         if (!res.ok) throw new Error("Errore nel caricamento");
         
@@ -38,7 +33,7 @@ export default function AppSidebar() {
         console.error("Errore fetch sidebar:", error);
         setLibraryItems([]);
       }
-    }
+    } 
 
     fetchData();
   }, [filter]);
@@ -357,7 +352,7 @@ export default function AppSidebar() {
           <span>Your Library</span>
         </button>
         <div className={styles.headerButtons}>
-          {/* <ButtonAddToPlaylist
+          { <ButtonAddToPlaylist
             variant="sidebar"
             className={styles.roundButton}
             onSuccess={(created) => {
@@ -365,7 +360,7 @@ export default function AppSidebar() {
                 setLibraryItems((prev) => [created, ...(prev || [])]);
               }
             }}
-          /> */}
+          /> }
         </div>
       </div>
 

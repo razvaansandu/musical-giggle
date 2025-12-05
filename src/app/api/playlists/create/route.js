@@ -12,11 +12,35 @@ export async function POST(request) {
     body = null;
   }
 
-  const { user_id, name, description, public: isPublic } = body || {};
+  const { user_id: bodyUserId, name, description, public: isPublic } = body || {};
 
-  if (!user_id || !name) {
+  if (!name) {
     return NextResponse.json(
-      { error: "Missing user_id or name" },
+      { error: "Missing name" },
+      { status: 400 }
+    );
+  }
+
+  let user_id = bodyUserId;
+
+  // Se manca user_id, lo recuperiamo da /me
+  if (!user_id) {
+    try {
+      const meRes = await fetch("https://api.spotify.com/v1/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (meRes.ok) {
+        const meData = await meRes.json();
+        user_id = meData.id;
+      }
+    } catch (e) {
+      console.error("Error fetching user me:", e);
+    }
+  }
+
+  if (!user_id) {
+    return NextResponse.json(
+      { error: "Missing user_id" },
       { status: 400 }
     );
   }

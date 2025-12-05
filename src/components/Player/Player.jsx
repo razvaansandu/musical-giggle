@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 import PlayButton from "../buttons/PlayButton";
@@ -16,20 +16,35 @@ import ButtonAddToPlaylist from "../buttons/ButtonAddToPlaylist";
 export default function Player() {
   const [current, setCurrent] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [repeatMode, setRepeatMode] = useState("off");
   const [showLyrics, setShowLyrics] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const [lyrics, setLyrics] = useState("");
+  const [syncedLyrics, setSyncedLyrics] = useState([]);
+  const [isSynced, setIsSynced] = useState(false);
   const [loadingLyrics, setLoadingLyrics] = useState(false);
 // testo panebianco
   const fetchLyrics = async (artist, track) => {
     if (!artist || !track) return;
     setLoadingLyrics(true);
+    setSyncedLyrics([]);
+    setIsSynced(false);
     try {
       const res = await fetch(`/api/lyrics?artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}`);
       const data = await res.json();
-      setLyrics(data.lyrics || "Testo non disponibile.");
+      
+      if (data.synced) {
+        setSyncedLyrics(parseLrc(data.lyrics));
+        setIsSynced(true);
+      } else {
+        setLyrics(data.lyrics || "Testo non disponibile.");
+        setIsSynced(false);
+      }
     } catch (error) {
       console.error("Error fetching lyrics:", error);
       setLyrics("Errore nel caricamento del testo.");
+      setIsSynced(false);
     } finally {
       setLoadingLyrics(false);
     }
@@ -45,7 +60,7 @@ export default function Player() {
 
   const fetchCurrent = async () => {
     try {
-      const res = await fetch("/api/player/get-currently-playing-track");
+      const res = await fetch("/api/player/get-playback-state");
 
       if (res.status === 204) {
         setCurrent(null);
@@ -56,10 +71,25 @@ export default function Player() {
       const data = await res.json();
       setCurrent(data.item || null);
       setIsPlaying(data.is_playing || false);
+      setIsShuffle(data.shuffle_state || false);
+      setRepeatMode(data.repeat_state || "off");
+      if (data.progress_ms) {
+        setProgress(data.progress_ms);
+      }
     } catch (err) {
       console.error("Errore stato player", err);
     }
   };
+
+  useEffect(() => {
+    let interval;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setProgress((p) => p + 1000);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
 
   useEffect(() => {
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -104,6 +134,30 @@ export default function Player() {
       fetchCurrent();
     } catch (err) {
       console.error("Errore previous", err);
+    }
+  };
+
+  const handleShuffle = async () => {
+    try {
+      const newState = !isShuffle;
+      setIsShuffle(newState); // Optimistic update
+      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: "PUT" });
+      fetchCurrent();
+    } catch (err) {
+      console.error("Errore shuffle", err);
+      setIsShuffle(!isShuffle); // Revert on error
+    }
+  };
+
+  const handleRepeat = async (newMode) => {
+    try {
+      setRepeatMode(newMode); // Optimistic update
+      await fetch(`/api/player/set-repeat-mode?state=${newMode}`, { method: "PUT" });
+      fetchCurrent();
+    } catch (err) {
+      console.error("Errore repeat", err);
+      // Revert logic could be complex here, just refetch
+      fetchCurrent();
     }
   };
 
@@ -192,6 +246,13 @@ export default function Player() {
       </div>
 
 
+      {showVideo && current && (
+        <YouTubePlayer 
+          query={`${current.artists?.[0]?.name} ${current.name}`} 
+          onClose={() => setShowVideo(false)} 
+        />
+      )}
+
       <div className={`${styles.lyricsOverlay} ${showLyrics ? styles.open : ''}`}>
         {current && (
           <div className={styles.lyricsHeader}>
@@ -200,7 +261,25 @@ export default function Player() {
           </div>
         )}
         <div className={styles.lyricsContent}>
-          {loadingLyrics ? "Caricamento testo..." : lyrics}
+          {loadingLyrics ? "Caricamento testo..." : (
+            isSynced ? (
+              syncedLyrics.map((line, i) => {
+                // Determine if this line is active
+                // It is active if progress >= line.time AND (it's the last line OR progress < nextLine.time)
+                const isActive = progress >= line.time && (i === syncedLyrics.length - 1 || progress < syncedLyrics[i+1].time);
+                return (
+                  <div 
+                    key={i} 
+                    ref={isActive ? activeLineRef : null}
+                    className={`${styles.lyricsLine} ${isActive ? styles.lyricsLineActive : ''}`}
+                    onClick={() => handleSeek({ target: { value: line.time } })}
+                  >
+                    {line.text}
+                  </div>
+                )
+              })
+            ) : lyrics
+          )}
         </div>
       </div>
     </div>

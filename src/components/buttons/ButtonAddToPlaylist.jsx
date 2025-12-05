@@ -65,6 +65,9 @@ export default function ButtonAddToPlaylist({
       onSuccess?.(data);
       setShowModal(false);
       setName("Nuova Playlist");
+    } catch (err) {
+      console.error("Failed to create playlist:", err);
+      alert("Impossibile creare la playlist: " + err.message);
     } finally {
       setLoading(false);
     }
