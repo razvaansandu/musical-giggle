@@ -1,40 +1,40 @@
 "use client";
+import styles from './buttons.module.css';
+import { useState, useEffect } from 'react';
 
-import React, { useState } from "react";
-import styles from "./stopButton.module.css";
+export default function StopButton({ isPlaying = false, onClick }) {
+  const [isPlay, setIsPlay] = useState(isPlaying);
 
-export default function StopButton() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  useEffect(() => {
+    setIsPlay(isPlaying);
+  }, [isPlaying]);
 
-  const handleStop = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/player/pause-playback", {
-        method: "PUT",
-      });
-      if (!res.ok) throw new Error("Errore nel fermare la riproduzione");
-    } catch (err) {
-      setError(err.message);
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleClick = () => {
+    const next = !isPlay;
+    setIsPlay(next);
+    if (onClick) onClick(next);
   };
 
   return (
     <button
-      className={styles.stopButton}
-      onClick={handleStop}
-      disabled={loading}
-      title="Ferma"
-      aria-label="Ferma riproduzione"
+      className={`${styles.playButton} play`}
+      onClick={handleClick}
+      type="button"
+      aria-pressed={isPlay}
+      title={isPlay ? "Pause" : "Play"}
     >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <rect x="6" y="6" width="12" height="12" rx="2" />
-      </svg>
-      {error && <span className={styles.error}>{error}</span>}
+      {isPlay ? (
+       
+        <svg height="24" width="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"/>
+        </svg>
+      ) : (
+       <svg height="24" width="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"/>
+        </svg>
+        
+      )}
     </button>
+    
   );
 }

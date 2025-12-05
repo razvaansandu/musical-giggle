@@ -138,6 +138,7 @@
   justify-content: center;
 }
 
+
 .iconBtn:hover {
   color: var(--primary);
   background: rgba(29, 185, 84, 0.1);
@@ -232,22 +233,21 @@
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
-  transition: all 0.2s;
+  transition: all 0.2s; 
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
   border: 1px solid transparent;
-}
+} 
 
 .lyricsButton:hover {
   color: var(--text-primary);
-  border-color: var(--text-primary);
-}
+
+} 
 
 .lyricsButton.active {
-  color: var(--primary);
-  border-color: var(--primary);
+  color: var(--primary); 
   background: rgba(29, 185, 84, 0.1);
 }
 

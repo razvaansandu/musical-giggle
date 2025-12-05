@@ -4,13 +4,14 @@ import { useEffect, useState, useRef } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 import PlayButton from "../buttons/PlayButton";
-import StopButton from "../buttons/stopButton";
+import ButtonNextSong from "../buttons/buttonNextSong";
 import ButtonPrevSong from "../buttons/songButtonFirst";
-import ButtonNextSong from "../buttons/buttonNextSong";  
+import StopButton from "../buttons/stopButton";
+import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
-import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
-import { MonitorPlay } from "lucide-react";
+import ButtonAddToPlaylist from "../buttons/ButtonAddToPlaylist";
+
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -23,49 +24,9 @@ export default function Player() {
   const [syncedLyrics, setSyncedLyrics] = useState([]);
   const [isSynced, setIsSynced] = useState(false);
   const [loadingLyrics, setLoadingLyrics] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const activeLineRef = useRef(null);
-
-  const parseLrc = (lrc) => {
-    const lines = lrc.split("\n");
-    const result = [];
-    for (const line of lines) {
-      // Match [mm:ss.xx] or [mm:ss.xxx]
-      const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
-      if (match) {
-        const minutes = parseInt(match[1], 10);
-        const seconds = parseInt(match[2], 10);
-        // If 3 digits (milliseconds), use as is. If 2 digits (hundredths), multiply by 10.
-        const rawMs = match[3];
-        const ms = rawMs.length === 3 ? parseInt(rawMs, 10) : parseInt(rawMs, 10) * 10;
-        
-        const time = minutes * 60 * 1000 + seconds * 1000 + ms;
-        const text = match[4].trim();
-        if (text) result.push({ time, text });
-      }
-    }
-    return result;
-  };
-
-  const handleSeek = async (e) => {
-    const newTime = parseInt(e.target.value, 10);
-    setProgress(newTime);
-    try {
-      await fetch(`/api/player/seek-to-position?position_ms=${newTime}`, { method: "PUT" });
-    } catch (err) {
-      console.error("Errore seek", err);
-    }
-  };
-
-  const formatTime = (ms) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
-
+// testo panebianco
   const fetchLyrics = async (artist, track) => {
-    if (!artist || !track) return; 
+    if (!artist || !track) return;
     setLoadingLyrics(true);
     setSyncedLyrics([]);
     setIsSynced(false);
@@ -89,13 +50,7 @@ export default function Player() {
     }
   };
 
-  useEffect(() => {
-    if (showLyrics && isSynced && activeLineRef.current) {
-      activeLineRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [progress, showLyrics, isSynced]);
-
-  useEffect(() => {
+  useEffect(() => { 
     if (showLyrics && current) {
       const artist = current.artists?.[0]?.name;
       const track = current.name;
@@ -211,22 +166,22 @@ export default function Player() {
   if (deviceId) {
     return (
       <div className={styles.playerBar}>
-        <div className={styles.empty}>🎧 Sto inizializzando il player...</div>
-      </div> 
-    ); 
+        <div className={styles.empty}> Sto inizializzando il player...</div>
+      </div>
+    );
   }
 
   if (!current) {
     return (
       <div className={styles.playerBar}>
         <div className={styles.empty}>
-          Nessun brano in riproduzione. Clicca una track per iniziare 💿
+          Nessun brano in riproduzione. Clicca una track per iniziare 
         </div>
       </div>
     );
   }
 
-  const img = current?.album?.images?.[0]?.url;
+  const img = current?.album?.images?.[0]?.url; 
 
   return (
     <div className={styles.playerBar}>
@@ -235,58 +190,61 @@ export default function Player() {
           <img
             src={img}
             alt={current.name}
-            className={styles.cover}
-          />
-        )}
+            className={styles.cover} 
+          />  
+          
+        )}  
+        
+    
         <div>
           <div className={styles.title}>{current.name}</div>
           <div className={styles.artist}>
             {current.artists?.map((a) => a.name).join(", ")}
           </div>
-        </div>
+        </div> 
+        <div>
+          <ButtonAddToPlaylist/>
+          </div>
+            
       </div>
+
+      <div className={styles.left}>
+        <button onClick={handlePrev} className={styles.iconBtn}>
+          <ButtonLoop />
+        </button>
+        <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
+          <ButtonPrevSong />
+        </button>
+
+        <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
+          {isPlaying ? <StopButton /> : <PlayButton />}
+        </button>
+
+        <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
+          <ButtonNextSong />
+        </button>
+        <button onClick={handleNext} className={styles.iconBtn}>
+          <ButtonShuffle />
+        </button>
+        {/* button per le lyrics */}
+         <button
+        className={`${styles.iconBtn} ${showLyrics ? styles.active : ''}`}
+        onClick={() => setShowLyrics(!showLyrics)}
+        title="Testo"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
+
+          <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path>
+
+        </svg>
+      </button>
+      </div>
+      
      
-      <div className={styles.center}>
-        <div className={styles.controls}>
-          <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
-          <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} />
-          <PlayButton isPlaying={isPlaying} onClick={handlePlayPause} />
-          <ButtonNextSong onNext={handleNext} className={styles.iconBtn} />
-          <ButtonLoop mode={repeatMode} onChange={handleRepeat} className={styles.iconBtn} />
-        </div>
-        
-        <div className={styles.progressBarContainer}>
-          <span className={styles.time}>{formatTime(progress)}</span>
-          <input
-            type="range"
-            min="0"
-            max={current?.duration_ms || 0}
-            value={progress}
-            onChange={handleSeek}
-            className={styles.progressBar}
-            style={{ '--progress-percent': `${(progress / (current?.duration_ms || 1)) * 100}%` }}
-          />
-          <span className={styles.time}>{formatTime(current?.duration_ms || 0)}</span>
-        </div>
+      <div>
+        <VolumeButton></VolumeButton>
       </div>
-      <div className={styles.right}>
-        <button 
-          className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`}
-          onClick={() => setShowVideo(!showVideo)}
-          title="Miniplayer YouTube" 
-        >
-          <MonitorPlay size={16} />
-        </button>
-        <button 
-          className={`${styles.lyricsButton} ${showLyrics ? styles.active : ''}`}
-          onClick={() => setShowLyrics(!showLyrics)}
-          title="Testo" 
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
-            <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path> 
-          </svg> 
-        </button>
-      </div> 
+
 
       {showVideo && current && (
         <YouTubePlayer 
@@ -325,5 +283,5 @@ export default function Player() {
         </div>
       </div>
     </div>
-  ); 
+  );
 } 
