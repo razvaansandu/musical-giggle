@@ -243,7 +243,7 @@ export default function Player() {
      
       <div>
         <VolumeButton></VolumeButton>
-      </div>
+      </div> 
 
 
       {showVideo && current && (
