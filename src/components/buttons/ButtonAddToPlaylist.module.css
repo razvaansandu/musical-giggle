@@ -1,9 +1,7 @@
 
-.wrapper{
-  display:inline-flex;
-  flex-direction:column;
-  align-items:flex-start;
-  position: relative; /* ensure the absolute menu is positioned relative to the button wrapper */
+.wrapper {
+  position: relative;
+  display: inline-flex;
 }
 
 .button{
@@ -118,12 +116,13 @@
   right: -100;
   background: linear-gradient(180deg, #1e1e1e, #111111);
   border-radius: 10px;
-  padding:6px;
-  min-width:240px;
+  padding: 6px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.6);
   border: 1px solid rgba(255,255,255,0.04);
-  z-index:50;
+  z-index: 9999;
 }
+
+
 
 /* When used inside the left sidebar, open the menu to the right of the button */
 .wrapper[data-variant="sidebar"] .menu{

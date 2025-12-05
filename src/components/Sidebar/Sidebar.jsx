@@ -74,7 +74,9 @@ export default function AppSidebar() {
       key = item.album.id;
       image = item.album.images?.[0]?.url;
       title = item.album.name;
-      details = `Album • ${item.album.artists.map(a => a.name).join(", ")}`;
+      details = `Album • ${item.album.artists
+        .map((a) => a.name)
+        .join(", ")}`;
       imageClass = styles.itemImagePlaylist;
       linkUrl = `/album/${key}`;
     }  
@@ -101,6 +103,42 @@ export default function AppSidebar() {
     );
   };
 
+  // ✅ FUNZIONE MANCANTE
+  const getContextMenuItems = () => {
+    if (!selectedItem) return [];
+
+    const { item, type } = selectedItem;
+
+    switch (type) {
+      case "Playlists":
+        return [
+          {
+            label: "Open playlist",
+            onClick: () => router.push(`/playlist/${item.id}`),
+          },
+        ];
+
+      case "Artists":
+        return [
+          {
+            label: "Go to artist",
+            onClick: () => router.push(`/artist/${item.id}`),
+          },
+        ];
+
+      case "Albums":
+        return [
+          {
+            label: "Go to album",
+            onClick: () => router.push(`/album/${item.album.id}`),
+          },
+        ];
+
+      default:
+        return [];
+    }
+  };
+
   return (
     <div className={styles.libraryContainer}>
       <div className={styles.libraryHeader}>
@@ -113,7 +151,6 @@ export default function AppSidebar() {
             variant="sidebar"
             className={styles.roundButton}
             onSuccess={(created) => {
-              // if we're viewing Playlists, prepend the new playlist to the list
               if (filter === "Playlists") {
                 setLibraryItems((prev) => [created, ...(prev || [])]);
               }
@@ -153,11 +190,14 @@ export default function AppSidebar() {
       </div>
 
       <ContextMenu
-        visible={contextMenu.visible}
+        visible={contextMenu.visible && !!selectedItem}
         x={contextMenu.x}
         y={contextMenu.y}
         items={getContextMenuItems()}
-        onClose={contextMenu.close}
+        onClose={() => {
+          setSelectedItem(null);
+          contextMenu.close();
+        }}
       />
     </div>
   );
