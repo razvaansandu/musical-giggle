@@ -149,7 +149,7 @@ export default function Player() {
           </div>
         </div> 
         <div>
-          <ButtonAddToPlaylist/>
+          {/* <ButtonAddToPlaylist/>   */}
           </div>
             
       </div>

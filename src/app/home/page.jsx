@@ -171,12 +171,12 @@ export default function HomePage() {
               <section className={styles.section}>
                 <div className={styles.sectionHeader}>
                   <h2>Your playlists</h2>
-                  <ButtonAddToPlaylist
+                  {/* <ButtonAddToPlaylist
                     onSuccess={(created) => {
                       // Prepend the newly created playlist so it's visible immediately
                       setPlaylists((prev) => [created, ...(prev || [])]);
                     }}
-                  />
+                  />  */}
                 </div>
 
                 <div className={styles.grid}>

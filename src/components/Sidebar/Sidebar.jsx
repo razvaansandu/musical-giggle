@@ -48,161 +48,7 @@ export default function AppSidebar() {
     setFilter(newFilter); 
   };
 
-  const renderLibraryItem = (item) => {
-    let key, image, title, details, imageClass, linkUrl;
-
-    if (filter === "Playlists") {
-      if (!item.owner) return null;
-      key = item.id;
-      image = item.images?.[0]?.url;
-      title = item.name;
-      details = `Playlist • ${item.owner.display_name}`;
-      imageClass = styles.itemImagePlaylist;
-      linkUrl = `/playlist/${key}`;
-    } 
-    else if (filter === "Artists") {
-      if (item.type !== "artist") return null;
-      key = item.id;
-      image = item.images?.[0]?.url;
-      title = item.name;
-      details = "Artist";
-      imageClass = styles.itemImageArtist; 
-      linkUrl = `/artist/${key}`;
-    } 
-    else if (filter === "Albums") {
-      if (!item.album) return null;
-      key = item.album.id;
-      image = item.album.images?.[0]?.url;
-      title = item.album.name;
-      details = `Album • ${item.album.artists
-        .map((a) => a.name)
-        .join(", ")}`;
-      imageClass = styles.itemImagePlaylist;
-      linkUrl = `/album/${key}`;
-    }  
-    else {
-      return null;
-    }
-
-    return (
-      <div 
-        key={key} 
-        className={styles.libraryItem} 
-        onClick={() => router.push(linkUrl)}
-        onContextMenu={(e) => {
-          contextMenu.handleContextMenu(e);
-          setSelectedItem({ item, type: filter });
-        }}
-      >
-        {image && <img src={image} alt={title} className={imageClass} />}
-        <div className={styles.itemInfo}>
-          <span className={styles.itemTitle}>{title}</span>
-          <span className={styles.itemDetails}>{details}</span>
-        </div>
-      </div>
-    );
-  };
-
-  // ✅ FUNZIONE MANCANTE
   const getContextMenuItems = () => {
-    if (!selectedItem) return [];
-
-    const { item, type } = selectedItem;
-
-    switch (type) {
-      case "Playlists":
-        return [
-          {
-            label: "Open playlist",
-            onClick: () => router.push(`/playlist/${item.id}`),
-          },
-        ];
-
-      case "Artists":
-        return [
-          {
-            label: "Go to artist",
-            onClick: () => router.push(`/artist/${item.id}`),
-          },
-        ];
-
-      case "Albums":
-        return [
-          {
-            label: "Go to album",
-            onClick: () => router.push(`/album/${item.album.id}`),
-          },
-        ];
-
-      default:
-        return [];
-    }
-  };
-
-  return (
-    <div className={styles.libraryContainer}>
-      <div className={styles.libraryHeader}>
-        <button className={styles.libraryTitle}>
-          <Library />
-          <span>Your Library</span>
-        </button>
-        <div className={styles.headerButtons}>
-          {/* <ButtonAddToPlaylist
-            variant="sidebar"
-            className={styles.roundButton}
-            onSuccess={(created) => {
-              if (filter === "Playlists") {
-                setLibraryItems((prev) => [created, ...(prev || [])]);
-              }
-            }}
-          /> */}
-        </div>
-      </div>
-
-      <div className={styles.libraryFilters}>
-        {["Playlists", "Artists", "Albums"].map((f) => (
-          <button 
-            key={f} 
-            className={styles.chip}
-            onClick={() => handleFilterChange(f)}
-            style={{
-              backgroundColor: filter === f ? "white" : "",
-              color: filter === f ? "black" : "",
-            }}
-          >
-            {f}
-          </button>
-        ))} 
-      </div>
-
-      <div className={styles.libraryUtilities}>
-        <button className={`${styles.iconButton} ${styles.searchIcon}`}>
-          <Search size={18} />
-        </button>
-        <button className={styles.sortButton}>
-          <span>Recents</span>
-          <ListMusic size={16} />
-        </button>
-      </div> 
-
-      <div className={styles.libraryList}>
-        {libraryItems.map(renderLibraryItem)}
-      </div>
-
-      <ContextMenu
-        visible={contextMenu.visible && !!selectedItem}
-        x={contextMenu.x}
-        y={contextMenu.y}
-        items={getContextMenuItems()}
-        onClose={() => {
-          setSelectedItem(null);
-          contextMenu.close();
-        }}
-      />
-    </div>
-  );
-
-  function getContextMenuItems() {
     if (!selectedItem) return [];
     const { item, type } = selectedItem;
 
@@ -337,7 +183,7 @@ export default function AppSidebar() {
       items.push({
         id: "copy-link",
         label: "Copia link",
-        icon: "�",
+        icon: "🔗",
         action: () => {
           const link = `https://open.spotify.com/artist/${item.id}`;
           navigator.clipboard.writeText(link);
@@ -424,7 +270,7 @@ export default function AppSidebar() {
       items.push({
         id: "copy-link",
         label: "Copia link",
-        icon: "�",
+        icon: "🔗",
         action: () => {
           const albumId = item.album?.id || item.id;
           const link = `https://open.spotify.com/album/${albumId}`;
@@ -446,6 +292,124 @@ export default function AppSidebar() {
     }
 
     return items;
-  }
+  };
+
+  const renderLibraryItem = (item) => {
+    let key, image, title, details, imageClass, linkUrl;
+
+    if (filter === "Playlists") {
+      if (!item.owner) return null;
+      key = item.id;
+      image = item.images?.[0]?.url;
+      title = item.name;
+      details = `Playlist • ${item.owner.display_name}`;
+      imageClass = styles.itemImagePlaylist;
+      linkUrl = `/playlist/${key}`;
+    } 
+    else if (filter === "Artists") {
+      if (item.type !== "artist") return null;
+      key = item.id;
+      image = item.images?.[0]?.url;
+      title = item.name;
+      details = "Artist";
+      imageClass = styles.itemImageArtist; 
+      linkUrl = `/artist/${key}`;
+    } 
+    else if (filter === "Albums") {
+      if (!item.album) return null;
+      key = item.album.id;
+      image = item.album.images?.[0]?.url;
+      title = item.album.name;
+      details = `Album • ${item.album.artists
+        .map((a) => a.name)
+        .join(", ")}`;
+      imageClass = styles.itemImagePlaylist;
+      linkUrl = `/album/${key}`;
+    }  
+    else {
+      return null;
+    }
+
+    return (
+      <div 
+        key={key} 
+        className={styles.libraryItem} 
+        onClick={() => router.push(linkUrl)}
+        onContextMenu={(e) => {
+          contextMenu.handleContextMenu(e);
+          setSelectedItem({ item, type: filter });
+        }}
+      >
+        {image && <img src={image} alt={title} className={imageClass} />}
+        <div className={styles.itemInfo}>
+          <span className={styles.itemTitle}>{title}</span>
+          <span className={styles.itemDetails}>{details}</span>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className={styles.libraryContainer}>
+      <div className={styles.libraryHeader}>
+        <button className={styles.libraryTitle}>
+          <Library />
+          <span>Your Library</span>
+        </button>
+        <div className={styles.headerButtons}>
+          {/* <ButtonAddToPlaylist
+            variant="sidebar"
+            className={styles.roundButton}
+            onSuccess={(created) => {
+              if (filter === "Playlists") {
+                setLibraryItems((prev) => [created, ...(prev || [])]);
+              }
+            }}
+          /> */}
+        </div>
+      </div>
+
+      <div className={styles.libraryFilters}>
+        {["Playlists", "Artists", "Albums"].map((f) => (
+          <button 
+            key={f} 
+            className={styles.chip}
+            onClick={() => handleFilterChange(f)}
+            style={{
+              backgroundColor: filter === f ? "white" : "",
+              color: filter === f ? "black" : "",
+            }}
+          >
+            {f}
+          </button>
+        ))} 
+      </div>
+
+      <div className={styles.libraryUtilities}>
+        <button className={`${styles.iconButton} ${styles.searchIcon}`}>
+          <Search size={18} />
+        </button>
+        <button className={styles.sortButton}>
+          <span>Recents</span>
+          <ListMusic size={16} />
+        </button>
+      </div> 
+
+      <div className={styles.libraryList}>
+        {libraryItems.map(renderLibraryItem)}
+      </div>
+
+      <ContextMenu
+        visible={contextMenu.visible && !!selectedItem}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={getContextMenuItems()}
+        onClose={() => {
+          setSelectedItem(null);
+          contextMenu.close();
+        }}
+      />
+    </div>
+  );
 }
  
