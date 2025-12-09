@@ -4,14 +4,15 @@ import { useEffect, useState, useRef } from "react";
 import styles from "./Player.module.css";
 import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 import PlayButton from "../buttons/PlayButton";
-import StopButton from "../buttons/stopButton";
+import ButtonNextSong from "../buttons/buttonNextSong";
 import ButtonPrevSong from "../buttons/songButtonFirst";
-import ButtonNextSong from "../buttons/buttonNextSong";  
+import StopButton from "../buttons/stopButton";
+import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
-import VolumeButton from "../volume/Volume";
-import { MonitorPlay } from "lucide-react";
+
+import { MonitorPlay, ListMusic } from "lucide-react";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -20,12 +21,15 @@ export default function Player() {
   const [repeatMode, setRepeatMode] = useState("off");
   const [showLyrics, setShowLyrics] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
+  const [queue, setQueue] = useState([]);
   const [lyrics, setLyrics] = useState("");
   const [syncedLyrics, setSyncedLyrics] = useState([]);
   const [isSynced, setIsSynced] = useState(false);
   const [loadingLyrics, setLoadingLyrics] = useState(false);
   const [progress, setProgress] = useState(0);
   const activeLineRef = useRef(null);
+  const queueRef = useRef(null);
 
   const parseLrc = (lrc) => {
     const lines = lrc.split("\n");
@@ -73,7 +77,7 @@ export default function Player() {
   };
 
   const fetchLyrics = async (artist, track) => {
-    if (!artist || !track) return; 
+    if (!artist || !track) return;
     setLoadingLyrics(true);
     setSyncedLyrics([]);
     setIsSynced(false);
@@ -97,13 +101,7 @@ export default function Player() {
     }
   };
 
-  useEffect(() => {
-    if (showLyrics && isSynced && activeLineRef.current) {
-      activeLineRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [progress, showLyrics, isSynced]);
-
-  useEffect(() => {
+  useEffect(() => { 
     if (showLyrics && current) {
       const artist = current.artists?.[0]?.name;
       const track = current.name;
@@ -154,9 +152,81 @@ export default function Player() {
       });
     };
 
+    // Fetch initial state immediately
+    fetchCurrent();
+    
+    // Also fetch the last played track if nothing is playing
+    fetchRecentlyPlayed();
+
     const interval = setInterval(fetchCurrent, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch recently played to show last track when nothing is playing
+  const fetchRecentlyPlayed = async () => {
+    try {
+      const res = await fetch("/api/player/get-recently-played-tracks?limit=1");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.items && data.items.length > 0 && !current) {
+          setCurrent(data.items[0].track);
+        }
+      }
+    } catch (err) {
+      console.error("Errore recently played", err);
+    }
+  };
+
+  // Fetch queue
+  const fetchQueue = async () => {
+    try {
+      const res = await fetch("/api/player/get-user-queue");
+      console.log("Queue response status:", res.status, "ok:", res.ok);
+      
+      if (res.status === 204) {
+        console.log("No active device - empty queue");
+        setQueue([]);
+        return;
+      }
+      
+      const data = await res.json();
+      console.log("Queue response data:", data);
+      
+      if (data.queue && Array.isArray(data.queue)) {
+        setQueue(data.queue);
+      } else if (data.error) {
+        console.error("Queue API error:", data.error);
+        setQueue([]);
+      } else {
+        console.log("No queue array in response, full data:", JSON.stringify(data));
+        setQueue([]);
+      }
+    } catch (err) {
+      console.error("Errore fetch queue", err);
+      setQueue([]);
+    }
+  };
+
+  // Toggle queue menu
+  const toggleQueue = () => {
+    if (!showQueue) {
+      fetchQueue();
+    }
+    setShowQueue(!showQueue);
+  };
+
+  // Close queue when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (queueRef.current && !queueRef.current.contains(e.target)) {
+        setShowQueue(false);
+      }
+    };
+    if (showQueue) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showQueue]);
 
   const handlePlayPause = async () => {
     try {
@@ -219,22 +289,22 @@ export default function Player() {
   if (deviceId) {
     return (
       <div className={styles.playerBar}>
-        <div className={styles.empty}>🎧 Sto inizializzando il player...</div>
-      </div> 
-    ); 
+        <div className={styles.empty}> 🎧 Sto inizializzando il player...</div>
+      </div>
+    );
   }
 
-  if (!current) {
+  if (!current) { 
     return (
       <div className={styles.playerBar}>
         <div className={styles.empty}>
-          Nessun brano in riproduzione. Clicca una track per iniziare 💿
+          Nessun brano in riproduzione. Clicca una track per iniziare 
         </div>
       </div>
     );
   }
 
-  const img = current?.album?.images?.[0]?.url;
+  const img = current?.album?.images?.[0]?.url; 
 
   return (
     <div className={styles.playerBar}>
@@ -243,23 +313,38 @@ export default function Player() {
           <img
             src={img}
             alt={current.name}
-            className={styles.cover}
-          />
-        )}
+            className={styles.cover} 
+          />  
+          
+        )}  
+        
+    
         <div>
           <div className={styles.title}>{current.name}</div>
           <div className={styles.artist}>
             {current.artists?.map((a) => a.name).join(", ")}
           </div>
-        </div>
+        </div> 
+        <div>
+          
+          </div>
+            
       </div>
-     
+
       <div className={styles.center}>
         <div className={styles.controls}>
           <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
-          <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} />
-          <PlayButton isPlaying={isPlaying} onClick={handlePlayPause} />
-          <ButtonNextSong onNext={handleNext} className={styles.iconBtn} />
+          <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
+            <ButtonPrevSong />
+          </button>
+
+          <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
+            {isPlaying ? <StopButton /> : <PlayButton />}
+          </button>
+
+          <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
+            <ButtonNextSong />
+          </button>
           <ButtonLoop mode={repeatMode} onChange={handleRepeat} className={styles.iconBtn} />
         </div>
         
@@ -277,9 +362,19 @@ export default function Player() {
           <span className={styles.time}>{formatTime(current?.duration_ms || 0)}</span>
         </div>
       </div>
+      
+     
+    
       <div className={styles.right}>
         <button 
-          className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`}
+          className={`${styles.lyricsButton} ${showQueue ? styles.active : ''}`} 
+          onClick={toggleQueue}
+          title="Coda" 
+        >
+          <ListMusic size={16} />
+        </button>
+        <button 
+          className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`} 
           onClick={() => setShowVideo(!showVideo)}
           title="Miniplayer YouTube" 
         >
@@ -295,6 +390,38 @@ export default function Player() {
           </svg> 
         </button>
         <VolumeButton />
+
+        {/* Queue Dropdown */}
+        {showQueue && (
+          <div ref={queueRef} className={styles.queueDropdown}>
+            <div className={styles.queueHeader}>
+              <span>Prossime in coda</span>
+            </div>
+            <div className={styles.queueList}>
+              {queue.length === 0 ? (
+                <div className={styles.queueEmpty}>
+                  {isPlaying ? "Nessun brano in coda" : "Avvia la riproduzione per vedere la coda"}
+                </div>
+              ) : (
+                queue.slice(0, 10).map((track, index) => (
+                  <div key={`${track.id}-${index}`} className={styles.queueItem}>
+                    <img 
+                      src={track.album?.images?.[2]?.url || track.album?.images?.[0]?.url} 
+                      alt={track.name}
+                      className={styles.queueItemCover}
+                    />
+                    <div className={styles.queueItemInfo}>
+                      <div className={styles.queueItemTitle}>{track.name}</div>
+                      <div className={styles.queueItemArtist}>
+                        {track.artists?.map(a => a.name).join(", ")}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
       </div> 
 
       {showVideo && current && (
@@ -312,7 +439,7 @@ export default function Player() {
           </div>
         )}
         <div className={styles.lyricsContent}>
-          {loadingLyrics ? "Caricamento testo..." : (
+          {loadingLyrics ? "Caricamento testo...." : (
             isSynced ? (
               syncedLyrics.map((line, i) => {
                 // Determine if this line is active
@@ -326,7 +453,8 @@ export default function Player() {
                     onClick={() => handleSeek({ target: { value: line.time } })}
                   >
                     {line.text}
-                  </div>
+                  </div> 
+                  
                 )
               })
             ) : lyrics
@@ -334,5 +462,5 @@ export default function Player() {
         </div>
       </div>
     </div>
-  ); 
+  );
 } 

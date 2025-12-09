@@ -4,7 +4,7 @@ import { Library, Plus, Search, ListMusic } from "lucide-react";
 import styles from "../../app/home/home.module.css"; 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import ButtonAddToPlaylist from "../../components/buttons/ButtonAddToPlaylist"; 
 export default function AppSidebar() {
   const router = useRouter();
   const [filter, setFilter] = useState("Playlists");
@@ -100,10 +100,8 @@ export default function AppSidebar() {
           <span>Your Library</span>
         </button>
         <div className={styles.headerButtons}>
-          <button className={styles.roundButton}>
-            <Plus />
-          </button>
-        </div>
+        <ButtonAddToPlaylist/> 
+        </div>  
       </div>
 
       <div className={styles.libraryFilters}>

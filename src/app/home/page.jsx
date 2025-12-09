@@ -7,10 +7,12 @@ import styles from "./home.module.css";
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
+import ScrollRow from "../../components/ScrollRow/ScrollRow";
 
 import ArtistCard from "../../components/Cards/ArtistCard";
 import TrackCard from "../../components/Cards/TrackCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
+import AlbumCard from "../../components/Cards/AlbumCard";
 import Loader from "../../components/Loader/Loader";
 import ButtonAddToPlaylist from "../../components/buttons/ButtonAddToPlaylist";
 
@@ -21,8 +23,10 @@ export default function HomePage() {
   const [topTracks, setTopTracks] = useState([]);
   const [recentTracks, setRecentTracks] = useState([]);
   const [playlists, setPlaylists] = useState([]);
+  const [savedAlbums, setSavedAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("all");
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -36,12 +40,14 @@ export default function HomePage() {
           topTracksRes,
           recentRes,
           playlistsRes,
+          albumsRes,
         ] = await Promise.all([
           fetch("/api/spotify/get-user-profile"),
-          fetch("/api/spotify/get-user-top?type=artists&limit=6"),
-          fetch("/api/spotify/get-user-top?type=tracks&limit=6"),
-          fetch("/api/player/get-recently-played-tracks"),
-          fetch("/api/playlists/user"),
+          fetch("/api/spotify/get-user-top?type=artists&limit=20"),
+          fetch("/api/spotify/get-user-top?type=tracks&limit=20"),
+          fetch("/api/player/get-recently-played-tracks?limit=50"),
+          fetch("/api/playlists/user?limit=50"),
+          fetch("/api/albums/saved?limit=50"),
         ]);
 
         if (!profileRes.ok) throw new Error("Errore profilo utente");
@@ -55,12 +61,14 @@ export default function HomePage() {
         const topTracksJson = await topTracksRes.json();
         const recentJson = await recentRes.json();
         const playlistsJson = await playlistsRes.json();
+        const albumsJson = albumsRes.ok ? await albumsRes.json() : { items: [] };
 
         console.log("PROFILE:", profileJson);
         console.log("TOP ARTISTS:", topArtistsJson);
         console.log("TOP TRACKS:", topTracksJson);
         console.log("RECENT:", recentJson);
         console.log("PLAYLISTS:", playlistsJson);
+        console.log("ALBUMS:", albumsJson);
 
         setProfile(profileJson);
 
@@ -73,6 +81,10 @@ export default function HomePage() {
         setRecentTracks(recentItems);
 
         setPlaylists(playlistsJson.items ?? playlistsJson ?? []);
+        
+        // Albums are wrapped in { album: {...} } objects
+        const albums = (albumsJson.items ?? []).map(item => item.album).filter(Boolean);
+        setSavedAlbums(albums);
       } catch (err) {
         console.error("Errore nella home:", err);
         setError(err.message || "Errore nel caricamento della home");
@@ -90,7 +102,7 @@ export default function HomePage() {
 
       <div className={styles.content}>
         <Sidebar />
-
+       
         <main className={styles.mainContent}>
           {loading && (
             <div style={{ marginTop: 40 }}>
@@ -106,89 +118,150 @@ export default function HomePage() {
 
           {!loading && (
             <>
-             
-              {/* RECENTLY PLAYED */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Recently played</h2>
-                  <a href="/search" className={styles.seeAllLink}>
-                    See all →
-                  </a>
-                </div>
-                <div className={styles.grid}>
-                  {recentTracks.slice(0, 8).map((track, index) => (
-                    <TrackCard
-                      key={`${track.id || "track"}-${index}`}
-                      track={track}
-                      onClick={() => {
-                        console.log("HOME: Navigating to /track/", track.id);
-                        router.push(`/track/${track.id}`);
+              <div className={styles.filterButtons}>
+                <button 
+                  className={`${styles.buttonGabry} ${activeFilter === 'all' ? styles.buttonGabryActive : ''}`}
+                  onClick={() => setActiveFilter('all')}
+                > 
+                  Tutto  
+                </button> 
+                <button 
+                  className={`${styles.buttonGabry} ${activeFilter === 'playlists' ? styles.buttonGabryActive : ''}`}
+                  onClick={() => setActiveFilter('playlists')}
+                > 
+                  Playlist  
+                </button> 
+                <button 
+                  className={`${styles.buttonGabry} ${activeFilter === 'albums' ? styles.buttonGabryActive : ''}`}
+                  onClick={() => setActiveFilter('albums')}
+                > 
+                  Album   
+                </button>  
+                <button 
+                  className={`${styles.buttonGabry} ${activeFilter === 'artists' ? styles.buttonGabryActive : ''}`}
+                  onClick={() => setActiveFilter('artists')}
+                > 
+                  Artist   
+                </button>  
+              </div>
+
+              {/* FILTERED CONTENT */}
+              {activeFilter === 'all' && (
+                <>
+                  {/* RECENTLY PLAYED */}
+                  <ScrollRow title="Recently played" seeAllLink="/search">
+                    {recentTracks.map((track, index) => (
+                      <TrackCard
+                        key={`${track.id || "track"}-${index}`}
+                        track={track}
+                        onClick={() => router.push(`/track/${track.id}`)}
+                      />
+                    ))}
+                  </ScrollRow>
+
+                  {/* YOUR ALBUMS */}
+                  <ScrollRow title="Your albums" seeAllLink="/search">
+                    {savedAlbums.map((album, index) => (
+                      <AlbumCard
+                        key={`${album.id || "album"}-${index}`}
+                        album={album}
+                        onClick={() => router.push(`/album/${album.id}`)}
+                      />
+                    ))}
+                  </ScrollRow>
+
+                  {/* YOUR PLAYLISTS */}
+                  <ScrollRow 
+                    title="Your playlists" 
+                    rightElement={
+                      <ButtonAddToPlaylist
+                        onSuccess={(created) => {
+                          setPlaylists((prev) => [created, ...(prev || [])]);
+                        }}
+                      />
+                    }
+                  >
+                    {playlists.map((pl, index) => (
+                      <PlaylistCard
+                        key={`${pl.id || "playlist"}-${index}`}
+                        playlist={pl}
+                        onClick={() => router.push(`/playlist/${pl.id}`)}
+                      />
+                    ))}
+                  </ScrollRow>
+
+                  {/* TOP ARTISTS */}
+                  <ScrollRow title="Your top artists" seeAllLink="/search">
+                    {topArtists.map((artist, index) => (
+                      <ArtistCard
+                        key={`${artist.id || "artist"}-${index}`}
+                        artist={artist}
+                        onClick={() => router.push(`/artist/${artist.id}`)}
+                      />
+                    ))}
+                  </ScrollRow>
+
+                  {/* TOP TRACKS */}
+                  <ScrollRow title="Your top tracks" seeAllLink="/search">
+                    {topTracks.map((track, index) => (
+                      <TrackCard
+                        key={`${track.id || "top-track"}-${index}`}
+                        track={track}
+                        onClick={() => router.push(`/track/${track.id}`)}
+                      />
+                    ))}
+                  </ScrollRow>
+                </>
+              )}
+
+              {activeFilter === 'playlists' && (
+                <ScrollRow 
+                  title="Your playlists" 
+                  rightElement={
+                    <ButtonAddToPlaylist
+                      onSuccess={(created) => {
+                        setPlaylists((prev) => [created, ...(prev || [])]);
                       }}
                     />
-                  ))}
-                </div>
-              </section>
-
-              {/* TOP ARTISTS */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Your top artists</h2>
-                  <a href="/search" className={styles.seeAllLink}>
-                    See all →
-                  </a>
-                </div>
-                <div className={styles.grid}>
-                  {topArtists.slice(0, 6).map((artist, index) => (
-                    <ArtistCard
-                      key={`${artist.id || "artist"}-${index}`}
-                      artist={artist}
-                      onClick={() => router.push(`/artist/${artist.id}`)}
-                    />
-                  ))}
-                </div>
-              </section>
-
-              {/* TOP TRACKS */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Your top tracks</h2>
-                  <a href="/search" className={styles.seeAllLink}>
-                    See all →
-                  </a>
-                </div>
-                <div className={styles.grid}>
-                  {topTracks.slice(0, 6).map((track, index) => (
-                    <TrackCard
-                      key={`${track.id || "top-track"}-${index}`}
-                      track={track}
-                      onClick={() => router.push(`/track/${track.id}`)}
-                    />
-                  ))}
-                </div>
-              </section>
-
-              {/* PLAYLISTS */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Your playlists</h2>
-                  <ButtonAddToPlaylist
-                    onSuccess={(created) => {
-                      // Prepend the newly created playlist so it's visible immediately
-                      setPlaylists((prev) => [created, ...(prev || [])]);
-                    }}
-                  />
-                </div>
-
-                <div className={styles.grid}>
-                  {playlists.slice(0, 8).map((pl, index) => (
+                  }
+                >
+                  {playlists.map((pl, index) => (
                     <PlaylistCard
                       key={`${pl.id || "playlist"}-${index}`}
                       playlist={pl}
                       onClick={() => router.push(`/playlist/${pl.id}`)}
                     />
                   ))}
-                </div>
-              </section>
+                </ScrollRow>
+              )}
+
+              {activeFilter === 'albums' && (
+                <ScrollRow title="Your saved albums">
+                  {savedAlbums.length > 0 ? (
+                    savedAlbums.map((album, index) => (
+                      <AlbumCard
+                        key={`${album.id || "album"}-${index}`}
+                        album={album}
+                        onClick={() => router.push(`/album/${album.id}`)}
+                      />
+                    ))
+                  ) : (
+                    <p style={{ color: 'var(--text-secondary)' }}>Nessun album salvato</p>
+                  )}
+                </ScrollRow>
+              )}
+
+              {activeFilter === 'artists' && (
+                <ScrollRow title="Your top artists">
+                  {topArtists.map((artist, index) => (
+                    <ArtistCard
+                      key={`${artist.id || "artist"}-${index}`}
+                      artist={artist}
+                      onClick={() => router.push(`/artist/${artist.id}`)}
+                    />
+                  ))}
+                </ScrollRow>
+              )}
             </>
           )}
         </main>

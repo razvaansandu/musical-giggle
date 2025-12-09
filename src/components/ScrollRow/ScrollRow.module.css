@@ -1,0 +1,132 @@
+.section {
+  margin-bottom: 32px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.seeAllLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: #b3b3b3;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.seeAllLink:hover {
+  color: #fff;
+}
+
+/* Scroll Container */
+.scrollWrapper {
+  position: relative;
+}
+
+.scrollRow {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollRow::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollRow > * {
+  flex-shrink: 0;
+  width: 180px;
+  min-width: 180px;
+}
+
+/* Arrow Buttons */
+.arrowButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.arrowButton:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.arrowButton:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.arrowLeft {
+  left: -8px;
+}
+
+.arrowRight {
+  right: -8px;
+}
+
+/* Gradient fade effect on edges when scrollable */
+.scrollWrapper::before,
+.scrollWrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.scrollWrapper::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(18, 18, 18, 1), transparent);
+}
+
+.scrollWrapper::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(18, 18, 18, 1), transparent);
+}
+
+.scrollWrapper:has(.arrowLeft)::before {
+  opacity: 1;
+}
+
+.scrollWrapper:has(.arrowRight)::after {
+  opacity: 1;
+}
