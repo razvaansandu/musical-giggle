@@ -118,7 +118,6 @@ export default function HomePage() {
 
           {!loading && (
             <>
-<<<<<<< HEAD
               <div className={styles.filterButtons}>
                 <button 
                   className={`${styles.buttonGabry} ${activeFilter === 'all' ? styles.buttonGabryActive : ''}`}
@@ -169,7 +168,7 @@ export default function HomePage() {
                         onClick={() => router.push(`/album/${album.id}`)}
                       />
                     ))}
-                  </ScrollRow>
+                  </ScrollRow> 
 
                   {/* YOUR PLAYLISTS */}
                   <ScrollRow 
@@ -227,83 +226,6 @@ export default function HomePage() {
                   }
                 >
                   {playlists.map((pl, index) => (
-=======
-             
-              {/* RECENTLY PLAYED */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Recently played</h2>
-                  <a href="/search" className={styles.seeAllLink}>
-                    See all →
-                  </a>
-                </div>
-                <div className={styles.grid}>
-                  {recentTracks.slice(0, 7).map((track, index) => (
-                    <TrackCard
-                      key={`${track.id || "track"}-${index}`}
-                      track={track}
-                      onClick={() => {
-                        console.log("HOME: Navigating to /track/", track.id);
-                        router.push(`/track/${track.id}`);
-                      }}
-                    />
-                  ))}
-                </div>
-              </section>
-
-              {/* TOP ARTISTS */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Your top artists</h2>
-                  <a href="/search" className={styles.seeAllLink}>
-                    See all →
-                  </a>
-                </div>
-                <div className={styles.grid}>
-                  {topArtists.slice(0, 6).map((artist, index) => (
-                    <ArtistCard
-                      key={`${artist.id || "artist"}-${index}`}
-                      artist={artist}
-                      onClick={() => router.push(`/artist/${artist.id}`)}
-                    />
-                  ))}
-                </div>
-              </section>
-
-              {/* TOP TRACKS */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Your top tracks</h2>
-                  <a href="/search" className={styles.seeAllLink}>
-                    See all →
-                  </a>
-                </div>
-                <div className={styles.grid}>
-                  {topTracks.slice(0, 6).map((track, index) => (
-                    <TrackCard
-                      key={`${track.id || "top-track"}-${index}`}
-                      track={track}
-                      onClick={() => router.push(`/track/${track.id}`)}
-                    />
-                  ))}
-                </div>
-              </section>
-
-              {/* PLAYLISTS */}
-              <section className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Your playlists</h2>
-                  {/* <ButtonAddToPlaylist
-                    onSuccess={(created) => {
-                      // Prepend the newly created playlist so it's visible immediately
-                      setPlaylists((prev) => [created, ...(prev || [])]);
-                    }}
-                  />  */}
-                </div>
-
-                <div className={styles.grid}>
-                  {playlists.slice(0, 8).map((pl, index) => (
->>>>>>> development
                     <PlaylistCard
                       key={`${pl.id || "playlist"}-${index}`}
                       playlist={pl}
@@ -343,8 +265,7 @@ export default function HomePage() {
             </>
           )}
         </main>
-      </div>
-
+      </div> 
       <Player />
     </div>
   );

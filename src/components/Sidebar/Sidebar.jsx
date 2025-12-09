@@ -4,43 +4,54 @@ import { Library, Plus, Search, ListMusic } from "lucide-react";
 import styles from "../../app/home/home.module.css"; 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import ButtonAddToPlaylist from "../../components/buttons/ButtonAddToPlaylist"; 
+import ButtonAddToPlaylist from "../../components/buttons/ButtonAddToPlaylist";
+import ContextMenu from "../ContextMenu/ContextMenu";
+
 export default function AppSidebar() {
   const router = useRouter();
   const [filter, setFilter] = useState("Playlists");
   const [libraryItems, setLibraryItems] = useState([]);
+  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const fetchData = async () => {
+    let url = "";
+    if (filter === "Playlists") url = "/api/playlists/user?limit=50";
+    else if (filter === "Albums") url = "/api/albums/saved?limit=50";
+    else if (filter === "Artists") url = "/api/spotify/get-followed-artists?limit=50";
+
+    if (!url) return;
+
+    try { 
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Errore nel caricamento");
+      
+      const data = await res.json();
+      if (filter === "Artists") {
+        setLibraryItems(data.artists?.items || []);
+      } else {
+        setLibraryItems(data.items || []);
+      }
+    } catch (error) {
+      console.error("Errore fetch sidebar:", error);
+      setLibraryItems([]);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      let url = "";
-      if (filter === "Playlists") url = "/api/playlists/user?limit=50";
-      else if (filter === "Albums") url = "/api/albums/saved?limit=50";
-      else if (filter === "Artists") url = "/api/spotify/get-followed-artists?limit=50";
-
-      if (!url) return;
-
-      try { 
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Errore nel caricamento");
-        
-        const data = await res.json();
-        if (filter === "Artists") {
-          setLibraryItems(data.artists?.items || []);
-        } else {
-          setLibraryItems(data.items || []);
-        }
-      } catch (error) {
-        console.error("Errore fetch sidebar:", error);
-        setLibraryItems([]);
-      }
-    } 
-
     fetchData();
   }, [filter]);
 
   const handleFilterChange = (newFilter) => {
     setLibraryItems([]); 
     setFilter(newFilter); 
+  };
+
+  const handleContextMenu = (e, item, type) => {
+    e.preventDefault();
+    setContextMenu({ visible: true, x: e.pageX, y: e.pageY });
+    setSelectedItem({ item, type });
   };
 
   const getContextMenuItems = () => {
@@ -330,10 +341,7 @@ export default function AppSidebar() {
         key={key} 
         className={styles.libraryItem} 
         onClick={() => router.push(linkUrl)}
-        onContextMenu={(e) => {
-          contextMenu.handleContextMenu(e);
-          setSelectedItem({ item, type: filter });
-        }}
+        onContextMenu={(e) => handleContextMenu(e, item, filter)}
       >
         {image && <img src={image} alt={title} className={imageClass} />}
         <div className={styles.itemInfo}>
@@ -352,21 +360,8 @@ export default function AppSidebar() {
           <span>Your Library</span>
         </button>
         <div className={styles.headerButtons}>
-<<<<<<< HEAD
         <ButtonAddToPlaylist/> 
         </div>  
-=======
-          { <ButtonAddToPlaylist
-            variant="sidebar"
-            className={styles.roundButton}
-            onSuccess={(created) => {
-              if (filter === "Playlists") {
-                setLibraryItems((prev) => [created, ...(prev || [])]);
-              }
-            }}
-          /> }
-        </div>
->>>>>>> development
       </div>
 
       <div className={styles.libraryFilters}>
@@ -406,7 +401,7 @@ export default function AppSidebar() {
         items={getContextMenuItems()}
         onClose={() => {
           setSelectedItem(null);
-          contextMenu.close();
+          setContextMenu({ ...contextMenu, visible: false });
         }}
       />
     </div>

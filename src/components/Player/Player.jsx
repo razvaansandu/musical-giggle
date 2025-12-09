@@ -326,37 +326,22 @@ export default function Player() {
           </div>
         </div> 
         <div>
-<<<<<<< HEAD
           
-=======
-          {/* <ButtonAddToPlaylist/>   */}
->>>>>>> development
           </div>
             
       </div>
 
-<<<<<<< HEAD
       <div className={styles.center}>
         <div className={styles.controls}>
           <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
           <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
             <ButtonPrevSong />
           </button>
-=======
-      <div className={styles.left}>
-        <button onClick={ButtonLoop} className={styles.iconBtn}>
-          <ButtonLoop />
-        </button>
-        <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
-          <ButtonPrevSong />
-        </button>
->>>>>>> development
 
           <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
             {isPlaying ? <StopButton /> : <PlayButton />}
           </button>
 
-<<<<<<< HEAD
           <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
             <ButtonNextSong />
           </button>
@@ -376,26 +361,6 @@ export default function Player() {
           />
           <span className={styles.time}>{formatTime(current?.duration_ms || 0)}</span>
         </div>
-=======
-        <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
-          <ButtonNextSong />
-        </button>
-        <button onClick={ButtonShuffle} className={styles.iconBtn}>
-          <ButtonShuffle />
-        </button>
-        {/* button per le lyrics */}
-         <button
-        className={`${styles.iconBtn} ${showLyrics ? styles.active : ''}`}
-        onClick={() => setShowLyrics(!showLyrics)}
-        title="Testo"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
-
-          <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path>
-
-        </svg>
-      </button>
->>>>>>> development
       </div>
       
      
