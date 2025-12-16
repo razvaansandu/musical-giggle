@@ -163,16 +163,8 @@ export default function HomePage() {
                 </ScrollRow>
               )}
 
-              {/* YOUR PLAYLISTS */}
               <ScrollRow 
                 title="Le tue playlist" 
-                rightElement={
-                  <ButtonAddToPlaylist
-                    onSuccess={(created) => {
-                      setUserPlaylists((prev) => [created, ...(prev || [])]);
-                    }}
-                  />
-                }
               >
                 {userPlaylists.map((pl, index) => (
                   <PlaylistCard
