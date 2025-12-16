@@ -149,7 +149,7 @@ export default function HomePage() {
               {activeFilter === 'all' && (
                 <>
                   {/* RECENTLY PLAYED */}
-                  <ScrollRow title="Recently played" seeAllLink="/search">
+                  <ScrollRow title="Recently played" seeAllLink="/recently-played">
                     {recentTracks.map((track, index) => (
                       <TrackCard
                         key={`${track.id || "track"}-${index}`}
@@ -160,7 +160,7 @@ export default function HomePage() {
                   </ScrollRow>
 
                   {/* YOUR ALBUMS */}
-                  <ScrollRow title="Your albums" seeAllLink="/search">
+                  <ScrollRow title="Your albums" seeAllLink="/albums">
                     {savedAlbums.map((album, index) => (
                       <AlbumCard
                         key={`${album.id || "album"}-${index}`}
@@ -173,6 +173,7 @@ export default function HomePage() {
                   {/* YOUR PLAYLISTS */}
                   <ScrollRow 
                     title="Your playlists" 
+                    seeAllLink="/playlists"
                     rightElement={
                       <ButtonAddToPlaylist
                         onSuccess={(created) => {
@@ -191,7 +192,7 @@ export default function HomePage() {
                   </ScrollRow>
 
                   {/* TOP ARTISTS */}
-                  <ScrollRow title="Your top artists" seeAllLink="/search">
+                  <ScrollRow title="Your top artists" seeAllLink="/top-artists">
                     {topArtists.map((artist, index) => (
                       <ArtistCard
                         key={`${artist.id || "artist"}-${index}`}
@@ -202,7 +203,7 @@ export default function HomePage() {
                   </ScrollRow>
 
                   {/* TOP TRACKS */}
-                  <ScrollRow title="Your top tracks" seeAllLink="/search">
+                  <ScrollRow title="Your top tracks" seeAllLink="/top-tracks">
                     {topTracks.map((track, index) => (
                       <TrackCard
                         key={`${track.id || "top-track"}-${index}`}
@@ -217,6 +218,7 @@ export default function HomePage() {
               {activeFilter === 'playlists' && (
                 <ScrollRow 
                   title="Your playlists" 
+                  seeAllLink="/playlists"
                   rightElement={
                     <ButtonAddToPlaylist
                       onSuccess={(created) => {
@@ -236,7 +238,7 @@ export default function HomePage() {
               )}
 
               {activeFilter === 'albums' && (
-                <ScrollRow title="Your saved albums">
+                <ScrollRow title="Your saved albums" seeAllLink="/albums">
                   {savedAlbums.length > 0 ? (
                     savedAlbums.map((album, index) => (
                       <AlbumCard
@@ -252,7 +254,7 @@ export default function HomePage() {
               )}
 
               {activeFilter === 'artists' && (
-                <ScrollRow title="Your top artists">
+                <ScrollRow title="Your top artists" seeAllLink="/top-artists">
                   {topArtists.map((artist, index) => (
                     <ArtistCard
                       key={`${artist.id || "artist"}-${index}`}
