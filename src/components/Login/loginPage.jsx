@@ -9,13 +9,8 @@ export default function LoginPage() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`, {
       method: 'POST'
     }).then(res => res.json());
-    window.location.href = res.url; // Reindirizza l'utente all'URL di autenticazione di Spotify
+    window.location.href = res.url; 
     console.log('Response from login API:', res);
-    /*if (res.ok) {
-      router.push('/home'); 
-    } else {
-      alert('Login fallito!');
-    }*/
   } catch (err) {
     console.error('Errore durante login:', err);
   }

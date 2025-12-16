@@ -30,10 +30,9 @@ export default function PlaylistPage() {
         if (!plRes.ok) throw new Error("Errore caricamento playlist");
         const plJson = await plRes.json();
 
-        // Fetch di tutti i brani della playlist con paginazione
         const allItems = [];
         let offset = 0;
-        const limit = 100; // Max limit per richiesta Spotify
+        const limit = 100; 
 
         while (true) {
           const res = await fetch(
@@ -45,14 +44,12 @@ export default function PlaylistPage() {
           const items = json.items || [];
           allItems.push(...items);
 
-          // Controlla se ci sono altri brani da caricare
           const total = json.total ?? allItems.length;
 
           offset += items.length;
           if (allItems.length >= total || items.length === 0) break;
         }
 
-        // Imposta lo stato con i dati della playlist e i brani
         setPlaylist(plJson);
         setTracks(allItems.map((it) => it.track || it));
       } catch (err) {
@@ -86,32 +83,27 @@ export default function PlaylistPage() {
 
           {!loading && playlist && (
             <>
-              {/* --- HERO PLAYLIST --- */}
-              <section className={styles.heroAlbumSection}>
-                <div className={styles.heroAlbumContainer}>
-                  <div className={styles.heroAlbumImage}>
-                    <img
-                      src={playlist.images?.[0]?.url || "/placeholder.png"}
-                      alt={playlist.name}
-                      className={styles.heroAlbumImg}
-                    />
-                  </div>
+              <section className={styles.hero}>
+                <div className={styles.heroImageWrapper}>
+                  <img
+                    src={playlist.images?.[0]?.url || "/placeholder.png"}
+                    alt={playlist.name}
+                    className={styles.heroImage}
+                  />
+                </div>
 
-                  <div className={styles.heroAlbumText}>
-                    <span className={styles.heroAlbumType}>Playlist</span>
-                    <h1 className={styles.heroAlbumTitle}>{playlist.name}</h1>
-                    <div className={styles.heroAlbumMeta}>
-                      <span>{playlist.owner?.display_name}</span>
-                      <span className={styles.heroAlbumDot}>•</span>
-                      <span>{playlist.followers?.total || 0} followers</span>
-                      <span className={styles.heroAlbumDot}>•</span>
-                      <span>{tracks.length} songs</span>
-                    </div>
-                  </div>
+                <div className={styles.heroText}>
+                  <p className={styles.heroType}>Playlist</p>
+                  <h1 className={styles.heroTitle}>{playlist.name}</h1>
+                  <p className={styles.heroFollowers}>
+                    {playlist.description || "No description"}
+                  </p>
+                  <p className={styles.heroFollowers}>
+                    {tracks.length} tracks
+                  </p>
                 </div>
               </section>
 
-              {/* Tracklist della playlist */}
               <section className={styles.section}>
                 <h2>Brani</h2>
                 <TrackList tracks={tracks} />

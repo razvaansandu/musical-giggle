@@ -69,7 +69,6 @@ function Card({ item, index }) {
       await fetch(`/api/player/add-item-to-playback-queue?uri=${item.uri}`, {
         method: "POST",
       });
-      // Optional: Add a toast notification here
       console.log("Added to queue");
     } catch (err) {
       console.error("Error adding to queue", err);
@@ -78,7 +77,6 @@ function Card({ item, index }) {
 
   return (
     <div className="card" onDoubleClick={handlePlay}> 
-      {/* 1. Index / Play Button */}
       <div className="card-left">
         <span className="card-index">{index}</span>
         <div className="card-play-icon">
@@ -86,7 +84,6 @@ function Card({ item, index }) {
         </div>
       </div>
 
-      {/* 2. Title & Artist */}
       <div className="card-content">
         <div className="card-title-row">
           <span className={`card-title ${item.preview_url ? 'playable' : ''}`}>
@@ -98,7 +95,6 @@ function Card({ item, index }) {
         </div>
       </div> 
 
-      {/* 3. Actions: Heart, Duration, Options */}
       <div className="card-right">
         <button 
           className={`card-heart ${isLiked ? "liked" : ""}`} 

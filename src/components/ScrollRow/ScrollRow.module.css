@@ -36,7 +36,6 @@
   color: #fff;
 }
 
-/* Scroll Container */
 .scrollWrapper {
   position: relative;
 }
@@ -62,7 +61,6 @@
   min-width: 180px;
 }
 
-/* Arrow Buttons */
 .arrowButton {
   position: absolute;
   top: 50%;
@@ -99,7 +97,6 @@
   right: -8px;
 }
 
-/* Gradient fade effect on edges when scrollable */
 .scrollWrapper::before,
 .scrollWrapper::after {
   content: '';

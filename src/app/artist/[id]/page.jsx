@@ -76,18 +76,17 @@ export default function ArtistPage() {
 
           {!loading && artist && (
             <>
-              {/* HERO ARTISTA */}
               <ArtistHero artist={artist} />
 
-              {/* POPULAR TRACKS */}
               <section className={styles.section}>
                 <h2>Popular</h2>
                 <TrackList tracks={topTracks.slice(0, 5)} />
               </section>
 
-              {/* ALBUMS */}
-              <ScrollRow title="Albums">
-                {albums.map((a) => (
+              <section className={styles.section}>
+                <h2>Albums</h2>
+                <div className={styles.grid}>
+                  {albums.map((a) => (
                   <AlbumCard 
                     key={a.id} 
                     album={a}

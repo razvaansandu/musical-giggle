@@ -1,6 +1,6 @@
 .playerContainer {
   position: fixed;
-  bottom: 100px; /* Above the player bar */
+  bottom: 100px; 
   right: 24px;
   width: 320px;
   height: 210px; 

@@ -160,7 +160,6 @@ export default function SpotifyHeader() {
                       key={playlist.id} 
                       className={styles.notificationItem}
                       onClick={() => {
-                        // router.push(`/playlist/${playlist.id}`);
                         setShowNotifications(false);
                       }}
                     >

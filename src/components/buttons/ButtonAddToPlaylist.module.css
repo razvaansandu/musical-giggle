@@ -95,7 +95,6 @@
   cursor:pointer;
 }
 
-/* Make the button smaller when it's used in the sidebar wrapper (.roundButton) */
 .wrapper[data-variant="sidebar"] .button{
   width:36px;
   height:36px;
@@ -124,11 +123,10 @@
 
 
 
-/* When used inside the left sidebar, open the menu to the right of the button */
 .wrapper[data-variant="sidebar"] .menu{
-  left: 44px; /* open to the right of the circular button */
+  left: 44px;
   right: auto;
-  top: 4px; /* align near the button vertically */
+  top: 4px; 
   min-width:220px;
   padding:6px;
 }
@@ -182,10 +180,10 @@ top: -900px;
 }
 
 .modal{
-  background: #0f0f0f; /* darker, like Spotify dialogs */
+  background: #0f0f0f; 
   border-radius:12px;
   padding:18px;
-  width:360px; /* slightly narrower to match Spotify modal proportions */
+  width:360px; 
   box-shadow: 0 18px 50px rgba(0,0,0,0.7);
   border:1px solid rgba(255,255,255,0.04);
   

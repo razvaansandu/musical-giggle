@@ -64,7 +64,7 @@ export default function AppSidebar() {
       items.push({
         id: "follow-playlist",
         label: "Segui questa playlist",
-        icon: "➕",
+        icon: "",
         action: async () => {
           try {
             const res = await fetch("/api/spotify/follow-playlist", {
@@ -73,7 +73,7 @@ export default function AppSidebar() {
               body: JSON.stringify({ playlist_id: item.id }),
             });
             if (res.ok) {
-              console.log("✅ Playlist seguita");
+              console.log("Playlist seguita");
               alert("Playlist aggiunta ai tuoi preferiti");
             } else {
               throw new Error("Errore nel seguire la playlist");
@@ -87,7 +87,7 @@ export default function AppSidebar() {
       items.push({
         id: "unfollow-playlist",
         label: "Smetti di seguire",
-        icon: "✖️",
+        icon: "",
         action: async () => {
           try {
             const res = await fetch("/api/spotify/unfollow-playlist", {
@@ -96,7 +96,7 @@ export default function AppSidebar() {
               body: JSON.stringify({ playlist_id: item.id }),
             });
             if (res.ok) {
-              console.log("✅ Playlist non più seguita");
+              console.log("Playlist non più seguita");
               alert("Playlist rimossa dai tuoi preferiti");
             } else {
               throw new Error("Errore nel smettere di seguire");
@@ -110,7 +110,7 @@ export default function AppSidebar() {
       items.push({
         id: "copy-link",
         label: "Copia link a playlist",
-        icon: "🔗",
+        icon: "",
         action: () => {
           const link = `https://open.spotify.com/playlist/${item.id}`;
           navigator.clipboard.writeText(link);
@@ -120,14 +120,14 @@ export default function AppSidebar() {
       items.push({
         id: "go-to-playlist",
         label: "Vai alla playlist",
-        icon: "▶️",
+        icon: "",
         action: () => router.push(`/playlist/${item.id}`),
       });
     } else if (type === "Artists") {
       items.push({
         id: "follow",
         label: "Segui artista",
-        icon: "➕",
+        icon: "",
         action: async () => {
           try {
             const res = await fetch("/api/spotify/follow", {
@@ -136,7 +136,7 @@ export default function AppSidebar() {
               body: JSON.stringify({ type: "artist", ids: [item.id] }),
             });
             if (res.ok) {
-              console.log("✅ Artista seguito");
+              console.log("Artista seguito");
               alert("Artista aggiunto ai tuoi preferiti");
             } else {
               throw new Error("Errore nel seguire l'artista");
@@ -150,7 +150,7 @@ export default function AppSidebar() {
       items.push({
         id: "unfollow",
         label: "Smetti di seguire",
-        icon: "✖️",
+        icon: "",
         action: async () => {
           try {
             const res = await fetch("/api/spotify/unfollow", {
@@ -159,7 +159,7 @@ export default function AppSidebar() {
               body: JSON.stringify({ type: "artist", ids: [item.id] }),
             });
             if (res.ok) {
-              console.log("✅ Artista non più seguito");
+              console.log("Artista non più seguito");
               alert("Artista rimosso dai tuoi preferiti");
             } else {
               throw new Error("Errore nel smettere di seguire");
@@ -173,13 +173,13 @@ export default function AppSidebar() {
       items.push({
         id: "go-to-profile",
         label: "Vai al profilo",
-        icon: "👤",
+        icon: "",
         action: () => router.push(`/artist/${item.id}`),
       });
       items.push({
         id: "share",
         label: "Condividi",
-        icon: "📤",
+        icon: "",
         action: () => {
           const link = `https://open.spotify.com/artist/${item.id}`;
           navigator.clipboard.writeText(link);
@@ -189,7 +189,7 @@ export default function AppSidebar() {
       items.push({
         id: "copy-link",
         label: "Copia link",
-        icon: "🔗",
+        icon: "",
         action: () => {
           const link = `https://open.spotify.com/artist/${item.id}`;
           navigator.clipboard.writeText(link);
@@ -200,7 +200,7 @@ export default function AppSidebar() {
       items.push({
         id: "report",
         label: "Segnala artista",
-        icon: "⚠️",
+        icon: "",
         danger: true,
         action: () => {
           alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");
@@ -211,7 +211,7 @@ export default function AppSidebar() {
       items.push({
         id: "save",
         label: "Salva album",
-        icon: "💾",
+        icon: "",
         action: async () => {
           try {
             const albumId = item.album?.id || item.id;
@@ -221,7 +221,7 @@ export default function AppSidebar() {
               body: JSON.stringify({ ids: [albumId] }),
             });
             if (res.ok) {
-              console.log("✅ Album salvato");
+              console.log(" Album salvato");
               alert("Album aggiunto alla tua libreria");
             } else {
               throw new Error("Errore nel salvare l'album");
@@ -235,7 +235,7 @@ export default function AppSidebar() {
       items.push({
         id: "unsave",
         label: "Rimuovi album",
-        icon: "🗑️",
+        icon: "",
         action: async () => {
           try {
             const albumId = item.album?.id || item.id;
@@ -259,13 +259,13 @@ export default function AppSidebar() {
       items.push({
         id: "go-to-album",
         label: "Vai all'album",
-        icon: "💿",
+        icon: "",
         action: () => router.push(`/albums/${item.album?.id || item.id}`),
       });
       items.push({
         id: "share",
         label: "Condividi",
-        icon: "📤",
+        icon: "",
         action: () => {
           const albumId = item.album?.id || item.id;
           const link = `https://open.spotify.com/album/${albumId}`;
@@ -276,7 +276,7 @@ export default function AppSidebar() {
       items.push({
         id: "copy-link",
         label: "Copia link",
-        icon: "🔗",
+        icon: "",
         action: () => {
           const albumId = item.album?.id || item.id;
           const link = `https://open.spotify.com/album/${albumId}`;
@@ -288,7 +288,7 @@ export default function AppSidebar() {
       items.push({
         id: "report",
         label: "Segnala album",
-        icon: "⚠️",
+        icon: "",
         danger: true,
         action: () => {
           alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");

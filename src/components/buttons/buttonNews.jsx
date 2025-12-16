@@ -1,4 +1,3 @@
-// src/components/ButtonNovita.jsx
 "use client";
 
 import React from "react";
@@ -8,7 +7,7 @@ export default function ButtonNews({
   onClick,
   href,
   active = false,
-  badge = 0,          // numero di novità da mostrare sul badge (0 = niente)
+  badge = 0,          
   title = "Novità",
   ariaLabel = "Vai alle novità",
   className = "",

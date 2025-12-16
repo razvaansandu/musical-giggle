@@ -10,7 +10,6 @@ export default function YouTubePlayer({ query, onClose }) {
   const [error, setError] = useState(null);
   const [mounted, setMounted] = useState(false);
 
-  // Dragging state
   const [position, setPosition] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -19,10 +18,9 @@ export default function YouTubePlayer({ query, onClose }) {
   useEffect(() => {
       setMounted(true);
       if (typeof window !== 'undefined') {
-          // Default position: Bottom Right, but visible
           setPosition({ 
-              x: window.innerWidth - 340, // 320px width + 20px margin
-              y: window.innerHeight - 320 // 210px height + 110px margin (above player bar)
+              x: window.innerWidth - 340,
+              y: window.innerHeight - 320
           });
       }
   }, []);
@@ -70,9 +68,9 @@ export default function YouTubePlayer({ query, onClose }) {
       setError(null);
       setVideoId(null);
       try {
-        console.log("🔍 Searching video for:", query);
+        console.log(" Searching video for:", query);
         const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query + " official video")}`);
-        console.log("📡 API Status:", res.status);
+        console.log(" API Status:", res.status);
         
         if (!res.ok) {
              if (res.status === 404) {
@@ -82,7 +80,7 @@ export default function YouTubePlayer({ query, onClose }) {
         }
         
         const data = await res.json();
-        console.log("📦 API Data:", data);
+        console.log(" API Data:", data);
 
         if (data.videoId) {
           setVideoId(data.videoId);
