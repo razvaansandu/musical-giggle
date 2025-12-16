@@ -86,25 +86,28 @@ export default function PlaylistPage() {
 
           {!loading && playlist && (
             <>
-              {/* Playlist dell'hero */}
-              <section className={styles.hero}>
-                <div className={styles.heroImageWrapper}>
-                  <img
-                    src={playlist.images?.[0]?.url || "/placeholder.png"}
-                    alt={playlist.name}
-                    className={styles.heroImage}
-                  />
-                </div>
+              {/* --- HERO PLAYLIST --- */}
+              <section className={styles.heroAlbumSection}>
+                <div className={styles.heroAlbumContainer}>
+                  <div className={styles.heroAlbumImage}>
+                    <img
+                      src={playlist.images?.[0]?.url || "/placeholder.png"}
+                      alt={playlist.name}
+                      className={styles.heroAlbumImg}
+                    />
+                  </div>
 
-                <div className={styles.heroText}>
-                  <p className={styles.heroType}>Playlist</p>
-                  <h1 className={styles.heroTitle}>{playlist.name}</h1>
-                  <p className={styles.heroFollowers}>
-                    {playlist.description || "No description"}
-                  </p>
-                  <p className={styles.heroFollowers}>
-                    {tracks.length} tracks
-                  </p>
+                  <div className={styles.heroAlbumText}>
+                    <span className={styles.heroAlbumType}>Playlist</span>
+                    <h1 className={styles.heroAlbumTitle}>{playlist.name}</h1>
+                    <div className={styles.heroAlbumMeta}>
+                      <span>{playlist.owner?.display_name}</span>
+                      <span className={styles.heroAlbumDot}>•</span>
+                      <span>{playlist.followers?.total || 0} followers</span>
+                      <span className={styles.heroAlbumDot}>•</span>
+                      <span>{tracks.length} songs</span>
+                    </div>
+                  </div>
                 </div>
               </section>
 
