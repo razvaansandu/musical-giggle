@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import styles from "./Player.module.css";
-import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 import PlayButton from "../buttons/PlayButton";
 import ButtonNextSong from "../buttons/buttonNextSong";
 import ButtonPrevSong from "../buttons/songButtonFirst";
@@ -11,7 +10,6 @@ import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
-import LikeButton from "../buttons/LikeButton";
 import { MonitorPlay, ListMusic } from "lucide-react";
 
 export default function Player() {
@@ -30,6 +28,7 @@ export default function Player() {
   const [progress, setProgress] = useState(0);
   const activeLineRef = useRef(null);
   const queueRef = useRef(null);
+  const seekTimeoutRef = useRef(null);
 
   const parseLrc = (lrc) => {
     const lines = lrc.split("\n");
@@ -49,8 +48,6 @@ export default function Player() {
     }
     return result;
   };
-
-  const seekTimeoutRef = useRef(null);
 
   const handleSeek = (e) => {
     const newTime = parseInt(e.target.value, 10);
@@ -99,14 +96,6 @@ export default function Player() {
     }
   };
 
-  useEffect(() => { 
-    if (showLyrics && current) {
-      const artist = current.artists?.[0]?.name;
-      const track = current.name;
-      fetchLyrics(artist, track);
-    }
-  }, [current?.id, showLyrics]);
-
   const fetchCurrent = async () => {
     try {
       const res = await fetch("/api/player/get-playback-state");
@@ -129,34 +118,6 @@ export default function Player() {
       console.error("Errore stato player", err);
     }
   };
-
-  useEffect(() => {
-    let interval;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setProgress((p) => p + 1000);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
-  useEffect(() => {
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      initWebPlayer(async () => {
-        const cookie = document.cookie
-          .split("; ")
-          .find(r => r.startsWith("auth_code="));
-        return cookie?.split("=")[1] || "";
-      });
-    };
-
-    fetchCurrent();
-    
-    fetchRecentlyPlayed();
-
-    const interval = setInterval(fetchCurrent, 2000);
-    return () => clearInterval(interval);
-  }, []);
 
   const fetchRecentlyPlayed = async () => {
     try {
@@ -194,18 +155,6 @@ export default function Player() {
     }
     setShowQueue(!showQueue);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (queueRef.current && !queueRef.current.contains(e.target)) {
-        setShowQueue(false);
-      }
-    };
-    if (showQueue) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showQueue]);
 
   const handlePlayPause = async () => {
     try {
@@ -262,15 +211,44 @@ export default function Player() {
     }
   };
 
-  const deviceId = getDeviceId();
+  // useEffect
+  useEffect(() => { 
+    if (showLyrics && current) {
+      const artist = current.artists?.[0]?.name;
+      const track = current.name;
+      fetchLyrics(artist, track);
+    }
+  }, [current?.id, showLyrics]);
 
-  if (deviceId) {
-    return (
-      <div className={styles.playerBar}>
-        <div className={styles.empty}>  Sto inizializzando il player...</div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    let interval;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setProgress((p) => p + 1000);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    fetchCurrent();
+    fetchRecentlyPlayed();
+
+    const interval = setInterval(fetchCurrent, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (queueRef.current && !queueRef.current.contains(e.target)) {
+        setShowQueue(false);
+      }
+    };
+    if (showQueue) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showQueue]);
 
   if (!current) { 
     return (
@@ -282,7 +260,7 @@ export default function Player() {
     );
   }
 
-  const img = current?.album?.images?.[0]?.url; 
+  const img = current?.album?.images?.[0]?.url;
 
   return (
     <div className={styles.playerBar}>
@@ -293,26 +271,19 @@ export default function Player() {
             alt={current.name}
             className={styles.cover} 
           />  
-          
         )}  
         
-    
         <div>
           <div className={styles.title}>{current.name}</div>
           <div className={styles.artist}>
             {current.artists?.map((a) => a.name).join(", ")}
           </div>
         </div> 
-        <div>
-          
-          </div>
-            
       </div>
 
       <div className={styles.center}>
         <div className={styles.controls}>
           <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
-          
           <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} title="Previous" />
 
           {isPlaying ? (
@@ -322,7 +293,6 @@ export default function Player() {
           )}
 
           <ButtonNextSong onNext={handleNext} className={styles.iconBtn} title="Next" />
-          
           <ButtonLoop mode={repeatMode} onChange={handleRepeat} className={styles.iconBtn} />
         </div>
         
@@ -341,10 +311,7 @@ export default function Player() {
         </div>
       </div>
       
-     
-    
       <div className={styles.right}>
-        <LikeButton trackId={current?.id} />
         <button 
           className={`${styles.lyricsButton} ${showQueue ? styles.active : ''}`} 
           onClick={toggleQueue}
@@ -430,7 +397,6 @@ export default function Player() {
                   >
                     {line.text}
                   </div> 
-                  
                 )
               })
             ) : lyrics
@@ -439,4 +405,4 @@ export default function Player() {
       </div>
     </div>
   );
-} 
+}
