@@ -14,7 +14,6 @@ import TrackCard from "../../components/Cards/TrackCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
 import AlbumCard from "../../components/Cards/AlbumCard";
 import Loader from "../../components/Loader/Loader";
-import ButtonAddToPlaylist from "../../components/buttons/ButtonAddToPlaylist";
 
 export default function HomePage() {
   const router = useRouter();
@@ -60,7 +59,6 @@ export default function HomePage() {
 
         setProfile(profileJson);
 
-        // Filtra le playlist: solo pubbliche e playlist dell'utente
         const allPlaylists = playlistsJson.items ?? playlistsJson ?? [];
         const userOwnedPlaylists = allPlaylists.filter(pl => 
           pl.owner?.id === profileJson.id || pl.owner?.display_name === profileJson.display_name
@@ -72,18 +70,15 @@ export default function HomePage() {
         setUserPlaylists(userOwnedPlaylists);
         setPublicPlaylists(publicPlaylistsFiltered);
 
-        // Brani recentemente ascoltati
         const recentItems = Array.isArray(recentJson.items)
           ? recentJson.items.map((i) => i.track)
           : [];
         setRecentTracks(recentItems);
         
-        // Albums are wrapped in { album: {...} } objects
         const albums = (albumsJson.items ?? []).map(item => item.album).filter(Boolean);
         setSavedAlbums(albums);
       } catch (err) {
         console.error("Errore nella home:", err);
-        // Se c'è un errore nel caricamento del profilo, significa che la sessione è scaduta
         if (err.message.includes("profilo")) {
           setSessionExpired();
         } else {
@@ -95,7 +90,6 @@ export default function HomePage() {
     };
 
     fetchHomeData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -120,7 +114,6 @@ export default function HomePage() {
 
           {!loading && (
             <>
-              {/* RECENTLY PLAYED */}
               <ScrollRow title="Ascoltati di recente">
                 {recentTracks.length > 0 ? (
                   recentTracks.map((track, index) => (
@@ -135,7 +128,6 @@ export default function HomePage() {
                 )}
               </ScrollRow>
 
-              {/* YOUR ALBUMS */}
               <ScrollRow title="I tuoi album" seeAllLink="/search">
                 {savedAlbums.length > 0 ? (
                   savedAlbums.map((album, index) => (
@@ -150,7 +142,6 @@ export default function HomePage() {
                 )}
               </ScrollRow>
 
-              {/* PUBLIC PLAYLISTS */}
               {publicPlaylists.length > 0 && (
                 <ScrollRow title="Playlist Pubbliche">
                   {publicPlaylists.map((pl, index) => (

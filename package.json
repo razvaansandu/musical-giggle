@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/node": "24.9.2",
     "@types/react": "19.2.2",
-    "baseline-browser-mapping": "^2.9.5",
+    "baseline-browser-mapping": "^2.9.7",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "nodemon": "^3.1.10"
