@@ -48,4 +48,3 @@ export default function TrackCard({ track, onClick }) {
     </button>
   );
 }
- 
