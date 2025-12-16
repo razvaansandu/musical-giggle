@@ -20,7 +20,6 @@ export default function HomePage() {
   const router = useRouter();
   const { setSessionExpired } = useSessionManager();
   const [profile, setProfile] = useState(null);
-  const [playlists, setPlaylists] = useState([]);
   const [publicPlaylists, setPublicPlaylists] = useState([]);
   const [userPlaylists, setUserPlaylists] = useState([]);
   const [recentTracks, setRecentTracks] = useState([]);
@@ -66,13 +65,12 @@ export default function HomePage() {
         const userOwnedPlaylists = allPlaylists.filter(pl => 
           pl.owner?.id === profileJson.id || pl.owner?.display_name === profileJson.display_name
         );
-        const publicPlaylists = allPlaylists.filter(pl => 
+        const publicPlaylistsFiltered = allPlaylists.filter(pl => 
           pl.public === true && (pl.owner?.id !== profileJson.id && pl.owner?.display_name !== profileJson.display_name)
         );
 
-        setPlaylists(allPlaylists);
         setUserPlaylists(userOwnedPlaylists);
-        setPublicPlaylists(publicPlaylists);
+        setPublicPlaylists(publicPlaylistsFiltered);
 
         // Brani recentemente ascoltati
         const recentItems = Array.isArray(recentJson.items)
@@ -121,45 +119,6 @@ export default function HomePage() {
           )}
 
           {!loading && (
-            <>
-              <div className={styles.filterButtons}>
-                <button 
-                  className={`${styles.buttonGabry} ${activeFilter === 'all' ? styles.buttonGabryActive : ''}`}
-                  onClick={() => setActiveFilter('all')}
-                > 
-                  Tutto  
-                </button> 
-                <button 
-                  className={`${styles.buttonGabry} ${activeFilter === 'playlists' ? styles.buttonGabryActive : ''}`}
-                  onClick={() => setActiveFilter('playlists')}
-                > 
-                  Playlist  
-                </button> 
-                <button 
-                  className={`${styles.buttonGabry} ${activeFilter === 'albums' ? styles.buttonGabryActive : ''}`}
-                  onClick={() => setActiveFilter('albums')}
-                > 
-                  Album   
-                </button>  
-                <button 
-                  className={`${styles.buttonGabry} ${activeFilter === 'artists' ? styles.buttonGabryActive : ''}`}
-                  onClick={() => setActiveFilter('artists')}
-                > 
-                  Artist   
-                </button>  
-              </div>
-
-              {activeFilter === 'all' && (
-                <>
-                  <ScrollRow title="Recently played" seeAllLink="/search">
-                    {recentTracks.map((track, index) => (
-                      <TrackCard
-                        key={`${track.id || "track"}-${index}`}
-                        track={track}
-                        onClick={() => router.push(`/track/${track.id}`)}
-                      />
-                    ))}
-                  </ScrollRow>
             <>
               {/* RECENTLY PLAYED */}
               <ScrollRow title="Ascoltati di recente">
