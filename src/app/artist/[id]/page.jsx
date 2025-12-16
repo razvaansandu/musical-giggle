@@ -12,7 +12,9 @@ import TrackCard from "../../../components/Cards/TrackCard";
 import PlaylistCard from "../../../components/Cards/PlaylistCard";
 import AlbumCard from "../../../components/Cards/AlbumCard";
 import ArtistHero from "../../../components/Cards/ArtistHero";
-import Loader from "../../../components/Loader/Loader"; 
+import TrackList from "../../../components/TrackList/TrackList";
+import Loader from "../../../components/Loader/Loader";
+import ScrollRow from "../../../components/ScrollRow/ScrollRow"; 
  
 export default function ArtistPage() { 
   const { id } = useParams();
@@ -77,16 +79,8 @@ export default function ArtistPage() {
               <ArtistHero artist={artist} />
 
               <section className={styles.section}>
-                <h2>Top tracks</h2>
-                <div className={styles.grid}>
-                  {topTracks.map((t) => (
-                    <TrackCard 
-                      key={t.id} 
-                      track={t}
-                      onClick={(track) => router.push(`/track/${track.id}`)}
-                    />
-                  ))}
-                </div>
+                <h2>Popular</h2>
+                <TrackList tracks={topTracks.slice(0, 5)} />
               </section>
 
               <section className={styles.section}>
@@ -98,9 +92,8 @@ export default function ArtistPage() {
                     album={a}
                     onClick={() => router.push(`/album/${a.id}`)}
                   />
-                  ))}
-                </div>
-              </section>
+                ))}
+              </ScrollRow>
             </>
           )}
         </main>

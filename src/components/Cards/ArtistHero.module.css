@@ -72,10 +72,10 @@
   letter-spacing: -1px;
   font-size: clamp(40px, 8vw, 96px);
   line-height: 0.95;
+  opacity: 0.95;
   text-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background: linear-gradient(180deg, rgba(212, 218, 214, 0.15), transparent);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
