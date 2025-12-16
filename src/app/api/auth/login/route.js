@@ -15,14 +15,13 @@ export async function POST() {
   "user-read-recently-played",
   "user-library-read",
   "user-library-modify",
-
+  "ugc-image-upload", 
   "playlist-read-private",
   "playlist-modify-public",
   "playlist-modify-private",
 
   "user-follow-read",
-  "user-follow-modify",
-
+  "user-follow-modify", 
   "user-top-read"
 ].join(" ");
 

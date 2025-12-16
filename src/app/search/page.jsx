@@ -52,9 +52,9 @@ export default function SearchPage() {
       <div className={styles.content}>
         <Sidebar />
 
-        <main className={styles.mainContent}>
-          <h1 className="">Results For: “{q}”</h1> 
-          {!loading && (
+        <main className={styles.mainContent}> 
+          <h1 className="">Results For: “{q}”</h1>   
+          {!loading && ( 
             <>
               {/* TRACKS */}
               {tracks.length > 0 && (

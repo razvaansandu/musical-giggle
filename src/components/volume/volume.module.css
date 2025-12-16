@@ -1,117 +1,108 @@
-/* Stili del volume */
-.volumeWrapper {
+/* Stili del volume - Spotify style */
 
-  bottom: 24px;
-  right: 24px;
+/* Container principale */
+.container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
-.volumeButton {
+/* Pulsante icona volume */
+.iconButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.1));
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid var(--border-subtle);
-}
-
-.volumeButton:hover {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  border-color: var(--primary);
-  transform: scale(1.1);
-}
-
-.volumeButton:active {
-  transform: scale(0.95);
-}
-
-.volumePopover {
-  position: relative;
+  padding: 0;
   background: transparent;
-  padding: 6px 8px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
+  color: #b3b3b3;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  border: none;
+  outline: none;
 }
 
+.iconButton:hover {
+  color: #fff;
+}
+
+/* Container dello slider */
 .sliderContainer {
-  width: 180px;
-  height: 40px;
+  width: 93px;
+  height: 32px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgb(0, 0, 0, 0.15), rgba(0, 0, 0, 0.1));
-  backdrop-filter: blur(10px);
-  padding: 8px 12px;
-  border-radius: 12px;
-
-  border: 1px solid var(--border-subtle);
+  background: transparent;
 }
 
-.volumeSlider {
+/* Slider principale */
+.slider {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
+  height: 4px;
   cursor: pointer;
-  background: transparent;
-  height: 40px;
-  display: block;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  background: #4d4d4d;
+  border-radius: 2px;
+  outline: none;
 }
 
-.volumeSlider::-webkit-slider-thumb {
+/* Thumb (pallino) - Chrome/Safari */
+.slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #fff;
   border-radius: 50%;
-
-  margin-top: 0;
-  transform: translateY(-3px);
   cursor: pointer;
-  transition: all 0.2s ease;
+  opacity: 0;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+  position: relative;
+  z-index: 2;
 }
 
-.volumeSlider::-webkit-slider-thumb:hover {
-
-  transform: translateY(-3px) scale(1.2);
+.sliderContainer:hover .slider::-webkit-slider-thumb {
+  opacity: 1;
 }
 
-.volumeSlider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Track (barra) - Chrome/Safari */
+.slider::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(to right, #fff var(--volume-percent, 50%), #4d4d4d var(--volume-percent, 50%));
+  border-radius: 2px;
+}
+
+.sliderContainer:hover .slider::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #1db954 var(--volume-percent, 50%), #4d4d4d var(--volume-percent, 50%));
+}
+
+/* Thumb - Firefox */
+.slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #fff;
   border-radius: 50%;
   border: none;
-  box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.2);
-  transform: translateY(-3px);
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.volumeSlider::-webkit-slider-runnable-track {
-  height: 6px;
-  background: rgb(141, 141, 141);
-  border-radius: 999px;
+/* Track - Firefox */
+.slider::-moz-range-track {
+  height: 4px;
+  background: #4d4d4d;
+  border-radius: 2px;
 }
 
-.volumeSlider::-moz-range-track {
-  height: 6px;
-  background: rgba(99, 102, 241, 0.2);
-  border-radius: 999px;
+.slider::-moz-range-progress {
+  height: 4px;
+  background: #fff;
+  border-radius: 2px;
 }
 
-.volumeSlider::-moz-range-progress {
-  height: 6px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
-  border-radius: 999px;
+.sliderContainer:hover .slider::-moz-range-progress {
+  background: #1db954;
 }

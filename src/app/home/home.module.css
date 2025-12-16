@@ -59,6 +59,24 @@
   gap: 8px;
 }
 
+.addPlaylistButton {
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.addPlaylistButton:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .roundButton {
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   border-radius: 50%;
@@ -237,6 +255,7 @@
   border-radius: 16px;
   padding: 32px;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   border: 1px solid var(--border-subtle);
   scrollbar-color: transparent transparent;
@@ -274,6 +293,43 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 24px;
+}
+
+/* Horizontal Scroll Row */
+.scrollRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 16px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding-bottom: 16px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #535353 transparent;
+}
+
+.scrollRow::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scrollRow::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollRow::-webkit-scrollbar-thumb {
+  background-color: #535353;
+  border-radius: 4px;
+}
+
+.scrollRow::-webkit-scrollbar-thumb:hover {
+  background-color: #b3b3b3;
+}
+
+.scrollRow > * {
+  flex-shrink: 0;
+  width: 180px;
+  min-width: 180px;
 }
 
 /* Card Styles */
@@ -507,7 +563,7 @@
 }
 
 .tracklistDuration {
-  font-size: 12px;
+  font-size: 12px; 
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-tertiary);
@@ -517,8 +573,42 @@
 }
 
 /* Tracklist */
-.tracklist {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.tracklist { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0; 
 }
+
+.filterButtons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.buttonGabry{ 
+ padding: 8px 16px;
+ min-width: 80px;
+ height: 36px;
+ background: rgba(255, 255, 255, 0.07);
+ color: white;  
+ border: none;  
+ border-radius: 20px;  
+ cursor: pointer;
+ font-size: 14px;
+ font-weight: 500;
+ transition: all 0.2s ease;
+}
+
+.buttonGabry:hover{ 
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.buttonGabryActive {
+  background: white;
+  color: black;
+}
+
+.buttonGabryActive:hover {
+  background: #e0e0e0;
+}      

@@ -10,8 +10,9 @@ import StopButton from "../buttons/stopButton";
 import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
-import ButtonAddToPlaylist from "../buttons/ButtonAddToPlaylist";
+import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
 
+import { MonitorPlay, ListMusic } from "lucide-react";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -20,11 +21,61 @@ export default function Player() {
   const [repeatMode, setRepeatMode] = useState("off");
   const [showLyrics, setShowLyrics] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
+  const [queue, setQueue] = useState([]);
   const [lyrics, setLyrics] = useState("");
   const [syncedLyrics, setSyncedLyrics] = useState([]);
   const [isSynced, setIsSynced] = useState(false);
   const [loadingLyrics, setLoadingLyrics] = useState(false);
-// testo panebianco
+  const [progress, setProgress] = useState(0);
+  const activeLineRef = useRef(null);
+  const queueRef = useRef(null);
+
+  const parseLrc = (lrc) => {
+    const lines = lrc.split("\n");
+    const result = [];
+    for (const line of lines) {
+      // Match [mm:ss.xx] or [mm:ss.xxx]
+      const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
+      if (match) {
+        const minutes = parseInt(match[1], 10);
+        const seconds = parseInt(match[2], 10);
+        // If 3 digits (milliseconds), use as is. If 2 digits (hundredths), multiply by 10.
+        const rawMs = match[3];
+        const ms = rawMs.length === 3 ? parseInt(rawMs, 10) : parseInt(rawMs, 10) * 10;
+        
+        const time = minutes * 60 * 1000 + seconds * 1000 + ms;
+        const text = match[4].trim();
+        if (text) result.push({ time, text });
+      }
+    }
+    return result;
+  };
+
+  const seekTimeoutRef = useRef(null);
+
+  const handleSeek = (e) => {
+    const newTime = parseInt(e.target.value, 10);
+    setProgress(newTime);
+    
+    if (seekTimeoutRef.current) clearTimeout(seekTimeoutRef.current);
+    
+    seekTimeoutRef.current = setTimeout(async () => {
+      try {
+        await fetch(`/api/player/seek-to-position?position_ms=${newTime}`, { method: "PUT" });
+      } catch (err) {
+        console.error("Errore seek", err);
+      }
+    }, 500);
+  };
+
+  const formatTime = (ms) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
   const fetchLyrics = async (artist, track) => {
     if (!artist || !track) return;
     setLoadingLyrics(true);
@@ -101,9 +152,68 @@ export default function Player() {
       });
     };
 
+    // Fetch initial state immediately
+    fetchCurrent();
+    
+    // Also fetch the last played track if nothing is playing
+    fetchRecentlyPlayed();
+
     const interval = setInterval(fetchCurrent, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch recently played to show last track when nothing is playing
+  const fetchRecentlyPlayed = async () => {
+    try {
+      const res = await fetch("/api/player/get-recently-played-tracks?limit=1");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.items && data.items.length > 0 && !current) {
+          setCurrent(data.items[0].track);
+        }
+      }
+    } catch (err) {
+      console.error("Errore recently played", err);
+    }
+  };
+
+  // Fetch queue (requires Spotify Premium)
+  const fetchQueue = async () => {
+    try {
+      const res = await fetch("/api/player/get-user-queue");
+      
+      if (res.ok) {
+        const data = await res.json();
+        setQueue(data.queue || []);
+      } else {
+        setQueue([]);
+      }
+    } catch (err) {
+      console.error("Errore fetch queue", err);
+      setQueue([]);
+    }
+  };
+
+  // Toggle queue menu
+  const toggleQueue = () => {
+    if (!showQueue) {
+      fetchQueue();
+    }
+    setShowQueue(!showQueue);
+  };
+
+  // Close queue when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (queueRef.current && !queueRef.current.contains(e.target)) {
+        setShowQueue(false);
+      }
+    };
+    if (showQueue) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showQueue]);
 
   const handlePlayPause = async () => {
     try {
@@ -166,12 +276,12 @@ export default function Player() {
   if (deviceId) {
     return (
       <div className={styles.playerBar}>
-        <div className={styles.empty}> Sto inizializzando il player...</div>
+        <div className={styles.empty}> 🎧 Sto inizializzando il player...</div>
       </div>
     );
   }
 
-  if (!current) {
+  if (!current) { 
     return (
       <div className={styles.playerBar}>
         <div className={styles.empty}>
@@ -203,48 +313,103 @@ export default function Player() {
           </div>
         </div> 
         <div>
-          {/* <ButtonAddToPlaylist/>   */}
+          
           </div>
             
       </div>
 
-      <div className={styles.left}>
-        <button onClick={ButtonLoop} className={styles.iconBtn}>
-          <ButtonLoop />
-        </button>
-        <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
-          <ButtonPrevSong />
-        </button>
+      <div className={styles.center}>
+        <div className={styles.controls}>
+          <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
+          
+          <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} title="Previous" />
 
-        <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
-          {isPlaying ? <StopButton /> : <PlayButton />}
-        </button>
+          {isPlaying ? (
+            <StopButton onClick={handlePlayPause} className={styles.playBtn} />
+          ) : (
+            <PlayButton onClick={handlePlayPause} className={styles.playBtn} />
+          )}
 
-        <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
-          <ButtonNextSong />
-        </button>
-        <button onClick={ButtonShuffle} className={styles.iconBtn}>
-          <ButtonShuffle />
-        </button>
-        {/* button per le lyrics */}
-         <button
-        className={`${styles.iconBtn} ${showLyrics ? styles.active : ''}`}
-        onClick={() => setShowLyrics(!showLyrics)}
-        title="Testo"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
-
-          <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path>
-
-        </svg>
-      </button>
+          <ButtonNextSong onNext={handleNext} className={styles.iconBtn} title="Next" />
+          
+          <ButtonLoop mode={repeatMode} onChange={handleRepeat} className={styles.iconBtn} />
+        </div>
+        
+        <div className={styles.progressBarContainer}>
+          <span className={styles.time}>{formatTime(progress)}</span>
+          <input
+            type="range"
+            min="0"
+            max={current?.duration_ms || 0}
+            value={progress}
+            onChange={handleSeek}
+            className={styles.progressBar}
+            style={{ '--progress-percent': `${(progress / (current?.duration_ms || 1)) * 100}%` }}
+          />
+          <span className={styles.time}>{formatTime(current?.duration_ms || 0)}</span>
+        </div>
       </div>
       
      
-      <div>
-        <VolumeButton></VolumeButton>
-      </div>
+    
+      <div className={styles.right}>
+        <button 
+          className={`${styles.lyricsButton} ${showQueue ? styles.active : ''}`} 
+          onClick={toggleQueue}
+          title="Coda" 
+        >
+          <ListMusic size={16} />
+        </button>
+        <button 
+          className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`} 
+          onClick={() => setShowVideo(!showVideo)}
+          title="Miniplayer YouTube" 
+        >
+          <MonitorPlay size={16} />
+        </button>
+        <button 
+          className={`${styles.lyricsButton} ${showLyrics ? styles.active : ''}`}
+          onClick={() => setShowLyrics(!showLyrics)}
+          title="Testo" 
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
+            <path d="M13.426 2.574a2.831 2.831 0 0 0-4.797 1.55l3.247 3.247a2.831 2.831 0 0 0 1.55-4.797M10.5 8.118l-2.619-2.62L4.74 9.075 2.065 12.12a1.287 1.287 0 0 0 1.816 1.816l3.06-2.688 3.56-3.129zM7.12 4.094a4.331 4.331 0 1 1 4.786 4.786l-3.974 3.493-3.06 2.689a2.787 2.787 0 0 1-3.933-3.933l2.676-3.045z"></path> 
+          </svg> 
+        </button>
+        <VolumeButton />
 
+        {/* Queue Dropdown */}
+        {showQueue && (
+          <div ref={queueRef} className={styles.queueDropdown}>
+            <div className={styles.queueHeader}>
+              <span>Prossime in coda</span>
+            </div>
+            <div className={styles.queueList}>
+              {queue.length === 0 ? (
+                <div className={styles.queueEmpty}>
+                  Nessun brano in coda
+                </div>
+              ) : (
+                queue.slice(0, 10).map((track, index) => (
+                  <div key={`${track.id}-${index}`} className={styles.queueItem}>
+                    <img 
+                      src={track.album?.images?.[2]?.url || track.album?.images?.[0]?.url} 
+                      alt={track.name}
+                      className={styles.queueItemCover}
+                    />
+                    <div className={styles.queueItemInfo}>
+                      <div className={styles.queueItemTitle}>{track.name}</div>
+                      <div className={styles.queueItemArtist}>
+                        {track.artists?.map(a => a.name).join(", ")}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div> 
 
       {showVideo && current && (
         <YouTubePlayer 
@@ -261,7 +426,7 @@ export default function Player() {
           </div>
         )}
         <div className={styles.lyricsContent}>
-          {loadingLyrics ? "Caricamento testo..." : (
+          {loadingLyrics ? "Caricamento testo...." : (
             isSynced ? (
               syncedLyrics.map((line, i) => {
                 // Determine if this line is active
@@ -275,7 +440,8 @@ export default function Player() {
                     onClick={() => handleSeek({ target: { value: line.time } })}
                   >
                     {line.text}
-                  </div>
+                  </div> 
+                  
                 )
               })
             ) : lyrics

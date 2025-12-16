@@ -2,7 +2,7 @@
 import styles from './buttons.module.css';
 import { useState, useEffect } from 'react';
 
-export default function StopButton({ isPlaying = false, onClick }) {
+export default function StopButton({ isPlaying = false, onClick, className = "" }) {
   const [isPlay, setIsPlay] = useState(isPlaying);
 
   useEffect(() => {
@@ -17,9 +17,9 @@ export default function StopButton({ isPlaying = false, onClick }) {
 
   return (
     <button
-      className={`${styles.playButton} play`}
-      onClick={handleClick}
       type="button"
+      className={`${styles.playButton} play ${className}`}
+      onClick={handleClick}
       aria-pressed={isPlay}
       title={isPlay ? "Pause" : "Play"}
     >
@@ -31,7 +31,7 @@ export default function StopButton({ isPlaying = false, onClick }) {
       ) : (
        <svg height="24" width="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path fill="currentColor" d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"/>
-        </svg>
+        </svg> 
         
       )}
     </button>

@@ -6,10 +6,10 @@ export async function GET() {
     // 1. New Releases (Albums)
     const newReleasesRes = await spotifyFetch("/browse/new-releases?limit=3");
     const newReleases = await newReleasesRes.json();
-    const albums = newReleases.albums?.items || [];
+    const albums = newReleases.albums?.items || []; 
 
     // 2. Featured Playlists
-    const featuredPlaylistsRes = await spotifyFetch("/browse/featured-playlists?limit=3");
+    const featurdPlaylistsRes = await spotifyFetch("/browse/featured-playlists?limit=3");
     const featuredPlaylists = await featuredPlaylistsRes.json();
     const playlists = featuredPlaylists.playlists?.items || [];
 
@@ -18,7 +18,7 @@ export async function GET() {
     if (albums.length > 0) {
       const albumId = albums[0].id;
       const tracksRes = await spotifyFetch(`/albums/${albumId}/tracks?limit=3`);
-      const tracksData = await tracksRes.json();
+      const tracksData = await tracksRes.json(); 
       tracks = tracksData.items || [];
       
       // Add album info to tracks since the track object from album endpoint doesn't have it

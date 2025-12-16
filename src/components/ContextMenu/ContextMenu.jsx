@@ -42,7 +42,7 @@ export default function ContextMenu({
       ref={menuRef}
       className={styles.contextMenu}
       style={{
-        top: `${y}px`,
+        top: `${y}px`, 
         left: `${x}px`,
       }}
       role="menu"
@@ -74,4 +74,4 @@ export default function ContextMenu({
     </div>,
     document.body
   );
-}
+} 

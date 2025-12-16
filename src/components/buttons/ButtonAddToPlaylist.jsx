@@ -13,6 +13,7 @@ export default function ButtonAddToPlaylist({
   const [showMenu, setShowMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("Nuova Playlist");
+  const [image, setImage] = useState(null);
 
   const wrapperRef = useRef(null);
   const menuRef = useRef(null);
@@ -46,6 +47,17 @@ export default function ButtonAddToPlaylist({
     }
   }, [showModal]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const createPlaylist = async () => {
     try {
       setLoading(true);
@@ -56,6 +68,7 @@ export default function ButtonAddToPlaylist({
           name,
           description: "Playlist creata tramite l'app",
           public: false,
+          image
         }),
       });
 
@@ -65,6 +78,7 @@ export default function ButtonAddToPlaylist({
       onSuccess?.(data);
       setShowModal(false);
       setName("Nuova Playlist");
+      setImage(null);
     } catch (err) {
       console.error("Failed to create playlist:", err);
       alert("Impossibile creare la playlist: " + err.message);
@@ -161,6 +175,25 @@ export default function ButtonAddToPlaylist({
                   }
                   placeholder="Nome playlist"
                 />
+                <input
+                  type="file"
+                  accept="image/jpeg"
+                  onChange={handleImageChange}
+                  style={{ marginTop: "10px", display: "block" }}
+                />
+                {image && (
+                  <img 
+                    src={image} 
+                    alt="Preview" 
+                    style={{ 
+                      width: "100px", 
+                      height: "100px", 
+                      objectFit: "cover", 
+                      marginTop: "10px",
+                      borderRadius: "4px"
+                    }} 
+                  />
+                )}
                 <div className={styles.modalActions}>
                   <button onClick={() => setShowModal(false)}>
                     Annulla
