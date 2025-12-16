@@ -11,6 +11,7 @@ import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
+import LikeButton from "../buttons/LikeButton";
 
 import { MonitorPlay, ListMusic } from "lucide-react";
 

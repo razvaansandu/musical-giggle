@@ -40,6 +40,7 @@ export default function TrackList({ tracks }) {
         <div className={styles.colArtist}>Artista</div>
         <div className={styles.colAlbum}>Album</div>
         <div className={styles.colDuration}>Durata</div>
+        <div className={styles.colLike}></div>
       </div>
 
       <div className={styles.trackListBody}>
@@ -76,6 +77,9 @@ export default function TrackList({ tracks }) {
               <div className={styles.colAlbum}>{albumName}</div>
               <div className={styles.colDuration}>
                 {formatDuration(duration)}
+              </div>
+              <div className={styles.colLike} onClick={(e) => e.stopPropagation()}>
+                <LikeButton trackId={stableId} />
               </div>
             </div>
           );
