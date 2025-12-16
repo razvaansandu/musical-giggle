@@ -2,7 +2,7 @@
 import styles from './buttons.module.css';
 import { useState, useEffect } from 'react';
 
-export default function StopButton({ isPlaying = false, onClick }) {
+export default function StopButton({ isPlaying = false, onClick, className = "" }) {
   const [isPlay, setIsPlay] = useState(isPlaying);
 
   useEffect(() => {
@@ -17,9 +17,9 @@ export default function StopButton({ isPlaying = false, onClick }) {
 
   return (
     <button
-      className={`${styles.playButton} play`}
-      onClick={handleClick}
       type="button"
+      className={`${styles.playButton} play ${className}`}
+      onClick={handleClick}
       aria-pressed={isPlay}
       title={isPlay ? "Pause" : "Play"}
     >

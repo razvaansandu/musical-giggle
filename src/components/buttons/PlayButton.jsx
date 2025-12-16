@@ -2,7 +2,7 @@
 import styles from './buttons.module.css';
 import { useState, useEffect } from 'react';
 
-export default function PlayButton({ isPlaying = false, onClick }) {
+export default function PlayButton({ isPlaying = false, onClick, className = "" }) {
   const [isPlay, setIsPlay] = useState(isPlaying);
 
   useEffect(() => {
@@ -17,12 +17,13 @@ export default function PlayButton({ isPlaying = false, onClick }) {
 
   return (
     <button
-      className={`${styles.playButton} play`}
-      onClick={handleClick}
       type="button"
+      className={`${styles.playButton} play ${className}`}
+      onClick={handleClick}
+    >
       aria-pressed={isPlay}
       title={isPlay ? "Pause" : "Play"}
-    >
+    
       {isPlay ? (
        
         <svg height="24" width="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

@@ -177,28 +177,15 @@ export default function Player() {
     }
   };
 
-  // Fetch queue
+  // Fetch queue (requires Spotify Premium)
   const fetchQueue = async () => {
     try {
       const res = await fetch("/api/player/get-user-queue");
-      console.log("Queue response status:", res.status, "ok:", res.ok);
       
-      if (res.status === 204) {
-        console.log("No active device - empty queue");
-        setQueue([]);
-        return;
-      }
-      
-      const data = await res.json();
-      console.log("Queue response data:", data);
-      
-      if (data.queue && Array.isArray(data.queue)) {
-        setQueue(data.queue);
-      } else if (data.error) {
-        console.error("Queue API error:", data.error);
-        setQueue([]);
+      if (res.ok) {
+        const data = await res.json();
+        setQueue(data.queue || []);
       } else {
-        console.log("No queue array in response, full data:", JSON.stringify(data));
         setQueue([]);
       }
     } catch (err) {
@@ -334,17 +321,17 @@ export default function Player() {
       <div className={styles.center}>
         <div className={styles.controls}>
           <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
-          <button onClick={handlePrev} className={styles.iconBtn} aria-label="Previous">
-            <ButtonPrevSong />
-          </button>
+          
+          <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} title="Previous" />
 
-          <button onClick={handlePlayPause} className={styles.playBtn} aria-label={isPlaying ? "Pause" : "Play"}>
-            {isPlaying ? <StopButton /> : <PlayButton />}
-          </button>
+          {isPlaying ? (
+            <StopButton onClick={handlePlayPause} className={styles.playBtn} />
+          ) : (
+            <PlayButton onClick={handlePlayPause} className={styles.playBtn} />
+          )}
 
-          <button onClick={handleNext} className={styles.iconBtn} aria-label="Next">
-            <ButtonNextSong />
-          </button>
+          <ButtonNextSong onNext={handleNext} className={styles.iconBtn} title="Next" />
+          
           <ButtonLoop mode={repeatMode} onChange={handleRepeat} className={styles.iconBtn} />
         </div>
         
@@ -400,7 +387,7 @@ export default function Player() {
             <div className={styles.queueList}>
               {queue.length === 0 ? (
                 <div className={styles.queueEmpty}>
-                  {isPlaying ? "Nessun brano in coda" : "Avvia la riproduzione per vedere la coda"}
+                  Nessun brano in coda
                 </div>
               ) : (
                 queue.slice(0, 10).map((track, index) => (

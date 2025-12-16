@@ -15,7 +15,7 @@ export async function GET() {
         Authorization: `Bearer ${token}`,
       },
       cache: "no-store",
-    });
+    }); 
 
     console.log("Spotify queue response status:", res.status);
 
@@ -36,3 +36,4 @@ export async function GET() {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+   

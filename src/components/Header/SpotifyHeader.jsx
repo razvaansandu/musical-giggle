@@ -31,9 +31,9 @@ export default function SpotifyHeader() {
     } else {
       setShowNotifications(false);
     }
-  };
-
-  useEffect(() => {
+  }; 
+ 
+  useEffect(() => { 
     const handleClickOutside = (event) => {
       if (
         dropdownRef.current && 
@@ -141,7 +141,7 @@ export default function SpotifyHeader() {
                         router.push(`/album/${track.album.id}`);
                         setShowNotifications(false);
                       }}
-                    >
+                    > 
                       <img src={track.album.images[0]?.url} alt={track.name} className={styles.notificationImage} />
                       <div className={styles.notificationInfo}>
                         <span className={styles.notificationTitle}>{track.name}</span>
@@ -169,7 +169,7 @@ export default function SpotifyHeader() {
                         <span className={styles.notificationTitle}>{playlist.name}</span>
                         <span className={styles.notificationSubtitle}>{playlist.owner.display_name}</span>
                       </div>
-                    </div>
+                    </div> 
                   ))}
                 </div>
               )}

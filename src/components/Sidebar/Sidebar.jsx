@@ -4,8 +4,8 @@ import { Library, Plus, Search, ListMusic } from "lucide-react";
 import styles from "../../app/home/home.module.css"; 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import ButtonAddToPlaylist from "../../components/buttons/ButtonAddToPlaylist";
 import ContextMenu from "../ContextMenu/ContextMenu";
+import CreatePlaylistModal from "../CreatePlaylistModal/CreatePlaylistModal";
 
 export default function AppSidebar() {
   const router = useRouter();
@@ -360,9 +360,26 @@ export default function AppSidebar() {
           <span>Your Library</span>
         </button>
         <div className={styles.headerButtons}>
-        <ButtonAddToPlaylist/> 
+          <button 
+            className={styles.addPlaylistButton}
+            onClick={() => setShowCreateModal(true)}
+            title="Crea playlist"
+          >
+            <Plus size={20} />
+          </button>
         </div>  
       </div>
+
+      <CreatePlaylistModal 
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={(playlist) => {
+          // Ricarica le playlist
+          if (filter === "Playlists") {
+            fetchData();
+          }
+        }}
+      />
 
       <div className={styles.libraryFilters}>
         {["Playlists", "Artists", "Albums"].map((f) => (
