@@ -4,13 +4,12 @@ import React from "react";
 import "./buttonShuffle.css";
 
 export default function ButtonShuffle({
-  isShuffled = false,     // se fornito, componente è controlled
-  onToggle,               // callback quando cambia lo stato
+  isShuffled = false,    
+  onToggle,              
   title = "Shuffle",
   ariaLabel = "Toggle shuffle",
   className = ""
 }) {
-  // Interno solo se onToggle non è fornito (uncontrolled)
   const [internal, setInternal] = React.useState(isShuffled);
   React.useEffect(() => { if (typeof isShuffled === "boolean") setInternal(isShuffled); }, [isShuffled]);
 

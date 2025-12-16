@@ -8,14 +8,12 @@ import { useContextMenu } from "../../hooks/useContextMenu";
 export default function TrackList({ tracks }) {
   const [selectedTrack, setSelectedTrack] = useState(null);
   const contextMenu = useContextMenu();
-  // Funzione per formattare la durata in mm:ss
     const formatDuration = (ms) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  // Funzione per gestire il click su una traccia
   const handlePlay = async (track) => {
     try {
       const uri = track?.uri ?? track?.track?.uri;
@@ -24,7 +22,6 @@ export default function TrackList({ tracks }) {
         return;
       }
 
-      // Avvia la riproduzione della traccia selezionata
       await fetch("/api/player/start-resume-playback", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -35,7 +32,6 @@ export default function TrackList({ tracks }) {
     }
   };
 
-  // Render della lista delle tracce
   return (
     <div className={styles.trackListContainer}>
       <div className={styles.trackListHeader}>
@@ -46,7 +42,6 @@ export default function TrackList({ tracks }) {
         <div className={styles.colDuration}>Durata</div>
       </div>
 
-      {/* Lista delle tracce */}
       <div className={styles.trackListBody}>
         {tracks.map((track, index) => {
           const stableId = track?.id ?? track?.track?.id ?? track?.uri ?? `track-${index}`;
@@ -108,7 +103,7 @@ export default function TrackList({ tracks }) {
       {
         id: "play-now",
         label: "Riproduci",
-        icon: "▶️",
+        icon: "▶",
         action: async () => {
           try {
             const uri = track?.uri ?? track?.track?.uri;
@@ -119,7 +114,7 @@ export default function TrackList({ tracks }) {
               body: JSON.stringify({ uris: [uri] }),
             });
             if (res.ok) {
-              console.log("▶️ Riproduzione avviata");
+              console.log("▶ Riproduzione avviata");
             } else {
               throw new Error("Errore nell'avviare la riproduzione");
             }
@@ -132,7 +127,7 @@ export default function TrackList({ tracks }) {
       {
         id: "add-to-queue",
         label: "Aggiungi alla coda",
-        icon: "➕",
+        icon: "",
         action: async () => {
           try {
             const uri = track?.uri ?? track?.track?.uri;
@@ -141,7 +136,7 @@ export default function TrackList({ tracks }) {
               method: "POST",
             });
             if (res.ok) {
-              console.log("✅ Traccia aggiunta alla coda");
+              console.log(" Traccia aggiunta alla coda");
               alert("Brano aggiunto alla coda");
             } else {
               throw new Error("Errore nell'aggiungere alla coda");
@@ -155,7 +150,7 @@ export default function TrackList({ tracks }) {
       {
         id: "add-to-playlist",
         label: "Aggiungi a una playlist",
-        icon: "📋",
+        icon: "",
         action: () => {
           console.log("Aggiungi a playlist:", trackId);
           alert("Funzionalità non ancora implementata. Accedi al menu delle playlist per aggiungere il brano.");
@@ -164,7 +159,7 @@ export default function TrackList({ tracks }) {
       {
         id: "like",
         label: "Salva nel tuo profilo",
-        icon: "❤️",
+        icon: "",
         action: async () => {
           try {
             const res = await fetch("/api/tracks/saved", {
@@ -173,7 +168,7 @@ export default function TrackList({ tracks }) {
               body: JSON.stringify({ ids: [trackId] }),
             });
             if (res.ok) {
-              console.log("✅ Brano salvato");
+              console.log(" Brano salvato");
               alert("Brano aggiunto ai tuoi salvataggi");
             } else {
               throw new Error("Errore nel salvare il brano");
@@ -187,7 +182,7 @@ export default function TrackList({ tracks }) {
       {
         id: "unlike",
         label: "Rimuovi dai tuoi salvataggi",
-        icon: "🗑️",
+        icon: "",
         action: async () => {
           try {
             const res = await fetch("/api/tracks/saved", {
@@ -196,7 +191,7 @@ export default function TrackList({ tracks }) {
               body: JSON.stringify({ ids: [trackId] }),
             });
             if (res.ok) {
-              console.log("✅ Brano rimosso");
+              console.log(" Brano rimosso");
               alert("Brano rimosso dai tuoi salvataggi");
             } else {
               throw new Error("Errore nel rimuovere il brano");
@@ -211,7 +206,7 @@ export default function TrackList({ tracks }) {
       {
         id: "go-to-artist",
         label: "Vai all'artista",
-        icon: "👤",
+        icon: "",
         action: () => {
           if (artistIds.length > 0) {
             router.push(`/artist/${artistIds[0]}`);
@@ -223,7 +218,7 @@ export default function TrackList({ tracks }) {
       {
         id: "go-to-album",
         label: "Vai all'album",
-        icon: "💿",
+        icon: "",
         action: () => {
           const albumId = track?.album?.id ?? track?.track?.album?.id;
           if (albumId) {
@@ -237,7 +232,7 @@ export default function TrackList({ tracks }) {
       {
         id: "copy-link",
         label: "Copia link",
-        icon: "🔗",
+        icon: "",
         action: () => {
           const link = `https://open.spotify.com/track/${trackId}`;
           navigator.clipboard.writeText(link);
@@ -247,7 +242,7 @@ export default function TrackList({ tracks }) {
       {
         id: "share",
         label: "Condividi",
-        icon: "📤",
+        icon: "",
         action: () => {
           const link = `https://open.spotify.com/track/${trackId}`;
           navigator.clipboard.writeText(link);
@@ -258,7 +253,7 @@ export default function TrackList({ tracks }) {
       {
         id: "report",
         label: "Segnala",
-        icon: "⚠️",
+        icon: "",
         danger: true,
         action: () => {
           alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");

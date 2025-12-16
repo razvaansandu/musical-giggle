@@ -23,7 +23,6 @@ export async function POST(request) {
 
   let user_id = bodyUserId;
 
-  // Se manca user_id, lo recuperiamo da /me
   if (!user_id) {
     try {
       const meRes = await fetch("https://api.spotify.com/v1/me", {
@@ -45,7 +44,6 @@ export async function POST(request) {
     );
   }
 
-  // 1. Create Playlist
   const createRes = await fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
     method: "POST",
     headers: {
@@ -65,10 +63,8 @@ export async function POST(request) {
     return NextResponse.json(playlistData, { status: createRes.status });
   }
 
-  // 2. Upload Image if provided
   if (image && playlistData.id) {
     try {
-      // Image must be base64 encoded JPEG
       const base64Image = image.replace(/^data:image\/\w+;base64,/, "");
       
       const imageRes = await fetch(`https://api.spotify.com/v1/playlists/${playlistData.id}/images`, {

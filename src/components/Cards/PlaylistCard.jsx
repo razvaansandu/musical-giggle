@@ -5,10 +5,8 @@ import styles from "./Card.module.css";
 
 export default function PlaylistCard({ playlist, onClick }) {
   if (!playlist) return null;
-// Ottieni l'immagine della playlist o usa un'immagine di default
   const img = playlist?.images?.[0]?.url || "/default-playlist.png";
 
-  // Se onClick è fornito, usa button; altrimenti usa Link
   if (onClick) {
     return (
       <button
@@ -28,7 +26,6 @@ export default function PlaylistCard({ playlist, onClick }) {
     );
   }
 
-  // Render della scheda della playlist
   return (
     <Link href={`/playlist/${playlist.id}`} className={styles.card}>
       <div

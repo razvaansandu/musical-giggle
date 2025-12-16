@@ -73,7 +73,6 @@
   color: var(--primary);
 }
 
-/* === LEFT: Index & Play === */
 .card-left {
   position: relative;
   display: flex;
@@ -139,7 +138,6 @@
   box-shadow: 0 6px 16px rgba(29, 185, 84, 0.6) !important;
 }
 
-/* === RIGHT: Actions (Heart, Duration, Options) === */
 .card-right {
   display: flex;
   align-items: center;
@@ -191,7 +189,6 @@
   color: var(--accent);
 }
 
-/* Heart specific styling */
 .card-heart svg {
   width: 18px;
   height: 18px;
@@ -206,7 +203,6 @@
   fill: currentColor;
 }
 
-/* Options button styling */
 .card-options svg {
   width: 18px;
   height: 18px;

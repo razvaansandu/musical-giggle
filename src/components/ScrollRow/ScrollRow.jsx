@@ -33,17 +33,16 @@ export default function ScrollRow({ children, title, seeAllLink, rightElement })
 
   const scroll = (direction) => {
     if (!scrollRef.current) return;
-    const scrollAmount = 400; // pixels to scroll
+    const scrollAmount = 400;
     scrollRef.current.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
   };
 
-  // Handle mouse wheel for horizontal scroll
   const handleWheel = (e) => {
     if (!scrollRef.current) return;
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // Already horizontal scroll
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;  
     
     e.preventDefault();
     scrollRef.current.scrollBy({

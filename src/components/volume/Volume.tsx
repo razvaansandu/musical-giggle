@@ -8,7 +8,6 @@ export default function VolumeButton() {
   const [prevVolume, setPrevVolume] = useState(50);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sync volume with Spotify API (debounced)
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -21,8 +20,7 @@ export default function VolumeButton() {
       } catch (error) {
         console.error('Error setting volume:', error);
       }
-    }, 200); // 200ms debounce
-
+    }, 200); 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };

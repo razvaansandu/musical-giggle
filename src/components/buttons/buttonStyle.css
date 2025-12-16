@@ -55,7 +55,6 @@ color :white;
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
 
-/* album art */
 .card-image {
   width: 56px;
   height: 56px; 
@@ -66,13 +65,12 @@ color :white;
   display: block;
 }
 
-/* content (title + artist) */
 .card-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 4px;
-  min-width: 0; /* allow truncation */
+  min-width: 0; 
   overflow: hidden;
 }
 
@@ -95,7 +93,6 @@ color :white;
   overflow: hidden;
 }
 
-/* right area: duration / actions */
 .card-meta {
   margin-left: auto;
   display: flex;
@@ -106,7 +103,6 @@ color :white;
   flex-shrink: 0;
 }
 
-/* small circular play button that appears on hover */
 .card-play {
   width: 36px;
   height: 36px;

@@ -57,7 +57,6 @@ console.log(tracks);
 
         <main className={styles.mainContent}>
 
-          {/* --- HERO ALBUM --- */}
           <section className={styles.heroAlbumSection}>
             <div className={styles.heroAlbumContainer}>
               <div className={styles.heroAlbumImage}>
@@ -82,7 +81,6 @@ console.log(tracks);
             </div>
           </section>
 
-          {/* --- TRACKLIST HEADER --- */}
           <section className={styles.tracklistHeader}>
             <div className={styles.tracklistHeaderLeft}>
               <span className={styles.tracklistNumber}>#</span>
@@ -93,7 +91,6 @@ console.log(tracks);
             </div>
           </section>
 
-          {/* --- TRACKLIST --- */}
           <section className={styles.tracklist}>
             {tracks.map((t, i) => (
               <Card key={t.id} item={t} index={i + 1} />

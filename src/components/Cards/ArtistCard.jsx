@@ -8,7 +8,6 @@ export default function ArtistCard({ artist, onClick }) {
 
   const img = artist?.images?.[0]?.url || "/default-artist.png";
 
-  // Se onClick è fornito, usa button; altrimenti usa Link
   if (onClick) {
     return (
       <button

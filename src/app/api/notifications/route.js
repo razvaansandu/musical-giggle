@@ -3,17 +3,14 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    // 1. New Releases (Albums)
     const newReleasesRes = await spotifyFetch("/browse/new-releases?limit=3");
     const newReleases = await newReleasesRes.json();
     const albums = newReleases.albums?.items || []; 
 
-    // 2. Featured Playlists
     const featurdPlaylistsRes = await spotifyFetch("/browse/featured-playlists?limit=3");
     const featuredPlaylists = await featuredPlaylistsRes.json();
     const playlists = featuredPlaylists.playlists?.items || [];
 
-    // 3. New Songs (Tracks from the first new album)
     let tracks = [];
     if (albums.length > 0) {
       const albumId = albums[0].id;
@@ -21,7 +18,6 @@ export async function GET() {
       const tracksData = await tracksRes.json(); 
       tracks = tracksData.items || [];
       
-      // Add album info to tracks since the track object from album endpoint doesn't have it
       tracks = tracks.map(t => ({ ...t, album: albums[0] }));
     }
 

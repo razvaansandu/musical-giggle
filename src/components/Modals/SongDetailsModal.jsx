@@ -29,7 +29,7 @@ export default function SongDetailsModal({ track, onClose }) {
           uris: [track.uri],
         }),
       });
-      onClose(); // Close modal after starting playback? Or keep it open? User might want to read lyrics. Let's keep it open.
+      onClose();
     } catch (err) {
       console.error("Errore avvio riproduzione:", err);
     }

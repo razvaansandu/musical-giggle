@@ -19,7 +19,6 @@ export default function ButtonAddToPlaylist({
   const menuRef = useRef(null);
   const inputRef = useRef(null);
 
-  /* ✅ CLICK FUORI: chiude SOLO il menu */
   useEffect(() => {
     if (!showMenu) return;
 
@@ -39,7 +38,7 @@ export default function ButtonAddToPlaylist({
 
   useEffect(() => {
     if (showModal) {
-      setShowMenu(false); // ✅ mai menu + modal insieme
+      setShowMenu(false); 
       setTimeout(() => {
         inputRef.current?.focus();
         inputRef.current?.select();
@@ -89,7 +88,6 @@ export default function ButtonAddToPlaylist({
 
   return (
     <>
-      {/* ✅ BOTTONE */}
       <div
         ref={wrapperRef}
         className={`${styles.wrapper} ${className}`}
@@ -105,7 +103,6 @@ export default function ButtonAddToPlaylist({
         </button>
       </div>
 
-      {/* ✅ MENU (Portal) */}
       {showMenu &&
         createPortal(
           <div
@@ -132,7 +129,6 @@ export default function ButtonAddToPlaylist({
           document.body
         )}
 
-      {/* ✅ BRANI PIACIUTI */}
       <button
         className={styles.menuItem}
         onClick={() => {
@@ -159,7 +155,6 @@ export default function ButtonAddToPlaylist({
         </div>
       </button>
 
-      {/* ✅ MODAL */}
       {showModal &&
         createPortal(
           <div className={styles.modalBackdrop} role="dialog" aria-modal="true">

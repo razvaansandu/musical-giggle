@@ -82,7 +82,6 @@ export default function HomePage() {
 
         setPlaylists(playlistsJson.items ?? playlistsJson ?? []);
         
-        // Albums are wrapped in { album: {...} } objects
         const albums = (albumsJson.items ?? []).map(item => item.album).filter(Boolean);
         setSavedAlbums(albums);
       } catch (err) {
@@ -145,10 +144,8 @@ export default function HomePage() {
                 </button>  
               </div>
 
-              {/* FILTERED CONTENT */}
               {activeFilter === 'all' && (
                 <>
-                  {/* RECENTLY PLAYED */}
                   <ScrollRow title="Recently played" seeAllLink="/search">
                     {recentTracks.map((track, index) => (
                       <TrackCard
@@ -159,7 +156,6 @@ export default function HomePage() {
                     ))}
                   </ScrollRow>
 
-                  {/* YOUR ALBUMS */}
                   <ScrollRow title="Your albums" seeAllLink="/search">
                     {savedAlbums.map((album, index) => (
                       <AlbumCard
@@ -170,7 +166,6 @@ export default function HomePage() {
                     ))}
                   </ScrollRow> 
 
-                  {/* YOUR PLAYLISTS */}
                   <ScrollRow 
                     title="Your playlists" 
                     rightElement={
@@ -190,7 +185,6 @@ export default function HomePage() {
                     ))}
                   </ScrollRow>
 
-                  {/* TOP ARTISTS */}
                   <ScrollRow title="Your top artists" seeAllLink="/search">
                     {topArtists.map((artist, index) => (
                       <ArtistCard
@@ -201,7 +195,6 @@ export default function HomePage() {
                     ))}
                   </ScrollRow>
 
-                  {/* TOP TRACKS */}
                   <ScrollRow title="Your top tracks" seeAllLink="/search">
                     {topTracks.map((track, index) => (
                       <TrackCard

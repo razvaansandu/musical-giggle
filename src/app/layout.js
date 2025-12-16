@@ -20,7 +20,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Spotify Web Playback SDK */}
         <script src="https://sdk.scdn.co/spotify-player.js" async></script>
       </head>
 

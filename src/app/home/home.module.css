@@ -295,7 +295,6 @@
   gap: 24px;
 }
 
-/* Horizontal Scroll Row */
 .scrollRow {
   display: flex;
   flex-direction: row;
@@ -332,7 +331,6 @@
   min-width: 180px;
 }
 
-/* Card Styles */
 .card {
   background: linear-gradient(135deg, rgba(40, 40, 40, 0.4), rgba(30, 30, 30, 0.3));
   padding: 16px;
@@ -390,7 +388,6 @@
   line-height: 1.5;
 }
 
-/* Hero Styles */
 .hero {
   display: flex;
   align-items: center;
@@ -436,7 +433,6 @@
   color: var(--text-secondary);
 }
 
-/* Album Hero Styles */
 .heroAlbumSection {
   background: linear-gradient(180deg, rgba(29, 185, 84, 0.15), transparent);
   padding: 48px 0 32px 0;
@@ -516,7 +512,6 @@
   font-size: 20px;
 }
 
-/* Tracklist Header */
 .tracklistHeader {
   display: grid;
   grid-template-columns: 48px 1fr auto;
@@ -572,7 +567,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Tracklist */
 .tracklist { 
   display: flex; 
   flex-direction: column; 
