@@ -11,6 +11,7 @@ import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
 import { MonitorPlay, ListMusic } from "lucide-react";
+import LikeButton from "../buttons/LikeButton";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -279,6 +280,7 @@ export default function Player() {
             {current.artists?.map((a) => a.name).join(", ")}
           </div>
         </div> 
+        <LikeButton trackId={current?.id} />
       </div>
 
       <div className={styles.center}>
