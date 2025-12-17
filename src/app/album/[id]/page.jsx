@@ -8,7 +8,7 @@ import styles from "../../home/home.module.css";
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
-import Card from "../../../components/Cards/Card";
+import TrackList from "../../../components/TrackList/TrackList"; 
 import Loader from "../../../components/Loader/Loader";
 
 export default function AlbumPage() {
@@ -19,7 +19,7 @@ export default function AlbumPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!id) return; 
+    if (!id) return;
 
     const fetchData = async () => {
       try {
@@ -27,12 +27,17 @@ export default function AlbumPage() {
         setError(null);
 
         const res = await fetch(`/api/albums/${id}`);
-        const data = await res.json();
-
         if (!res.ok) throw new Error("Errore caricamento album");
-
+        
+        const data = await res.json();
         setAlbum(data);
-        setTracks(data.tracks?.items || []);
+
+        const albumTracks = (data.tracks?.items || []).map(track => ({
+            ...track,
+            album: data 
+        }));
+
+        setTracks(albumTracks);
       } catch (err) {
         console.error(err);
         setError(err.message || "Errore caricamento album");
@@ -44,11 +49,7 @@ export default function AlbumPage() {
     fetchData();
   }, [id]);
 
-  if (loading) return <Loader />;
-  if (error) return <p style={{ color: "#f87171" }}>{error}</p>;
-console.log(tracks); 
-  return (  
-    
+  return (
     <div className={styles.container}>
       <SpotifyHeader />
 
@@ -56,47 +57,45 @@ console.log(tracks);
         <Sidebar />
 
         <main className={styles.mainContent}>
+          {loading && (
+            <div style={{ marginTop: 40 }}>
+              <Loader />
+            </div>
+          )}
 
-          <section className={styles.heroAlbumSection}>
-            <div className={styles.heroAlbumContainer}>
-              <div className={styles.heroAlbumImage}>
-                <img
-                  src={album.images?.[0]?.url || "/placeholder.png"}
-                  alt={album.name}
-                  className={styles.heroAlbumImg}
-                />
-              </div>
+          {error && !loading && (
+            <p style={{ color: "#f87171", marginBottom: "1rem" }}>{error}</p>
+          )}
 
-              <div className={styles.heroAlbumText}>
-                <span className={styles.heroAlbumType}>Album</span>
-                <h1 className={styles.heroAlbumTitle}>{album.name}</h1>
-                <div className={styles.heroAlbumMeta}>
-                  <span>{album.artists?.map((a) => a.name).join(", ")}</span>
-                  <span className={styles.heroAlbumDot}>•</span>
-                  <span>{album.release_date}</span>
-                  <span className={styles.heroAlbumDot}>•</span>
-                  <span>{album.total_tracks} songs</span>
+          {!loading && album && (
+            <>
+              <section className={styles.hero}>
+                <div className={styles.heroImageWrapper}>
+                  <img
+                    src={album.images?.[0]?.url || "/placeholder.png"}
+                    alt={album.name}
+                    className={styles.heroImage}
+                  />
                 </div>
-              </div>
-            </div>
-          </section>
 
-          <section className={styles.tracklistHeader}>
-            <div className={styles.tracklistHeaderLeft}>
-              <span className={styles.tracklistNumber}>#</span>
-              <span className={styles.tracklistTitle}>TITLE</span>
-            </div>
-            <div className={styles.tracklistHeaderRight}>
-              <span className={styles.tracklistDuration}>DURATION</span>
-            </div>
-          </section>
+                <div className={styles.heroText}>
+                  <p className={styles.heroType}>Album</p>
+                  <h1 className={styles.heroTitle}>{album.name}</h1>
+                  <p className={styles.heroFollowers}>
+                    {album.artists?.map(a => a.name).join(", ")} • {new Date(album.release_date).getFullYear()}
+                  </p>
+                  <p className={styles.heroFollowers}>
+                    {tracks.length} tracks
+                  </p>
+                </div>
+              </section>
 
-          <section className={styles.tracklist}>
-            {tracks.map((t, i) => (
-              <Card key={t.id} item={t} index={i + 1} />
-            ))}
-          </section>
-
+              <section className={styles.section}>
+                <h2>Brani</h2>
+                <TrackList tracks={tracks} />
+              </section>
+            </>
+          )}
         </main>
       </div>
 
