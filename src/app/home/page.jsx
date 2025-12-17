@@ -13,6 +13,7 @@ import ScrollRow from "../../components/ScrollRow/ScrollRow";
 import TrackCard from "../../components/Cards/TrackCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
 import AlbumCard from "../../components/Cards/AlbumCard";
+import ArtistCard from "../../components/Cards/ArtistCard";
 import Loader from "../../components/Loader/Loader";
 
 export default function HomePage() {
@@ -23,6 +24,7 @@ export default function HomePage() {
   const [userPlaylists, setUserPlaylists] = useState([]);
   const [recentTracks, setRecentTracks] = useState([]);
   const [savedAlbums, setSavedAlbums] = useState([]);
+  const [topArtists, setTopArtists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -37,11 +39,13 @@ export default function HomePage() {
           playlistsRes,
           albumsRes,
           recentRes,
+          topArtistsRes,
         ] = await Promise.all([
           fetch("/api/spotify/get-user-profile"),
           fetch("/api/playlists/user?limit=50"),
           fetch("/api/albums/saved?limit=50"),
           fetch("/api/player/get-recently-played-tracks?limit=20"),
+          fetch("/api/spotify/get-user-top?type=artists&limit=20"),
         ]);
 
         if (!profileRes.ok) throw new Error("Errore profilo utente");
@@ -51,6 +55,7 @@ export default function HomePage() {
         const playlistsJson = await playlistsRes.json();
         const albumsJson = albumsRes.ok ? await albumsRes.json() : { items: [] };
         const recentJson = await recentRes.json();
+        const topArtistsJson = topArtistsRes.ok ? await topArtistsRes.json() : { items: [] };
 
         console.log("PROFILE:", profileJson);
         console.log("PLAYLISTS:", playlistsJson);
@@ -78,6 +83,9 @@ export default function HomePage() {
           self.findIndex(t => t.id === track.id) === index
         );
         setRecentTracks(uniqueRecentTracks);
+        
+        const topArtists = topArtistsJson.items ?? [];
+        setTopArtists(topArtists);
         
         const albums = (albumsJson.items ?? []).map(item => item.album).filter(Boolean);
         setSavedAlbums(albums);
@@ -129,6 +137,20 @@ export default function HomePage() {
                   ))
                 ) : (
                   <p style={{ color: 'var(--text-secondary)' }}>Nessun brano ascoltato di recente</p>
+                )}
+              </ScrollRow>
+
+              <ScrollRow title="Artisti Top di questo mese" seeAllLink="/top-artists">
+                {topArtists.length > 0 ? (
+                  topArtists.map((artist, index) => (
+                    <ArtistCard
+                      key={`${artist.id || "artist"}-${index}`}
+                      artist={artist}
+                      onClick={() => router.push(`/artist/${artist.id}`)}
+                    />
+                  ))
+                ) : (
+                  <p style={{ color: 'var(--text-secondary)' }}>Nessun artista top</p>
                 )}
               </ScrollRow>
 
