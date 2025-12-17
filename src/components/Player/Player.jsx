@@ -10,7 +10,7 @@ import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
-import { MonitorPlay, ListMusic } from "lucide-react";
+import { MonitorPlay, ListMusic, Speaker } from "lucide-react"; 
 import LikeButton from "../buttons/LikeButton";
 
 export default function Player() {
@@ -18,17 +18,23 @@ export default function Player() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
   const [repeatMode, setRepeatMode] = useState("off");
+  
   const [showLyrics, setShowLyrics] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
+  const [showDevices, setShowDevices] = useState(false);
+  
   const [queue, setQueue] = useState([]);
+  const [devices, setDevices] = useState([]); 
   const [lyrics, setLyrics] = useState("");
   const [syncedLyrics, setSyncedLyrics] = useState([]);
   const [isSynced, setIsSynced] = useState(false);
   const [loadingLyrics, setLoadingLyrics] = useState(false);
   const [progress, setProgress] = useState(0);
+
   const activeLineRef = useRef(null);
   const queueRef = useRef(null);
+  const deviceRef = useRef(null); 
   const seekTimeoutRef = useRef(null);
 
   const parseLrc = (lrc) => {
@@ -134,10 +140,44 @@ export default function Player() {
     }
   };
 
+  const fetchDevices = async () => {
+    try {
+      const res = await fetch("/api/player/get-available-devices");
+      if (res.ok) {
+        const data = await res.json();
+        setDevices(data.devices || []);
+      }
+    } catch (err) {
+      console.error("Errore nel recuperare i dispositivi", err);
+      setDevices([]);
+    }
+  };
+
+  const toggleDevices = () => {
+    if (!showDevices) {
+      fetchDevices();
+      setShowQueue(false); 
+    }
+    setShowDevices(!showDevices);
+  };
+
+  const handleDeviceClick = async (deviceId) => {
+    try {
+      await fetch('/api/player/transfer-playback', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId }),
+      });
+      setShowDevices(false);
+      setTimeout(fetchCurrent, 1000);
+    } catch (err) {
+      console.error("Errore nel trasferire la riproduzione", err);
+    }
+  };
+
   const fetchQueue = async () => {
     try {
       const res = await fetch("/api/player/get-user-queue");
-      
       if (res.ok) {
         const data = await res.json();
         setQueue(data.queue || []);
@@ -153,6 +193,7 @@ export default function Player() {
   const toggleQueue = () => {
     if (!showQueue) {
       fetchQueue();
+      setShowDevices(false); 
     }
     setShowQueue(!showQueue);
   };
@@ -212,7 +253,6 @@ export default function Player() {
     }
   };
 
-  // useEffect
   useEffect(() => { 
     if (showLyrics && current) {
       const artist = current.artists?.[0]?.name;
@@ -234,22 +274,27 @@ export default function Player() {
   useEffect(() => {
     fetchCurrent();
     fetchRecentlyPlayed();
-
     const interval = setInterval(fetchCurrent, 2000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (queueRef.current && !queueRef.current.contains(e.target)) {
-        setShowQueue(false);
+      if (queueRef.current && !queueRef.current.contains(e.target) && showQueue) {
+        const btn = e.target.closest(`button[title="Coda"]`);
+        if (!btn) setShowQueue(false);
+      }
+      if (deviceRef.current && !deviceRef.current.contains(e.target) && showDevices) {
+        const btn = e.target.closest(`button[title="Dispositivi"]`);
+        if (!btn) setShowDevices(false);
       }
     };
-    if (showQueue) {
+    
+    if (showQueue || showDevices) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showQueue]);
+  }, [showQueue, showDevices]);
 
   if (!current) { 
     return (
@@ -273,7 +318,6 @@ export default function Player() {
             className={styles.cover} 
           />  
         )}  
-        
         <div>
           <div className={styles.title}>{current.name}</div>
           <div className={styles.artist}>
@@ -315,12 +359,21 @@ export default function Player() {
       
       <div className={styles.right}>
         <button 
+          className={`${styles.lyricsButton} ${showDevices ? styles.active : ''}`} 
+          onClick={toggleDevices}
+          title="Dispositivi" 
+        >
+          <Speaker size={16} />
+        </button>
+
+        <button 
           className={`${styles.lyricsButton} ${showQueue ? styles.active : ''}`} 
           onClick={toggleQueue}
           title="Coda" 
         >
           <ListMusic size={16} />
         </button>
+
         <button 
           className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`} 
           onClick={() => setShowVideo(!showVideo)}
@@ -338,6 +391,39 @@ export default function Player() {
           </svg> 
         </button>
         <VolumeButton />
+
+        {showDevices && (
+          <div ref={deviceRef} className={styles.queueDropdown} style={{right: '180px'}}>
+            <div className={styles.queueHeader}>
+              <span>Connetti a un dispositivo</span>
+            </div>
+            <div className={styles.queueList}>
+              {devices.length > 0 ? (
+                devices.map((device) => (
+                  <div 
+                    key={device.id} 
+                    className={`${styles.queueItem} ${device.is_active ? styles.activeDevice : ''}`}
+                    onClick={() => !device.is_active && handleDeviceClick(device.id)}
+                    style={{ cursor: device.is_active ? 'default' : 'pointer', background: device.is_active ? 'rgba(29, 185, 84, 0.1)' : 'transparent' }}
+                  >
+                    <div className={styles.queueItemInfo}>
+                      <div className={styles.queueItemTitle} style={{ color: device.is_active ? '#1DB954' : 'inherit' }}>
+                        {device.name}
+                      </div>
+                      <div className={styles.queueItemArtist}>
+                        {device.type} {device.is_active && '• Ascoltando ora'}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className={styles.queueEmpty}>
+                  Nessun dispositivo disponibile
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {showQueue && (
           <div ref={queueRef} className={styles.queueDropdown}>

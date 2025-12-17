@@ -23,6 +23,7 @@ export async function POST() {
   "user-follow-read",
   "user-follow-modify", 
   "user-top-read"
+  
 ].join(" ");
 
   const authUrl = `https://accounts.spotify.com/authorize?${new URLSearchParams({
