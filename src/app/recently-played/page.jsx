@@ -27,7 +27,11 @@ export default function RecentlyPlayedPage() {
         const tracks = Array.isArray(data.items)
           ? data.items.map((i) => i.track)
           : [];
-        setRecentTracks(tracks);
+        // Remove duplicates based on track ID
+        const uniqueTracks = tracks.filter((track, index, self) => 
+          self.findIndex(t => t.id === track.id) === index
+        );
+        setRecentTracks(uniqueTracks);
       } catch (err) {
         console.error("Errore:", err);
         setError(err.message || "Errore nel caricamento");

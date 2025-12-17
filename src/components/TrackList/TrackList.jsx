@@ -55,7 +55,7 @@ export default function TrackList({ tracks }) {
 
           return (
             <div
-              key={stableId}
+              key={`${stableId}-${index}`}
               className={styles.trackRow}
               onClick={() => handlePlay(track)}
               onContextMenu={(e) => {
