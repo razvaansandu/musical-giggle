@@ -161,10 +161,26 @@ export default function LikedSongs() {
                 {track.album?.name}
               </div>
 
-              {/* Data */}
-              <div className={styles.tracklistArtist} style={{ color: '#b3b3b3' }}>
-                {formatDate(item.added_at)}
-              </div>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '16px 6fr 4fr 3fr minmax(100px, 1fr)', 
+            gridGap: '16px', 
+            padding: '0 32px', 
+            borderBottom: 'none', 
+            marginBottom: '16px',
+            color: '#b3b3b3',
+            fontSize: '12px',
+            textTransform: 'uppercase',
+            height: '36px',
+            alignItems: 'center',
+            letterSpacing: '1px'
+          }}>
+            <div style={{ textAlign: 'center' }}>#</div>
+            <div>Titolo</div>
+            <div>Artista</div>
+            <div>Album</div>
+            <div style={{ textAlign: 'right', paddingRight: '30px' }}><Clock size={16} /></div>
+          </div>
 
               {/* Action (Remove) */}
               <div style={{ display: 'flex', justifyContent: 'center' }}>
