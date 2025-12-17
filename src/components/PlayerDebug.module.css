@@ -1,0 +1,161 @@
+.debugContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10000;
+  font-family: monospace;
+}
+
+.debugButton {
+  padding: 10px 16px;
+  background: #1e1e1e;
+  color: #fff;
+  border: 2px solid #6BCF7F;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 44px;
+}
+
+.debugButton:active {
+  transform: scale(0.95);
+}
+
+.debugPanel {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  width: 320px;
+  max-height: 500px;
+  overflow-y: auto;
+  color: #fff;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.debugHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px 12px 0 0;
+}
+
+.debugHeader h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  min-width: auto;
+  transition: color 0.2s;
+}
+
+.closeBtn:hover {
+  color: #fff;
+}
+
+.debugContent {
+  padding: 12px 0;
+}
+
+.debugRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+}
+
+.debugRow:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.value {
+  color: rgba(255, 255, 255, 0.8);
+  word-break: break-word;
+  text-align: right;
+  flex: 1;
+  margin-left: 10px;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 8px 0;
+}
+
+.debugFooter {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 12px 12px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}
+
+.debugFooter p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .debugContainer {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .debugButton {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .debugPanel {
+    width: 280px;
+    right: -10px;
+    bottom: 50px;
+  }
+
+  .debugRow {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .label {
+    min-width: 100px;
+    font-size: 10px;
+  }
+}

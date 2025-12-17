@@ -9,6 +9,7 @@ import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
 import ScrollRow from "../../components/ScrollRow/ScrollRow";
+import PlayerDebug from "../../components/PlayerDebug";
 
 import TrackCard from "../../components/Cards/TrackCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
@@ -171,6 +172,7 @@ export default function HomePage() {
         </main>
       </div> 
       <Player />
+      <PlayerDebug />
     </div>
   );
 }
