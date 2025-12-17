@@ -8,7 +8,11 @@ import styles from "../../home/home.module.css";
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
-import TrackList from "../../../components/TrackList/TrackList"; 
+import TrackList from "../../../components/TrackList/TrackList";
+import ButtonShuffle from "../../../components/buttons/buttonShuffle";
+import PlayButton from "../../../components/buttons/PlayButton";
+import AddToLibraryButton from "../../../components/buttons/AddToLibraryButton";
+
 import Loader from "../../../components/Loader/Loader";
 
 export default function AlbumPage() {
@@ -48,6 +52,37 @@ export default function AlbumPage() {
 
     fetchData();
   }, [id]);
+
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handleShuffle = async (next) => {
+    try {
+      const newState = typeof next === 'boolean' ? next : !isShuffle;
+      setIsShuffle(newState);
+      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: 'PUT' });
+    } catch (err) {
+      console.error('Errore shuffle', err);
+      setIsShuffle(prev => !prev);
+    }
+  };
+
+  const handlePlayAll = async (play) => {
+    try {
+      setIsPlaying(play);
+      if (!tracks || !tracks.length) return;
+      const uris = tracks.map(t => t.uri).filter(Boolean);
+      if (!uris.length) return;
+      await fetch('/api/player/start-resume-playback', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uris }),
+      });
+    } catch (err) {
+      console.error('Errore play', err);
+      setIsPlaying(!play);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -92,14 +127,22 @@ export default function AlbumPage() {
 
               <section className={styles.section}>
                 <h2>Brani</h2>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '12px 0' }}>
+                  <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} />
+                  <PlayButton isPlaying={isPlaying} onClick={handlePlayAll} />
+                  <div>
+                    <AddToLibraryButton albumId={album?.id} />
+                  </div>
+                </div>
                 <TrackList tracks={tracks} />
               </section>
             </>
           )}
         </main>
+        
       </div>
 
-      <Player />
+      <Player/>
     </div>
   );
 }
