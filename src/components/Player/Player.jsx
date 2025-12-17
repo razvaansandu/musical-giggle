@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import styles from "./Player.module.css";
 import PlayButton from "../buttons/PlayButton";
 import ButtonNextSong from "../buttons/buttonNextSong";
@@ -9,8 +9,7 @@ import StopButton from "../buttons/stopButton";
 import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
-import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
-import { MonitorPlay, ListMusic, Speaker } from "lucide-react"; 
+import { MonitorPlay, ListMusic, Speaker, Disc } from "lucide-react"; 
 import LikeButton from "../buttons/LikeButton";
 
 export default function Player() {
@@ -20,7 +19,7 @@ export default function Player() {
   const [repeatMode, setRepeatMode] = useState("off");
   
   const [showLyrics, setShowLyrics] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
+  const [showNowPlaying, setShowNowPlaying] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
   const [showDevices, setShowDevices] = useState(false);
   
@@ -29,13 +28,17 @@ export default function Player() {
   const [lyrics, setLyrics] = useState("");
   const [syncedLyrics, setSyncedLyrics] = useState([]);
   const [isSynced, setIsSynced] = useState(false);
+  const [isAutoScroll, setIsAutoScroll] = useState(true);
   const [loadingLyrics, setLoadingLyrics] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [artistDetails, setArtistDetails] = useState(null);
 
   const activeLineRef = useRef(null);
   const queueRef = useRef(null);
   const deviceRef = useRef(null); 
   const seekTimeoutRef = useRef(null);
+  const lyricsContentRef = useRef(null);
+  const isProgrammaticScroll = useRef(false);
 
   const parseLrc = (lrc) => {
     const lines = lrc.split("\n");
@@ -100,6 +103,19 @@ export default function Player() {
       setIsSynced(false);
     } finally {
       setLoadingLyrics(false);
+    }
+  };
+
+  const fetchArtistDetails = async (artistId) => {
+    if (!artistId) return;
+    try {
+      const res = await fetch(`/api/artist/${artistId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setArtistDetails(data);
+      }
+    } catch (error) {
+      console.error("Error fetching artist details:", error);
     }
   };
 
@@ -253,6 +269,30 @@ export default function Player() {
     }
   };
 
+  const scrollToActiveLine = () => {
+    setIsAutoScroll(true);
+    if (activeLineRef.current) {
+      isProgrammaticScroll.current = true;
+      activeLineRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 500);
+    }
+  };
+
+  const handleLyricsScroll = () => {
+    if (!isProgrammaticScroll.current) {
+      setIsAutoScroll(false);
+    }
+  };
+
+  const handleUserInteraction = () => {
+    setIsAutoScroll(false);
+  };
+
   useEffect(() => { 
     if (showLyrics && current) {
       const artist = current.artists?.[0]?.name;
@@ -260,6 +300,32 @@ export default function Player() {
       fetchLyrics(artist, track);
     }
   }, [current?.id, showLyrics]);
+
+  useEffect(() => {
+    if (showNowPlaying && current?.artists?.[0]?.id) {
+      fetchArtistDetails(current.artists[0].id);
+    }
+  }, [current?.id, showNowPlaying]);
+
+  const activeIndex = useMemo(() => {
+    if (!isSynced || syncedLyrics.length === 0) return -1;
+    return syncedLyrics.findIndex((line, i) => {
+      return progress >= line.time && (i === syncedLyrics.length - 1 || progress < syncedLyrics[i+1].time);
+    });
+  }, [progress, syncedLyrics, isSynced]);
+
+  useEffect(() => {
+    if (showLyrics && isAutoScroll && activeIndex !== -1 && activeLineRef.current) {
+      isProgrammaticScroll.current = true;
+      activeLineRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 500);
+    }
+  }, [activeIndex, showLyrics, isAutoScroll]);
 
   useEffect(() => {
     let interval;
@@ -298,11 +364,7 @@ export default function Player() {
 
   if (!current) { 
     return (
-      <div className={styles.playerBar}>
-        <div className={styles.empty}>
-          Nessun brano in riproduzione. Clicca una track per iniziare 
-        </div>
-      </div>
+     <p></p>
     );
   }
 
@@ -375,15 +437,21 @@ export default function Player() {
         </button>
 
         <button 
-          className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`} 
-          onClick={() => setShowVideo(!showVideo)}
-          title="Miniplayer YouTube" 
+          className={`${styles.lyricsButton} ${showNowPlaying ? styles.active : ''}`} 
+          onClick={() => {
+            if (!showNowPlaying) setShowLyrics(false);
+            setShowNowPlaying(!showNowPlaying);
+          }}
+          title="Cosa stai ascoltando" 
         >
-          <MonitorPlay size={16} />
+          <Disc size={16} />
         </button>
         <button 
           className={`${styles.lyricsButton} ${showLyrics ? styles.active : ''}`}
-          onClick={() => setShowLyrics(!showLyrics)}
+          onClick={() => {
+            if (!showLyrics) setShowNowPlaying(false);
+            setShowLyrics(!showLyrics);
+          }}
           title="Testo" 
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-mic-fill" viewBox="0 0 16 16">
@@ -457,12 +525,52 @@ export default function Player() {
         )}
       </div> 
 
-      {showVideo && current && (
-        <YouTubePlayer 
-          query={`${current.artists?.[0]?.name} ${current.name}`} 
-          onClose={() => setShowVideo(false)} 
-        />
-      )}
+      <div className={`${styles.nowPlayingOverlay} ${showNowPlaying ? styles.open : ''}`}>
+        {current && (
+          <div className={styles.nowPlayingContent}>
+            <div className={styles.nowPlayingHeader}>Cosa stai ascoltando</div>
+            
+            <img 
+              src={current.album?.images?.[0]?.url} 
+              alt={current.album?.name} 
+              className={styles.nowPlayingCover}
+            />
+            
+            <div className={styles.nowPlayingTrackInfo}>
+              <div className={styles.nowPlayingTitle}>{current.name}</div>
+              <div className={styles.nowPlayingArtist}>{current.artists?.map(a => a.name).join(", ")}</div>
+            </div>
+
+            {current.album && (
+              <div className={styles.nowPlayingSection}>
+                <div className={styles.nowPlayingLabel}>Album</div>
+                <div className={styles.nowPlayingValue}>{current.album.name}</div>
+              </div>
+            )}
+
+            {artistDetails && (
+              <div className={styles.nowPlayingArtistSection}>
+                <div className={styles.nowPlayingLabel}>Info Artista</div>
+                <div className={styles.artistCard}>
+                  {artistDetails.images?.[0]?.url && (
+                    <img 
+                      src={artistDetails.images[0].url} 
+                      alt={artistDetails.name} 
+                      className={styles.artistImage}
+                    />
+                  )}
+                  <div className={styles.artistName}>{artistDetails.name}</div>
+                  {artistDetails.genres && artistDetails.genres.length > 0 && (
+                    <div className={styles.artistGenres}>
+                      {artistDetails.genres.slice(0, 3).join(", ")}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       <div className={`${styles.lyricsOverlay} ${showLyrics ? styles.open : ''}`}>
         {current && (
@@ -471,11 +579,17 @@ export default function Player() {
             <div className={styles.lyricsArtist}>{current.artists?.map(a => a.name).join(", ")}</div>
           </div>
         )}
-        <div className={styles.lyricsContent}>
+        <div 
+          className={styles.lyricsContent} 
+          ref={lyricsContentRef}
+          onScroll={handleLyricsScroll}
+          onWheel={handleUserInteraction}
+          onTouchMove={handleUserInteraction}
+        >
           {loadingLyrics ? "Caricamento testo...." : (
             isSynced ? (
               syncedLyrics.map((line, i) => {
-                const isActive = progress >= line.time && (i === syncedLyrics.length - 1 || progress < syncedLyrics[i+1].time);
+                const isActive = i === activeIndex;
                 return (
                   <div 
                     key={i} 
@@ -490,6 +604,16 @@ export default function Player() {
             ) : lyrics
           )}
         </div>
+        {isSynced && !isAutoScroll && (
+          <button className={styles.syncButton} onClick={scrollToActiveLine}> 
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-music-note-beamed" viewBox="0 0 16 16">
+  <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13s1.12-2 2.5-2 2.5.896 2.5 2m9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2"/>
+  <path fillRule="evenodd" d="M14 11V2h1v9zM6 3v10H5V3z"/>
+  <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4z"/>
+</svg>
+             Sincronizza
+          </button>
+        )}
       </div>
     </div>
   );
