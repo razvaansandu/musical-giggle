@@ -52,6 +52,7 @@
   transition: opacity 0.1s ease, transform 0.1s ease;
   position: relative;
   z-index: 2;
+  margin-top: -4px;
 }
 
 .sliderContainer:hover .slider::-webkit-slider-thumb {
