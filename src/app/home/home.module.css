@@ -50,7 +50,7 @@
   transition: all 0.3s ease;
 }
 .libraryTitle:hover {
-  color: var(--accent);
+  color: var(--text-primary);
   transform: translateX(2px);
 }
 
@@ -139,7 +139,7 @@
 }
 .iconButton:hover {
   background-color: var(--bg-hover);
-  color: var(--accent);
+  color: var(--text-primary);
 }
 
 .sortButton {

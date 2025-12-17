@@ -14,6 +14,11 @@ export default function AppSidebar() {
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
   const [selectedItem, setSelectedItem] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const getSmall = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   const fetchData = async () => {
     let url = "";
@@ -342,32 +347,49 @@ export default function AppSidebar() {
         className={styles.libraryItem} 
         onClick={() => router.push(linkUrl)}
         onContextMenu={(e) => handleContextMenu(e, item, filter)}
+        style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', padding: isCollapsed ? '8px 0' : '12px' }}
       >
-        {image && <img src={image} alt={title} className={imageClass} />}
-        <div className={styles.itemInfo}>
-          <span className={styles.itemTitle}>{title}</span>
-          <span className={styles.itemDetails}>{details}</span>
-        </div>
+        {image && <img 
+          src={image} 
+          alt={title} 
+          className={imageClass} 
+          style={isCollapsed ? { width: '48px', height: '48px', minWidth: '48px', borderWidth: '0' } : {}}
+        />}
+        {!isCollapsed && (
+          <div className={styles.itemInfo}>
+            <span className={styles.itemTitle}>{title}</span>
+            <span className={styles.itemDetails}>{details}</span>
+          </div>
+        )}
       </div>
     );
   };
 
   return (
-    <div className={styles.libraryContainer}>
-      <div className={styles.libraryHeader}>
-        <button className={styles.libraryTitle}>
-          <Library />
-          <span>Your Library</span>
-        </button>
-        <div className={styles.headerButtons}>
-          <button 
-            className={styles.addPlaylistButton}
-            onClick={() => setShowCreateModal(true)}
-            title="Crea playlist"
-          >
-            <Plus size={20} />
-          </button>
-        </div>  
+    <div 
+      className={styles.libraryContainer}
+      style={{ 
+        width: isCollapsed ? '80px' : '320px', 
+        transition: 'width 0.3s ease',
+        alignItems: isCollapsed ? 'center' : 'stretch'
+      }}
+    >
+      <div className={styles.libraryHeader} style={{ justifyContent: isCollapsed ? 'center' : 'space-between', padding: isCollapsed ? '0' : '0 8px' }}>
+        <button className={styles.libraryTitle} onClick={getSmall}> 
+          <Library /> 
+          {!isCollapsed && "Your Library"} 
+        </button> 
+        {!isCollapsed && ( 
+          <div className={styles.headerButtons}>
+            <button 
+              className={styles.addPlaylistButton}
+              onClick={() => setShowCreateModal(true)}
+              title="Crea playlist"
+            > 
+              <Plus size={20} />
+            </button>
+          </div>  
+        )}
       </div>
 
       <CreatePlaylistModal 
@@ -381,31 +403,35 @@ export default function AppSidebar() {
         }}
       />
 
-      <div className={styles.libraryFilters}>
-        {["Playlists", "Artists", "Albums"].map((f) => (
-          <button 
-            key={f} 
-            className={styles.chip}
-            onClick={() => handleFilterChange(f)}
-            style={{
-              backgroundColor: filter === f ? "white" : "",
-              color: filter === f ? "black" : "",
-            }}
-          >
-            {f}
-          </button>
-        ))} 
-      </div>
+      {!isCollapsed && (
+        <div className={styles.libraryFilters}>
+          {["Playlists", "Artists", "Albums"].map((f) => (
+            <button 
+              key={f} 
+              className={styles.chip}
+              onClick={() => handleFilterChange(f)}
+              style={{
+                backgroundColor: filter === f ? "white" : "",
+                color: filter === f ? "black" : "",
+              }}
+            >
+              {f}
+            </button>
+          ))} 
+        </div>
+      )}
 
-      <div className={styles.libraryUtilities}>
-        <button className={`${styles.iconButton} ${styles.searchIcon}`}>
-          <Search size={18} />
-        </button>
-        <button className={styles.sortButton}>
-          <span>Recents</span>
-          <ListMusic size={16} />
-        </button>
-      </div> 
+      {!isCollapsed && (
+        <div className={styles.libraryUtilities}>
+          <button className={`${styles.iconButton} ${styles.searchIcon}`}>
+            <Search size={18} />
+          </button>
+          <button className={styles.sortButton}>
+            <span>Recents</span>
+            <ListMusic size={16} />
+          </button>
+        </div> 
+      )}
 
       <div className={styles.libraryList}>
         {libraryItems.map(renderLibraryItem)}
