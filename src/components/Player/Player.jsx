@@ -9,7 +9,6 @@ import StopButton from "../buttons/stopButton";
 import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
-import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
 import { MonitorPlay, ListMusic, Speaker } from "lucide-react"; 
 import LikeButton from "../buttons/LikeButton";
 
@@ -375,13 +374,6 @@ export default function Player() {
         </button>
 
         <button 
-          className={`${styles.lyricsButton} ${showVideo ? styles.active : ''}`} 
-          onClick={() => setShowVideo(!showVideo)}
-          title="Miniplayer YouTube" 
-        >
-          <MonitorPlay size={16} />
-        </button>
-        <button 
           className={`${styles.lyricsButton} ${showLyrics ? styles.active : ''}`}
           onClick={() => setShowLyrics(!showLyrics)}
           title="Testo" 
@@ -457,12 +449,7 @@ export default function Player() {
         )}
       </div> 
 
-      {showVideo && current && (
-        <YouTubePlayer 
-          query={`${current.artists?.[0]?.name} ${current.name}`} 
-          onClose={() => setShowVideo(false)} 
-        />
-      )}
+      
 
       <div className={`${styles.lyricsOverlay} ${showLyrics ? styles.open : ''}`}>
         {current && (

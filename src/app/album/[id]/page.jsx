@@ -23,7 +23,7 @@ export default function AlbumPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) return; 
 
     const fetchData = async () => {
       try {
@@ -31,17 +31,12 @@ export default function AlbumPage() {
         setError(null);
 
         const res = await fetch(`/api/albums/${id}`);
-        if (!res.ok) throw new Error("Errore caricamento album");
-        
         const data = await res.json();
+
+        if (!res.ok) throw new Error("Errore caricamento album");
+
         setAlbum(data);
-
-        const albumTracks = (data.tracks?.items || []).map(track => ({
-            ...track,
-            album: data 
-        }));
-
-        setTracks(albumTracks);
+        setTracks(data.tracks?.items || []);
       } catch (err) {
         console.error(err);
         setError(err.message || "Errore caricamento album");
@@ -104,24 +99,27 @@ export default function AlbumPage() {
 
           {!loading && album && (
             <>
-              <section className={styles.hero}>
-                <div className={styles.heroImageWrapper}>
-                  <img
-                    src={album.images?.[0]?.url || "/placeholder.png"}
-                    alt={album.name}
-                    className={styles.heroImage}
-                  />
-                </div>
+              <section className={styles.heroAlbumSection}>
+                <div className={styles.heroAlbumContainer}>
+                  <div className={styles.heroAlbumImage}>
+                    <img
+                      src={album.images?.[0]?.url || "/placeholder.png"}
+                      alt={album.name}
+                      className={styles.heroAlbumImg}
+                    />
+                  </div>
 
-                <div className={styles.heroText}>
-                  <p className={styles.heroType}>Album</p>
-                  <h1 className={styles.heroTitle}>{album.name}</h1>
-                  <p className={styles.heroFollowers}>
-                    {album.artists?.map(a => a.name).join(", ")} • {new Date(album.release_date).getFullYear()}
-                  </p>
-                  <p className={styles.heroFollowers}>
-                    {tracks.length} tracks
-                  </p>
+                  <div className={styles.heroAlbumText}>
+                    <span className={styles.heroAlbumType}>Album</span>
+                    <h1 className={styles.heroAlbumTitle}>{album.name}</h1>
+                    <div className={styles.heroAlbumMeta}>
+                      <span>{album.artists?.map((a) => a.name).join(", ")}</span>
+                      <span className={styles.heroAlbumDot}>•</span>
+                      <span>{album.release_date}</span>
+                      <span className={styles.heroAlbumDot}>•</span>
+                      <span>{album.total_tracks} songs</span>
+                    </div>
+                  </div>
                 </div>
               </section>
 
@@ -134,15 +132,25 @@ export default function AlbumPage() {
                     <AddToLibraryButton albumId={album?.id} />
                   </div>
                 </div>
+
+                <section className={styles.tracklistHeader}>
+                  <div className={styles.tracklistHeaderLeft}>
+                    <span className={styles.tracklistNumber}>#</span>
+                    <span className={styles.tracklistTitle}>TITLE</span>
+                  </div>
+                  <div className={styles.tracklistHeaderRight}>
+                    <span className={styles.tracklistDuration}>DURATION</span>
+                  </div>
+                </section>
+
                 <TrackList tracks={tracks} />
               </section>
             </>
           )}
         </main>
-        
       </div>
 
-      <Player/>
+      <Player />
     </div>
   );
 }
