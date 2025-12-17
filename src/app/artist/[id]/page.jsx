@@ -12,7 +12,9 @@ import TrackCard from "../../../components/Cards/TrackCard";
 import PlaylistCard from "../../../components/Cards/PlaylistCard";
 import AlbumCard from "../../../components/Cards/AlbumCard";
 import ArtistHero from "../../../components/Cards/ArtistHero";
-import Loader from "../../../components/Loader/Loader"; 
+import TrackList from "../../../components/TrackList/TrackList";
+import Loader from "../../../components/Loader/Loader";
+import ScrollRow from "../../../components/ScrollRow/ScrollRow"; 
  
 export default function ArtistPage() { 
   const { id } = useParams();
@@ -74,35 +76,24 @@ export default function ArtistPage() {
 
           {!loading && artist && (
             <>
-              {/* HERO ARTISTA */}
               <ArtistHero artist={artist} />
 
-              {/* TOP TRACKS */}
               <section className={styles.section}>
-                <h2>Top tracks</h2>
-                <div className={styles.grid}>
-                  {topTracks.map((t) => (
-                    <TrackCard 
-                      key={t.id} 
-                      track={t}
-                      onClick={(track) => router.push(`/track/${track.id}`)}
-                    />
-                  ))}
-                </div>
+                <h2>Popular</h2>
+                <TrackList tracks={topTracks.slice(0, 5)} />
               </section>
 
-              {/* ALBUMS */}
               <section className={styles.section}>
                 <h2>Albums</h2>
-                <div className={styles.grid}>
+                <ScrollRow>
                   {albums.map((a) => (
-                  <AlbumCard 
-                    key={a.id} 
-                    album={a}
-                    onClick={() => router.push(`/album/${a.id}`)}
-                  />
+                    <AlbumCard 
+                      key={a.id} 
+                      album={a}
+                      onClick={() => router.push(`/album/${a.id}`)}
+                    />
                   ))}
-                </div>
+                </ScrollRow>
               </section>
             </>
           )}

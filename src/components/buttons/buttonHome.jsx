@@ -1,4 +1,3 @@
-// src/components/ButtonHome.jsx
 "use client";
 
 import React from "react";
@@ -10,7 +9,7 @@ export default function ButtonHome({
   title = "Home",
   ariaLabel = "Go to Home",
   className = "",
-  variant = "flat" // "flat" | "ghost"
+  variant = "flat" 
 }) {
   const content = ( 
     <span className="bh-inner">

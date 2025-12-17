@@ -34,7 +34,7 @@ export default function ArtistHero({ artist }) {
             onClick={() => setFollowing((s) => !s)}
             aria-pressed={following}
           >
-            {following ? "Seguito" : "Segui"}
+            {following ? "Segui già" : "Segui"}
           </button>
         </div>
       </div>

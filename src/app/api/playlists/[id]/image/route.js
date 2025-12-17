@@ -23,14 +23,11 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: "Missing image (base64)" }, { status: 400 });
     }
 
-    // L'immagine deve essere base64 senza il prefisso "data:image/..."
-    // Rimuovi il prefisso se presente
     let base64Image = image;
     if (image.includes(",")) {
       base64Image = image.split(",")[1];
     }
 
-    // Spotify accetta max 256KB per l'immagine
     const res = await fetch(`https://api.spotify.com/v1/playlists/${id}/images`, {
       method: "PUT",
       headers: {

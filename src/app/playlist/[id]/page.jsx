@@ -30,10 +30,9 @@ export default function PlaylistPage() {
         if (!plRes.ok) throw new Error("Errore caricamento playlist");
         const plJson = await plRes.json();
 
-        // Fetch di tutti i brani della playlist con paginazione
         const allItems = [];
         let offset = 0;
-        const limit = 100; // Max limit per richiesta Spotify
+        const limit = 100; 
 
         while (true) {
           const res = await fetch(
@@ -45,14 +44,12 @@ export default function PlaylistPage() {
           const items = json.items || [];
           allItems.push(...items);
 
-          // Controlla se ci sono altri brani da caricare
           const total = json.total ?? allItems.length;
 
           offset += items.length;
           if (allItems.length >= total || items.length === 0) break;
         }
 
-        // Imposta lo stato con i dati della playlist e i brani
         setPlaylist(plJson);
         setTracks(allItems.map((it) => it.track || it));
       } catch (err) {
@@ -86,7 +83,6 @@ export default function PlaylistPage() {
 
           {!loading && playlist && (
             <>
-              {/* Playlist dell'hero */}
               <section className={styles.hero}>
                 <div className={styles.heroImageWrapper}>
                   <img
@@ -108,7 +104,6 @@ export default function PlaylistPage() {
                 </div>
               </section>
 
-              {/* Tracklist della playlist */}
               <section className={styles.section}>
                 <h2>Brani</h2>
                 <TrackList tracks={tracks} />

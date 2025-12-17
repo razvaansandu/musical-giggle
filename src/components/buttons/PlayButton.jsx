@@ -20,10 +20,10 @@ export default function PlayButton({ isPlaying = false, onClick, className = "" 
       type="button"
       className={`${styles.playButton} play ${className}`}
       onClick={handleClick}
-      aria-pressed={isPlay}
+            aria-pressed={isPlay}
       title={isPlay ? "Pause" : "Play"}
     >
-      
+
     
       {isPlay ? (
        

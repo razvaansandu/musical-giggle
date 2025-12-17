@@ -1,13 +1,9 @@
-/* Stili del volume - Spotify style */
-
-/* Container principale */
 .container {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* Pulsante icona volume */
 .iconButton {
   display: inline-flex;
   align-items: center;
@@ -25,7 +21,6 @@
   color: #fff;
 }
 
-/* Container dello slider */
 .sliderContainer {
   width: 93px;
   height: 32px;
@@ -34,7 +29,6 @@
   background: transparent;
 }
 
-/* Slider principale */
 .slider {
   -webkit-appearance: none;
   appearance: none;
@@ -46,7 +40,6 @@
   outline: none;
 }
 
-/* Thumb (pallino) - Chrome/Safari */
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -69,7 +62,6 @@
   transform: scale(1.2);
 }
 
-/* Track (barra) - Chrome/Safari */
 .slider::-webkit-slider-runnable-track {
   height: 4px;
   background: linear-gradient(to right, #fff var(--volume-percent, 50%), #4d4d4d var(--volume-percent, 50%));
@@ -80,7 +72,6 @@
   background: linear-gradient(to right, #1db954 var(--volume-percent, 50%), #4d4d4d var(--volume-percent, 50%));
 }
 
-/* Thumb - Firefox */
 .slider::-moz-range-thumb {
   width: 12px;
   height: 12px;
@@ -90,7 +81,6 @@
   cursor: pointer;
 }
 
-/* Track - Firefox */
 .slider::-moz-range-track {
   height: 4px;
   background: #4d4d4d;

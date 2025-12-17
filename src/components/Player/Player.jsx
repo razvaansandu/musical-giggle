@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import styles from "./Player.module.css";
-import { initWebPlayer, getDeviceId } from "../../lib/webPlayer";
 import PlayButton from "../buttons/PlayButton";
 import ButtonNextSong from "../buttons/buttonNextSong";
 import ButtonPrevSong from "../buttons/songButtonFirst";
@@ -11,8 +10,8 @@ import VolumeButton from "../volume/Volume";
 import ButtonShuffle from "../buttons/buttonShuffle";
 import ButtonLoop from "../buttons/ButtonLoop";
 import YouTubePlayer from "../YouTubePlayer/YouTubePlayer";
-
 import { MonitorPlay, ListMusic } from "lucide-react";
+import LikeButton from "../buttons/LikeButton";
 
 export default function Player() {
   const [current, setCurrent] = useState(null);
@@ -30,17 +29,16 @@ export default function Player() {
   const [progress, setProgress] = useState(0);
   const activeLineRef = useRef(null);
   const queueRef = useRef(null);
+  const seekTimeoutRef = useRef(null);
 
   const parseLrc = (lrc) => {
     const lines = lrc.split("\n");
     const result = [];
     for (const line of lines) {
-      // Match [mm:ss.xx] or [mm:ss.xxx]
       const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/);
       if (match) {
         const minutes = parseInt(match[1], 10);
         const seconds = parseInt(match[2], 10);
-        // If 3 digits (milliseconds), use as is. If 2 digits (hundredths), multiply by 10.
         const rawMs = match[3];
         const ms = rawMs.length === 3 ? parseInt(rawMs, 10) : parseInt(rawMs, 10) * 10;
         
@@ -51,8 +49,6 @@ export default function Player() {
     }
     return result;
   };
-
-  const seekTimeoutRef = useRef(null);
 
   const handleSeek = (e) => {
     const newTime = parseInt(e.target.value, 10);
@@ -101,14 +97,6 @@ export default function Player() {
     }
   };
 
-  useEffect(() => { 
-    if (showLyrics && current) {
-      const artist = current.artists?.[0]?.name;
-      const track = current.name;
-      fetchLyrics(artist, track);
-    }
-  }, [current?.id, showLyrics]);
-
   const fetchCurrent = async () => {
     try {
       const res = await fetch("/api/player/get-playback-state");
@@ -132,37 +120,6 @@ export default function Player() {
     }
   };
 
-  useEffect(() => {
-    let interval;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setProgress((p) => p + 1000);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
-  useEffect(() => {
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      initWebPlayer(async () => {
-        const cookie = document.cookie
-          .split("; ")
-          .find(r => r.startsWith("auth_code="));
-        return cookie?.split("=")[1] || "";
-      });
-    };
-
-    // Fetch initial state immediately
-    fetchCurrent();
-    
-    // Also fetch the last played track if nothing is playing
-    fetchRecentlyPlayed();
-
-    const interval = setInterval(fetchCurrent, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Fetch recently played to show last track when nothing is playing
   const fetchRecentlyPlayed = async () => {
     try {
       const res = await fetch("/api/player/get-recently-played-tracks?limit=1");
@@ -177,7 +134,6 @@ export default function Player() {
     }
   };
 
-  // Fetch queue (requires Spotify Premium)
   const fetchQueue = async () => {
     try {
       const res = await fetch("/api/player/get-user-queue");
@@ -194,26 +150,12 @@ export default function Player() {
     }
   };
 
-  // Toggle queue menu
   const toggleQueue = () => {
     if (!showQueue) {
       fetchQueue();
     }
     setShowQueue(!showQueue);
   };
-
-  // Close queue when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (queueRef.current && !queueRef.current.contains(e.target)) {
-        setShowQueue(false);
-      }
-    };
-    if (showQueue) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showQueue]);
 
   const handlePlayPause = async () => {
     try {
@@ -250,36 +192,64 @@ export default function Player() {
   const handleShuffle = async () => {
     try {
       const newState = !isShuffle;
-      setIsShuffle(newState); // Optimistic update
+      setIsShuffle(newState); 
       await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: "PUT" });
       fetchCurrent();
     } catch (err) {
       console.error("Errore shuffle", err);
-      setIsShuffle(!isShuffle); // Revert on error
+      setIsShuffle(!isShuffle); 
     }
   };
 
   const handleRepeat = async (newMode) => {
     try {
-      setRepeatMode(newMode); // Optimistic update
+      setRepeatMode(newMode); 
       await fetch(`/api/player/set-repeat-mode?state=${newMode}`, { method: "PUT" });
       fetchCurrent();
     } catch (err) {
       console.error("Errore repeat", err);
-      // Revert logic could be complex here, just refetch
       fetchCurrent();
     }
   };
 
-  const deviceId = getDeviceId();
+  // useEffect
+  useEffect(() => { 
+    if (showLyrics && current) {
+      const artist = current.artists?.[0]?.name;
+      const track = current.name;
+      fetchLyrics(artist, track);
+    }
+  }, [current?.id, showLyrics]);
 
-  if (deviceId) {
-    return (
-      <div className={styles.playerBar}>
-        <div className={styles.empty}> 🎧 Sto inizializzando il player...</div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    let interval;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setProgress((p) => p + 1000);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    fetchCurrent();
+    fetchRecentlyPlayed();
+
+    const interval = setInterval(fetchCurrent, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (queueRef.current && !queueRef.current.contains(e.target)) {
+        setShowQueue(false);
+      }
+    };
+    if (showQueue) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showQueue]);
 
   if (!current) { 
     return (
@@ -291,7 +261,7 @@ export default function Player() {
     );
   }
 
-  const img = current?.album?.images?.[0]?.url; 
+  const img = current?.album?.images?.[0]?.url;
 
   return (
     <div className={styles.playerBar}>
@@ -302,26 +272,20 @@ export default function Player() {
             alt={current.name}
             className={styles.cover} 
           />  
-          
         )}  
         
-    
         <div>
           <div className={styles.title}>{current.name}</div>
           <div className={styles.artist}>
             {current.artists?.map((a) => a.name).join(", ")}
           </div>
         </div> 
-        <div>
-          
-          </div>
-            
+        <LikeButton trackId={current?.id} />
       </div>
 
       <div className={styles.center}>
         <div className={styles.controls}>
           <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} className={styles.iconBtn} />
-          
           <ButtonPrevSong onPrev={handlePrev} className={styles.iconBtn} title="Previous" />
 
           {isPlaying ? (
@@ -331,7 +295,6 @@ export default function Player() {
           )}
 
           <ButtonNextSong onNext={handleNext} className={styles.iconBtn} title="Next" />
-          
           <ButtonLoop mode={repeatMode} onChange={handleRepeat} className={styles.iconBtn} />
         </div>
         
@@ -350,8 +313,6 @@ export default function Player() {
         </div>
       </div>
       
-     
-    
       <div className={styles.right}>
         <button 
           className={`${styles.lyricsButton} ${showQueue ? styles.active : ''}`} 
@@ -378,7 +339,6 @@ export default function Player() {
         </button>
         <VolumeButton />
 
-        {/* Queue Dropdown */}
         {showQueue && (
           <div ref={queueRef} className={styles.queueDropdown}>
             <div className={styles.queueHeader}>
@@ -429,8 +389,6 @@ export default function Player() {
           {loadingLyrics ? "Caricamento testo...." : (
             isSynced ? (
               syncedLyrics.map((line, i) => {
-                // Determine if this line is active
-                // It is active if progress >= line.time AND (it's the last line OR progress < nextLine.time)
                 const isActive = progress >= line.time && (i === syncedLyrics.length - 1 || progress < syncedLyrics[i+1].time);
                 return (
                   <div 
@@ -441,7 +399,6 @@ export default function Player() {
                   >
                     {line.text}
                   </div> 
-                  
                 )
               })
             ) : lyrics
@@ -450,4 +407,4 @@ export default function Player() {
       </div>
     </div>
   );
-} 
+}

@@ -295,7 +295,6 @@
   gap: 24px;
 }
 
-/* Horizontal Scroll Row */
 .scrollRow {
   display: flex;
   flex-direction: row;
@@ -332,7 +331,6 @@
   min-width: 180px;
 }
 
-/* Card Styles */
 .card {
   background: linear-gradient(135deg, rgba(40, 40, 40, 0.4), rgba(30, 30, 30, 0.3));
   padding: 16px;
@@ -390,7 +388,6 @@
   line-height: 1.5;
 }
 
-/* Hero Styles */
 .hero {
   display: flex;
   align-items: center;
@@ -399,11 +396,19 @@
 }
 
 .heroImageWrapper {
-  width: 180px;
-  height: 180px;
+  width: 240px;
+  height: 240px;
   overflow: hidden;
   border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  border: 2px solid var(--border-medium);
+  transition: all 0.3s ease;
+}
+
+.heroImageWrapper:hover {
+  transform: scale(1.05);
+  border-color: linear-gradient(135deg, var(--primary), var(--primary-light));
 }
 
 .heroImage {
@@ -415,8 +420,8 @@
 .heroType {
   font-size: 14px;
   text-transform: uppercase;
-  opacity: 0.7;
-  color: var(--primary);
+  opacity: 0.8;
+  color: rgb(11, 214, 82);
   font-weight: 600;
   letter-spacing: 1px;
 }
@@ -424,10 +429,7 @@
 .heroTitle {
   font-size: 48px;
   font-weight: 900;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: linear-gradient(180deg, rgba(85, 90, 87, 0.15), transparent);
 }
 
 .heroFollowers {
@@ -436,7 +438,6 @@
   color: var(--text-secondary);
 }
 
-/* Album Hero Styles */
 .heroAlbumSection {
   background: linear-gradient(180deg, rgba(29, 185, 84, 0.15), transparent);
   padding: 48px 0 32px 0;
@@ -516,7 +517,6 @@
   font-size: 20px;
 }
 
-/* Tracklist Header */
 .tracklistHeader {
   display: grid;
   grid-template-columns: 48px 1fr auto;
@@ -572,11 +572,73 @@
   letter-spacing: 0.5px;
 }
 
-/* Tracklist */
 .tracklist { 
   display: flex; 
   flex-direction: column; 
   gap: 0; 
+}
+
+.tracklistItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-height: 56px;
+}
+
+.tracklistItem:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tracklistLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex: 1;
+}
+
+.tracklistImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.tracklistInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.tracklistTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tracklistArtist {
+  font-size: 14px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tracklistRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-width: 120px;
 }
 
 .filterButtons {

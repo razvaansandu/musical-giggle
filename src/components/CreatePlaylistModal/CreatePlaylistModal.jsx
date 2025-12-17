@@ -69,12 +69,10 @@ export default function CreatePlaylistModal({ isOpen, onClose, onCreated }) {
 
     setError("");
 
-    // 1. Show immediate preview using Object URL
     const objectUrl = URL.createObjectURL(file);
     setImagePreview(objectUrl);
 
     try {
-      // 2. Compress/Resize in background
       const jpegDataUrl = await convertToJpeg(file);
       
       const base64Length = jpegDataUrl.split(',')[1].length;
@@ -84,11 +82,10 @@ export default function CreatePlaylistModal({ isOpen, onClose, onCreated }) {
 
       if (sizeInBytes > 256 * 1024) {
         setError("L'immagine è ancora troppo grande dopo la compressione.");
-        setImagePreview(null); // Revert preview
+        setImagePreview(null);
         return;
       }
     
-      // 3. Set the data for upload
       setImage(jpegDataUrl); 
       
     } catch (err) {
@@ -96,7 +93,6 @@ export default function CreatePlaylistModal({ isOpen, onClose, onCreated }) {
       console.error(err);
       setImagePreview(null);
     } finally {
-      // Reset input to allow re-selection
       e.target.value = ""; 
     }
   };

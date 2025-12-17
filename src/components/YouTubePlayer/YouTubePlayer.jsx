@@ -15,10 +15,19 @@ export default function YouTubePlayer({ query, onClose }) {
   const [queue, setQueue] = useState([]);
   const [currentTrackInfo, setCurrentTrackInfo] = useState(null);
 
-  
+  const [position, setPosition] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    setMounted(true);
+      setMounted(true);
+      if (typeof window !== 'undefined') {
+          setPosition({ 
+              x: window.innerWidth - 340,
+              y: window.innerHeight - 320
+          });
+      }
   }, []);
 
   
@@ -37,7 +46,7 @@ export default function YouTubePlayer({ query, onClose }) {
         console.log(" Searching video for:", query);
         const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query + " official video")}`);
         console.log(" API Status:", res.status);
-
+        
         if (!res.ok) {
           if (res.status === 404) {
             throw new Error("Video non trovato (404)");

@@ -19,14 +19,12 @@ export default function TrackDetailModal({ track, isOpen, onClose }) {
   const fetchTrackDetails = async () => {
     try {
       setLoading(true);
-      // Fetch audio features
       const featuresRes = await fetch(`/api/tracks/audio-features/${track.id}`);
       if (featuresRes.ok) {
         const features = await featuresRes.json();
         setAudioFeatures(features);
       }
 
-      // Fetch artist albums if we have artist id
       if (track?.artists?.[0]?.id) {
         const albumsRes = await fetch(
           `/api/artist/albums/${track.artists[0].id}?limit=6`
@@ -85,14 +83,11 @@ export default function TrackDetailModal({ track, isOpen, onClose }) {
   return (
     <div className={styles.backdrop} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {/* Close Button */}
         <button className={styles.closeBtn} onClick={onClose} aria-label="Chiudi">
           ✕
         </button>
 
-        {/* Main Content */}
         <div className={styles.mainContent}>
-          {/* Left Side - Album Art */}
           <div className={styles.leftSection}>
             <div className={styles.albumContainer}>
               <img src={img} alt={track.name} className={styles.albumArt} />
@@ -100,7 +95,6 @@ export default function TrackDetailModal({ track, isOpen, onClose }) {
             </div>
           </div>
 
-          {/* Right Side - Info and Controls */}
           <div className={styles.rightSection}>
             <div className={styles.header}>
               <p className={styles.label}>Singolo</p>
@@ -109,7 +103,6 @@ export default function TrackDetailModal({ track, isOpen, onClose }) {
               <p className={styles.album}>{albumName} • {duration}</p>
             </div>
 
-            {/* Control Buttons */}
             <div className={styles.controls}>
               <button className={styles.playBtn} onClick={handlePlay}>
                 ▶
@@ -135,7 +128,6 @@ export default function TrackDetailModal({ track, isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Audio Features Section */}
             {audioFeatures && (
               <div className={styles.featuresSection}>
                 <h3 className={styles.sectionTitle}>Caratteristiche audio</h3>
@@ -182,7 +174,6 @@ export default function TrackDetailModal({ track, isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Bottom Section - Related Content */}
         <div className={styles.bottomSection}>
           {artistAlbums.length > 0 && (
             <div className={styles.relatedSection}>

@@ -8,8 +8,29 @@ export default function SpotifyHeader() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState({ albums: [], playlists: [], tracks: [] });
   const [loadingNotifications, setLoadingNotifications] = useState(false);
+  
+  const [profileImage, setProfileImage] = useState(null); 
+  
   const bellRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      try {
+        const res = await fetch("/api/spotify/get-user-profile");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.images && data.images.length > 0) {
+            const lastImage = [...data.images].pop(); 
+            setProfileImage(lastImage?.url);
+          }
+        }
+      } catch (err) {
+        console.error("Errore caricamento immagine header:", err);
+      }
+    };
+    fetchProfileImage();
+  }, []);
 
   const toggleNotifications = async () => {
     if (!showNotifications) {
@@ -31,12 +52,12 @@ export default function SpotifyHeader() {
     } else {
       setShowNotifications(false);
     }
-  }; 
- 
-  useEffect(() => { 
+  };
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
         bellRef.current &&
         !bellRef.current.contains(event.target)
@@ -51,38 +72,34 @@ export default function SpotifyHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.logoSection}>
-        {/* Logo di Spotify */}  
         <button
-          className={styles.homeButton} 
+          className={styles.homeButton}
           onClick={() => router.push('/home')}
-          aria-label="Home" 
-        > 
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288" />
-        </svg> 
-      </button> 
-
-      </div> 
+          aria-label="Home"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288" />
+          </svg>
+        </button>
+      </div>
 
       <div className={styles.searchSection}>
-        <button 
-          className={styles.homeButton} 
+        <button
+          className={styles.homeButton}
           onClick={() => router.push('/home')}
-          aria-label="Home" 
+          aria-label="Home"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/>
-            <path d="m8 3.293 6 6V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V9.293l6-6Z"/>
-          </svg>  
+             <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z" />
+             <path d="m8 3.293 6 6V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V9.293l6-6Z" />
+          </svg>
         </button>
-        <SearchBar /> 
+        <SearchBar />
       </div>
 
       <div className={styles.userSection}>
-        <button className={styles.installButton}>Installa app</button>
-
-        <button 
-          className={styles.installButton} 
+        <button
+          className={styles.installButton}
           ref={bellRef}
           onClick={toggleNotifications}
         >
@@ -91,14 +108,21 @@ export default function SpotifyHeader() {
           </svg>
         </button>
 
-        <button className={styles.installButton}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-people-fill" viewBox="0 0 16 16">
-            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
-          </svg>
-        </button>
-
-        <button className={styles.profileButton}>
-          <img src="/default-profile.png" alt="Profilo" className={styles.profileImage} />
+        <button
+          className={styles.profileButton}
+          onClick={() => router.push('/profilo')}
+        >
+          {profileImage ? (
+            <img src={profileImage} alt="Profilo" className={styles.profileImage} />
+          ) : (
+            <div className={styles.profileImagePlaceholder} style={{ 
+               width: 32, height: 32, borderRadius: '50%', background: '#535353', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+            }}>
+               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 16 16">
+                 <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+               </svg>
+            </div>
+          )}
         </button>
       </div>
 
@@ -112,8 +136,8 @@ export default function SpotifyHeader() {
                 <div className={styles.notificationSection}>
                   <h3>Nuove Uscite</h3>
                   {notifications.albums.map(album => (
-                    <div 
-                      key={album.id} 
+                    <div
+                      key={album.id}
                       className={styles.notificationItem}
                       onClick={() => {
                         router.push(`/album/${album.id}`);
@@ -134,14 +158,14 @@ export default function SpotifyHeader() {
                 <div className={styles.notificationSection}>
                   <h3>Nuovi Brani</h3>
                   {notifications.tracks.map(track => (
-                    <div 
-                      key={track.id} 
+                    <div
+                      key={track.id}
                       className={styles.notificationItem}
                       onClick={() => {
                         router.push(`/album/${track.album.id}`);
                         setShowNotifications(false);
                       }}
-                    > 
+                    >
                       <img src={track.album.images[0]?.url} alt={track.name} className={styles.notificationImage} />
                       <div className={styles.notificationInfo}>
                         <span className={styles.notificationTitle}>{track.name}</span>
@@ -156,11 +180,10 @@ export default function SpotifyHeader() {
                 <div className={styles.notificationSection}>
                   <h3>Playlist Consigliate</h3>
                   {notifications.playlists.map(playlist => (
-                    <div 
-                      key={playlist.id} 
+                    <div
+                      key={playlist.id}
                       className={styles.notificationItem}
                       onClick={() => {
-                        // router.push(`/playlist/${playlist.id}`);
                         setShowNotifications(false);
                       }}
                     >
@@ -169,7 +192,7 @@ export default function SpotifyHeader() {
                         <span className={styles.notificationTitle}>{playlist.name}</span>
                         <span className={styles.notificationSubtitle}>{playlist.owner.display_name}</span>
                       </div>
-                    </div> 
+                    </div>
                   ))}
                 </div>
               )}

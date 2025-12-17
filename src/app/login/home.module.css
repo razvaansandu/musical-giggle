@@ -118,32 +118,27 @@
   height: 100%;
 }
 
-/* Stili barra laterale */
 .sidebar {
-  width: 320px; /* Larghezza fissa della sidebar */
+  width: 320px;
   display: flex;
   flex-direction: column;
-  padding-top: 8px; /* Spazio per la barra superiore (se presente) */
-  padding-left: 8px; /* Spazio a sinistra */
-  padding-bottom: 8px; /* Spazio per il player (se presente) */
-  background: #000; /* Sfondo nero principale */
-  /* Altezza calcolata per lasciare spazio a un ipotetico player di 90px */
-  /* Modifica 90px se hai un player di altezza diversa */
+  padding-top: 8px; 
+  padding-left: 8px; 
+  padding-bottom: 8px;
+  background: #000; 
   height: calc(100vh - 90px);
 }
 
-/* Container principale della libreria (riempie .sidebar) */
 .libraryContainer {
   display: flex;
   flex-direction: column;
-  background-color: #121212; /* Sfondo della sidebar interna */
-  border-radius: 8px; /* Angoli arrotondati */
+  background-color: #121212; 
+  border-radius: 8px; 
   padding: 8px 12px;
   height: 100%;
-  gap: 8px; /* Spazio tra le sezioni */
+  gap: 8px; 
 }
 
-/* Header: "La tua libreria" */
 .libraryHeader {
   display: flex;
   justify-content: space-between;
@@ -154,12 +149,12 @@
 .libraryTitle {
   display: flex;
   align-items: center;
-  gap: 12px; /* Spazio tra icona e testo */
+  gap: 12px; 
   font-weight: 700;
   font-size: 16px;
   background: none;
   border: none;
-  color: #a7a7a7; /* Colore grigio (non attivo) */
+  color: #a7a7a7; 
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -175,7 +170,7 @@
 .roundButton {
   background: none;
   border-radius: 50%;
-  padding: 8px; /* Aumenta padding per cliccabilità */
+  padding: 8px; 
   border: none;
   cursor: pointer;
   color: #a7a7a7;
@@ -189,31 +184,29 @@
   color: white;
 }
 
-/* Filtri: "Playlist", "Artisti"... */
 .libraryFilters {
   display: flex;
   gap: 8px;
   padding: 0 4px;
-  overflow-x: auto; /* Per schermi piccoli */
+  overflow-x: auto; 
 }
 
 .chip {
   background-color: #232323;
   border: none;
-  border-radius: 500px; /* Completamente tondo */
+  border-radius: 500px;
   padding: 6px 12px;
   color: white;
-  font-size: 14px; /* Testo leggermente più grande */
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-  white-space: nowrap; /* Evita che il testo vada a capo */
+  white-space: nowrap; 
 }
 .chip:hover {
   background-color: #2a2a2a;
 }
 
-/* Utility: Cerca e Ordina */
 .libraryUtilities {
   display: flex;
   justify-content: space-between;
@@ -235,7 +228,7 @@
   color: white;
 }
 .searchIcon {
-  padding: 8px; /* Più grande come gli altri bottoni */
+  padding: 8px; 
 }
 
 .sortButton {
@@ -254,21 +247,16 @@
   color: white;
 }
 
-
-/* --- NUOVI STILI PER LA LISTA (Da aggiungere) --- */
-
-/* La lista scrollabile */
 .libraryList {
-  flex: 1; /* Occupa tutto lo spazio verticale rimanente */
-  overflow-y: auto; /* Abilita lo scroll verticale */
-  padding-right: 8px; /* Spazio per la scrollbar, per non sovrapporsi */
+  flex: 1; 
+  overflow-y: auto; 
+  padding-right: 8px; 
   scrollbar-color: transparent transparent;
 }
 .libraryList:hover {
   scrollbar-color: #ffffff transparent;
 }
 
-/* Stile della scrollbar (opzionale ma fedele a Spotify) */
 .libraryList::-webkit-scrollbar {
   width: 8px;
 }
@@ -280,10 +268,9 @@
   background-color: #ffffff;
 }
 .libraryList::-webkit-scrollbar-track {
-  background: transparent; /* Nasconde lo sfondo della traccia */
+  background: transparent;
 }
 
-/* Singolo elemento della lista */
 .libraryItem {
   display: flex;
   align-items: center;
@@ -297,15 +284,14 @@
   background-color: #1a1a1a;
 }
 
-/* Contenitore per icone speciali (Brani piaciuti, Episodi) */
 .itemIconWrapper {
   width: 48px;
   height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px; /* Angoli squadrati per playlist */
-  flex-shrink: 0; /* Evita che si rimpicciolisca */
+  border-radius: 4px; 
+  flex-shrink: 0;
 }
 
 .likedIcon {
@@ -318,39 +304,36 @@
   background: #333333;
 }
 
-/* Immagine normale (playlist) */
 .itemImagePlaylist {
   width: 48px;
   height: 48px;
-  border-radius: 4px; /* Angoli squadrati per playlist */
+  border-radius: 4px; 
   object-fit: cover;
   flex-shrink: 0;
 }
 
-/* Immagine (artista) */
 .itemImageArtist {
   width: 48px;
   height: 48px;
-  border-radius: 50%; /* Tonde per artisti */
+  border-radius: 50%; 
   object-fit: cover;
   flex-shrink: 0;
 }
 
-/* Info: Titolo e Dettagli */
 .itemInfo {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  overflow: hidden; /* Fondamentale per troncare il testo */
+  overflow: hidden; 
 }
 
 .itemTitle {
   font-size: 16px;
   font-weight: 500;
   color: #ffffff;
-  white-space: nowrap; /* Non manda a capo */
-  overflow: hidden; /* Nasconde testo in eccesso */
-  text-overflow: ellipsis; /* Aggiunge "..." */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 
 .itemDetails {
@@ -361,7 +344,6 @@
   text-overflow: ellipsis;
 }
 
-/* Stili del volume */
 .volumeWrapper {
   position: fixed;
   bottom: 24px;
@@ -455,8 +437,6 @@
   background: #535353;
   border-radius: 999px;
 }
-
-/* --- NUOVI STILI PER IL PLAYER FISSO --- */
 
 .playerBar {
   position: fixed;

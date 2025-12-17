@@ -2,18 +2,40 @@
 
 import styles from "./Card.module.css";
   
-export default function TrackCard({ track, onClick }) {
+export default function TrackCard({ track, onClick, playOnly = false }) {
   if (!track) return null;
 
   const img = track?.album?.images?.[0]?.url || "/default-track.png";
 
   const handlePlay = async () => { 
     if (onClick) {
-      onClick(track);
+      onClick();
       return;
     }
 
-   
+    // Se playOnly è true, avvia la riproduzione senza navigare
+    if (playOnly) {
+      try {
+        if (!track.uri) {
+          console.warn("Nessuna URI per questa traccia:", track);
+          return;
+        }
+
+        await fetch("/api/player/start-resume-playback", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uris: [track.uri],
+          }),
+        });
+      } catch (err) {
+        console.error("Errore avvio riproduzione:", err);
+      }
+      return;
+    }
+
     try {
       if (!track.uri) {
         console.warn("Nessuna URI per questa traccia:", track);
