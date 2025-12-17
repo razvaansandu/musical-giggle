@@ -1,8 +1,8 @@
 "use client";
 
-import { Library, Plus, Search, ListMusic } from "lucide-react";
+import { Library, Plus, Search, ListMusic, X, Check } from "lucide-react";
 import styles from "../../app/home/home.module.css"; 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import CreatePlaylistModal from "../CreatePlaylistModal/CreatePlaylistModal";
@@ -15,6 +15,22 @@ export default function AppSidebar() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState("Recents");
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+  const sortMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(event.target)) {
+        setIsSortMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const getSmall = () => {
     setIsCollapsed(!isCollapsed);
@@ -49,6 +65,7 @@ export default function AppSidebar() {
   }, [filter]);
 
   const handleFilterChange = (newFilter) => {
+    if (filter === newFilter) return;
     setLibraryItems([]); 
     setFilter(newFilter); 
   };
@@ -286,6 +303,26 @@ export default function AppSidebar() {
     return items;
   };
 
+  const filteredAndSortedItems = libraryItems
+    .filter((item) => {
+      if (!searchQuery) return true;
+      const name = item.name || item.album?.name || "";
+      return name.toLowerCase().includes(searchQuery.toLowerCase());
+    })
+    .sort((a, b) => {
+      if (sortOrder === "Alphabetical") {
+        const nameA = a.name || a.album?.name || "";
+        const nameB = b.name || b.album?.name || "";
+        return nameA.localeCompare(nameB);
+      }
+      if (sortOrder === "Creator" && filter === "Playlists") {
+        const ownerA = a.owner?.display_name || "";
+        const ownerB = b.owner?.display_name || "";
+        return ownerA.localeCompare(ownerB);
+      }
+      return 0;
+    });
+
   const renderLibraryItem = (item) => {
     let key, image, title, details, imageClass, linkUrl;
 
@@ -404,18 +441,72 @@ export default function AppSidebar() {
 
       {!isCollapsed && (
         <div className={styles.libraryUtilities}>
-          <button className={`${styles.iconButton} ${styles.searchIcon}`}>
-            <Search size={18} />
-          </button>
-          <button className={styles.sortButton}>
-            <span>Recents</span>
-            <ListMusic size={16} />
-          </button>
+          {isSearchOpen ? (
+            <div className={styles.searchContainer}>
+              <button className={styles.iconButton} onClick={() => setIsSearchOpen(false)}>
+                 <Search size={16} />
+              </button>
+              <input 
+                type="text" 
+                className={styles.searchInput} 
+                placeholder="Cerca..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+              <button className={styles.iconButton} onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}>
+                <X size={16} />
+              </button>
+            </div>
+          ) : (
+            <button className={`${styles.iconButton} ${styles.searchIcon}`} onClick={() => setIsSearchOpen(true)}>
+              <Search size={18} />
+            </button>
+          )}
+          
+          <div style={{ position: 'relative' }} ref={sortMenuRef}>
+            <button 
+              className={styles.sortButton} 
+              onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
+            >
+              <span>{sortOrder === "Recents" ? "Recenti" : sortOrder === "Alphabetical" ? "Alfabetico" : "Autore"}</span>
+              <ListMusic size={16} />
+            </button>
+            
+            {isSortMenuOpen && (
+              <div className={styles.sortMenu}>
+                <div className={styles.navTitle}>Ordina per</div>
+                <button 
+                  className={`${styles.sortMenuItem} ${sortOrder === "Recents" ? styles.active : ''}`}
+                  onClick={() => { setSortOrder("Recents"); setIsSortMenuOpen(false); }}
+                >
+                  Recenti
+                  {sortOrder === "Recents" && <Check size={16} />}
+                </button>
+                <button 
+                  className={`${styles.sortMenuItem} ${sortOrder === "Alphabetical" ? styles.active : ''}`}
+                  onClick={() => { setSortOrder("Alphabetical"); setIsSortMenuOpen(false); }}
+                >
+                  Alfabetico
+                  {sortOrder === "Alphabetical" && <Check size={16} />}
+                </button>
+                {filter === "Playlists" && (
+                  <button 
+                    className={`${styles.sortMenuItem} ${sortOrder === "Creator" ? styles.active : ''}`}
+                    onClick={() => { setSortOrder("Creator"); setIsSortMenuOpen(false); }}
+                  >
+                    Autore
+                    {sortOrder === "Creator" && <Check size={16} />}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div> 
       )}
 
       <div className={styles.libraryList}>
-        {libraryItems.map(renderLibraryItem)}
+        {filteredAndSortedItems.map(renderLibraryItem)}
       </div>
 
       <ContextMenu
