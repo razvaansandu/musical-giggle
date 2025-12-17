@@ -17,11 +17,9 @@ export default function ArtistCard({ artist, onClick }) {
       >
         <div
           className={styles.imageWrapper}
-          style={{
-            backgroundImage: `url(${img})`,
-            borderRadius: "50%",
-          }}
-        />
+        >
+          <img src={img} alt={artist.name} className={styles.artistImage} />
+        </div>
         <h3 className={styles.title}>{artist.name}</h3>
         <p className={styles.subtitle}>Artist</p>
       </button>
@@ -32,11 +30,9 @@ export default function ArtistCard({ artist, onClick }) {
     <Link href={`/artist/${artist.id}`} className={styles.card}>
       <div
         className={styles.imageWrapper}
-        style={{
-          backgroundImage: `url(${img})`,
-          borderRadius: "50%",
-        }}
-      />
+      >
+        <img src={img} alt={artist.name} className={styles.artistImage} />
+      </div>
       <h3 className={styles.title}>{artist.name}</h3>
       <p className={styles.subtitle}>Artist</p>
     </Link>

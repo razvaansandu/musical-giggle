@@ -85,15 +85,16 @@ export default function ArtistPage() {
 
               <section className={styles.section}>
                 <h2>Albums</h2>
-                <div className={styles.grid}>
+                <ScrollRow>
                   {albums.map((a) => (
-                  <AlbumCard 
-                    key={a.id} 
-                    album={a}
-                    onClick={() => router.push(`/album/${a.id}`)}
-                  />
-                ))}
-              </ScrollRow>
+                    <AlbumCard 
+                      key={a.id} 
+                      album={a}
+                      onClick={() => router.push(`/album/${a.id}`)}
+                    />
+                  ))}
+                </ScrollRow>
+              </section>
             </>
           )}
         </main>

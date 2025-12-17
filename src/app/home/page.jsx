@@ -114,7 +114,7 @@ export default function HomePage() {
 
           {!loading && (
             <>
-              <ScrollRow title="Ascoltati di recente">
+              <ScrollRow title="Ascoltati di recente" seeAllLink="/recently-played">
                 {recentTracks.length > 0 ? (
                   recentTracks.map((track, index) => (
                     <TrackCard
@@ -128,7 +128,7 @@ export default function HomePage() {
                 )}
               </ScrollRow>
 
-              <ScrollRow title="I tuoi album" seeAllLink="/search">
+              <ScrollRow title="I tuoi album" seeAllLink="/albums">
                 {savedAlbums.length > 0 ? (
                   savedAlbums.map((album, index) => (
                     <AlbumCard
@@ -155,7 +155,8 @@ export default function HomePage() {
               )}
 
               <ScrollRow 
-                title="Le tue playlist" 
+                title="Le tue playlist"
+                seeAllLink="/playlists"
               >
                 {userPlaylists.map((pl, index) => (
                   <PlaylistCard
