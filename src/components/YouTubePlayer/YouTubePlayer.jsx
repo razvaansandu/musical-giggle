@@ -9,58 +9,19 @@ export default function YouTubePlayer({ query, onClose }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [videoTitle, setVideoTitle] = useState('');
+  const [channelTitle, setChannelTitle] = useState('');
+  const [thumbnailUrl, setThumbnailUrl] = useState(null);
+  const [queue, setQueue] = useState([]);
+  const [currentTrackInfo, setCurrentTrackInfo] = useState(null);
 
-  // Dragging state
-  const [position, setPosition] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const containerRef = useRef(null);
+  
 
   useEffect(() => {
-      setMounted(true);
-      if (typeof window !== 'undefined') {
-          // Default position: Bottom Right, but visible
-          setPosition({ 
-              x: window.innerWidth - 340, // 320px width + 20px margin
-              y: window.innerHeight - 320 // 210px height + 110px margin (above player bar)
-          });
-      }
+    setMounted(true);
   }, []);
 
-  const handleMouseDown = (e) => {
-    if (e.target.closest('button')) return;
-    setIsDragging(true);
-    const rect = containerRef.current.getBoundingClientRect();
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    });
-  };
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (isDragging) {
-        setPosition({
-          x: e.clientX - dragOffset.x,
-          y: e.clientY - dragOffset.y
-        });
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, dragOffset]);
+  
 
   useEffect(() => {
     if (!query) return;
@@ -69,29 +30,40 @@ export default function YouTubePlayer({ query, onClose }) {
       setLoading(true);
       setError(null);
       setVideoId(null);
+      setVideoTitle('');
+      setChannelTitle('');
+      setThumbnailUrl(null);
       try {
-        console.log("🔍 Searching video for:", query);
+        console.log(" Searching video for:", query);
         const res = await fetch(`/api/youtube/search?q=${encodeURIComponent(query + " official video")}`);
-        console.log("📡 API Status:", res.status);
-        
+        console.log(" API Status:", res.status);
+
         if (!res.ok) {
-             if (res.status === 404) {
-                 throw new Error("Video non trovato (404)");
-             }
-             throw new Error("Errore API");
+          if (res.status === 404) {
+            throw new Error("Video non trovato (404)");
+          }
+          throw new Error("Errore API");
         }
-        
+
         const data = await res.json();
-        console.log("📦 API Data:", data);
+        console.log(" API Data:", data);
 
         if (data.videoId) {
           setVideoId(data.videoId);
+    
+          if (data.title) setVideoTitle(data.title);
+          if (data.channelTitle) setChannelTitle(data.channelTitle);
+           setThumbnailUrl(`https://img.youtube.com/vi/${data.videoId}/hqdefault.jpg`);
         } else {
           throw new Error("Nessun video trovato");
         }
       } catch (err) {
         console.warn("API search failed, falling back to embed search", err);
         setVideoId("FALLBACK");
+       
+        const { title, artist } = parseQuery(query);
+        setVideoTitle(title);
+        setChannelTitle(artist || 'YouTube');
       } finally {
         setLoading(false);
       }
@@ -100,22 +72,74 @@ export default function YouTubePlayer({ query, onClose }) {
     fetchVideo();
   }, [query]);
 
+  const parseQuery = (q) => {
+    if (!q) return { title: '', artist: '' };
+ 
+    let title = q;
+    let artist = '';
+    const separators = [" - ", " — ", " – ", " by ", " | "];
+    for (const sep of separators) {
+      if (q.includes(sep)) {
+        const parts = q.split(sep);
+        title = parts[0].trim();
+        artist = parts.slice(1).join(sep).trim();
+        break;
+      }
+    }
+    return { title, artist };
+  };
+
+    useEffect(() => {
+      if (!mounted) return;
+    
+      fetchPlayerInfo();
+      fetchQueue();
+    }, [mounted]);
+
+    const fetchPlayerInfo = async () => {
+      try {
+        const res = await fetch('/api/player/get-currently-playing-track');
+        if (!res.ok) return;
+        const data = await res.json();
+        const item = data?.item || data?.currently_playing || null;
+        if (item) {
+          setCurrentTrackInfo({
+            name: item.name,
+            artists: (item.artists || []).map(a => a.name).join(', '),
+            album: item.album?.name || '',
+            albumImage: item.album?.images?.[0]?.url || null,
+          });
+        }
+      } catch (err) {
+        console.warn('Failed to fetch current track', err);
+      }
+    };
+
+    const fetchQueue = async () => {
+      try {
+        const res = await fetch('/api/player/get-user-queue');
+        if (!res.ok) return;
+        const data = await res.json();
+        const q = data?.queue || [];
+        setQueue(q.slice(0, 10));
+      } catch (err) {
+        console.warn('Failed to fetch queue', err);
+      }
+    };
+
   if (!query || !mounted) return null;
 
   const playerContent = (
     <div 
-      className={styles.playerContainer} 
-      ref={containerRef}
-      style={position ? { left: position.x, top: position.y, bottom: 'auto', right: 'auto' } : {}}
+      className={styles.playerContainer}
     >
-      <div 
-        className={styles.header} 
-        onMouseDown={handleMouseDown}
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+      <div
+        className={styles.header}
+        
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <GripHorizontal size={16} />
-            <span className={styles.title}>YouTube Miniplayer</span>
+          <GripHorizontal size={16} />
+          <span className={styles.title}>YouTube Miniplayer</span>
         </div>
         <button onClick={onClose} className={styles.closeBtn} title="Chiudi">
           <X size={16} />
@@ -148,6 +172,48 @@ export default function YouTubePlayer({ query, onClose }) {
             <span>Video non disponibile</span>
           </div>
         )}
+      </div>
+      <div className={styles.infoPanel}>
+        <div className={styles.meta}>
+          <div className={styles.trackTitle}>{videoTitle || query}</div>
+          <div className={styles.artistName}>{channelTitle || 'YouTube'}</div>
+          {currentTrackInfo && (
+            <div className={styles.currentTrackBlock}>
+              <div className={styles.currentLabel}>In riproduzione (Spotify):</div>
+              <div className={styles.currentLine}>
+                <div className={styles.currentName}>{currentTrackInfo.name}</div>
+                <div className={styles.currentArtists}>{currentTrackInfo.artists}</div>
+              </div>
+            </div>
+          )}
+
+          <div className={styles.queueBlock}>
+            <div className={styles.queueLabel}>Prossime in coda</div>
+            <ul className={styles.queueList}>
+              {queue.length > 0 ? (
+                queue.map((t, i) => (
+                  <li key={i} className={styles.queueItem}>
+                    <div className={styles.qIndex}>{i + 1}.</div>
+                    <div className={styles.qMeta}>
+                      <div className={styles.qTitle}>{t?.name || t?.track?.name}</div>
+                      <div className={styles.qArtists}>{(t?.artists || t?.track?.artists || []).map(a => a.name).join(', ')}</div>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li className={styles.queueEmpty}>Nessuna traccia in coda</li>
+              )}
+            </ul>
+          </div>
+
+          <div className={styles.actions}>
+            {videoId && videoId !== 'FALLBACK' ? (
+              <a href={`https://youtu.be/${videoId}`} target="_blank" rel="noreferrer" className={styles.openBtn}>Apri su YouTube</a>
+            ) : (
+              <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`} target="_blank" rel="noreferrer" className={styles.openBtn}>Cerca su YouTube</a>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
