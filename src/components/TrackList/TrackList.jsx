@@ -55,7 +55,7 @@ export default function TrackList({ tracks }) {
 
           return (
             <div
-              key={`${stableId}-${index}`}
+              key={stableId}
               className={styles.trackRow}
               onClick={() => handlePlay(track)}
               onContextMenu={(e) => {
@@ -125,7 +125,6 @@ export default function TrackList({ tracks }) {
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       },
@@ -142,13 +141,11 @@ export default function TrackList({ tracks }) {
             });
             if (res.ok) {
               console.log(" Traccia aggiunta alla coda");
-              alert("Brano aggiunto alla coda");
             } else {
               throw new Error("Errore nell'aggiungere alla coda");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       },
@@ -158,7 +155,6 @@ export default function TrackList({ tracks }) {
         icon: "",
         action: () => {
           console.log("Aggiungi a playlist:", trackId);
-          alert("Funzionalità non ancora implementata. Accedi al menu delle playlist per aggiungere il brano.");
         },
       },
       {
@@ -174,13 +170,11 @@ export default function TrackList({ tracks }) {
             });
             if (res.ok) {
               console.log(" Brano salvato");
-              alert("Brano aggiunto ai tuoi salvataggi");
             } else {
               throw new Error("Errore nel salvare il brano");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       },
@@ -197,13 +191,11 @@ export default function TrackList({ tracks }) {
             });
             if (res.ok) {
               console.log(" Brano rimosso");
-              alert("Brano rimosso dai tuoi salvataggi");
             } else {
               throw new Error("Errore nel rimuovere il brano");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       },
@@ -216,7 +208,6 @@ export default function TrackList({ tracks }) {
           if (artistIds.length > 0) {
             router.push(`/artist/${artistIds[0]}`);
           } else {
-            alert("Artista non disponibile");
           }
         },
       },
@@ -229,7 +220,6 @@ export default function TrackList({ tracks }) {
           if (albumId) {
             router.push(`/albums/${albumId}`);
           } else {
-            alert("Album non disponibile");
           }
         },
       },
@@ -241,7 +231,6 @@ export default function TrackList({ tracks }) {
         action: () => {
           const link = `https://open.spotify.com/track/${trackId}`;
           navigator.clipboard.writeText(link);
-          alert("Link copiato!");
         },
       },
       {
@@ -251,7 +240,6 @@ export default function TrackList({ tracks }) {
         action: () => {
           const link = `https://open.spotify.com/track/${trackId}`;
           navigator.clipboard.writeText(link);
-          alert("Link copiato!");
         },
       },
       { divider: true },
@@ -261,7 +249,6 @@ export default function TrackList({ tracks }) {
         icon: "",
         danger: true,
         action: () => {
-          alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");
           console.log("Segnala brano:", trackId);
         },
       },

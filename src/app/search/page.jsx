@@ -11,6 +11,7 @@ import Player from "../../components/Player/Player";
 
 import TrackCard from "../../components/Cards/TrackCard";
 import ArtistCard from "../../components/Cards/ArtistCard";
+import AlbumCard from "../../components/Cards/AlbumCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
 import Loader from "../../components/Loader/Loader";
 
@@ -87,7 +88,6 @@ export default function SearchPage() {
                       .map(p => (
                         <PlaylistCard key={p.id} playlist={p} />
                       ))}
-
                   </div>
                 </section>
               )}
@@ -98,13 +98,9 @@ export default function SearchPage() {
                   <h2>Albums</h2>
                   <div className={styles.grid}>
                     {albums.map(al => (
-                      <TrackCard
+                      <AlbumCard
                         key={al.id}
-                        track={{
-                          name: al.name,
-                          album: { images: al.images },
-                          artists: al.artists,
-                        }}
+                        album={al}
                       />
                     ))}
                   </div>

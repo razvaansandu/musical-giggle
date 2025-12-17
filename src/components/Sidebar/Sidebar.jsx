@@ -96,13 +96,11 @@ export default function AppSidebar() {
             });
             if (res.ok) {
               console.log("Playlist seguita");
-              alert("Playlist aggiunta ai tuoi preferiti");
             } else {
               throw new Error("Errore nel seguire la playlist");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       });
@@ -119,13 +117,11 @@ export default function AppSidebar() {
             });
             if (res.ok) {
               console.log("Playlist non più seguita");
-              alert("Playlist rimossa dai tuoi preferiti");
             } else {
               throw new Error("Errore nel smettere di seguire");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       });
@@ -136,7 +132,6 @@ export default function AppSidebar() {
         action: () => {
           const link = `https://open.spotify.com/playlist/${item.id}`;
           navigator.clipboard.writeText(link);
-          alert("Link copiato!");
         },
       });
       items.push({
@@ -159,13 +154,11 @@ export default function AppSidebar() {
             });
             if (res.ok) {
               console.log("Artista seguito");
-              alert("Artista aggiunto ai tuoi preferiti");
             } else {
               throw new Error("Errore nel seguire l'artista");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       });
@@ -182,13 +175,11 @@ export default function AppSidebar() {
             });
             if (res.ok) {
               console.log("Artista non più seguito");
-              alert("Artista rimosso dai tuoi preferiti");
             } else {
               throw new Error("Errore nel smettere di seguire");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       });
@@ -205,7 +196,6 @@ export default function AppSidebar() {
         action: () => {
           const link = `https://open.spotify.com/artist/${item.id}`;
           navigator.clipboard.writeText(link);
-          alert("Link copiato!");
         },
       });
       items.push({
@@ -215,7 +205,6 @@ export default function AppSidebar() {
         action: () => {
           const link = `https://open.spotify.com/artist/${item.id}`;
           navigator.clipboard.writeText(link);
-          alert("Link copiato!");
         },
       });
       items.push({ divider: true });
@@ -225,7 +214,6 @@ export default function AppSidebar() {
         icon: "",
         danger: true,
         action: () => {
-          alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");
           console.log("Segnala artista:", item.id);
         },
       });
@@ -244,13 +232,11 @@ export default function AppSidebar() {
             });
             if (res.ok) {
               console.log(" Album salvato");
-              alert("Album aggiunto alla tua libreria");
             } else {
               throw new Error("Errore nel salvare l'album");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       });
@@ -267,14 +253,12 @@ export default function AppSidebar() {
               body: JSON.stringify({ ids: [albumId] }),
             });
             if (res.ok) {
-              console.log("✅ Album rimosso");
-              alert("Album rimosso dalla tua libreria");
+              console.log(" Album rimosso");
             } else {
               throw new Error("Errore nel rimuovere l'album");
             }
           } catch (err) {
             console.error(err);
-            alert("Errore: " + err.message);
           }
         },
       });
@@ -292,7 +276,6 @@ export default function AppSidebar() {
           const albumId = item.album?.id || item.id;
           const link = `https://open.spotify.com/album/${albumId}`;
           navigator.clipboard.writeText(link);
-          alert("Link copiato!");
         },
       });
       items.push({
@@ -303,7 +286,6 @@ export default function AppSidebar() {
           const albumId = item.album?.id || item.id;
           const link = `https://open.spotify.com/album/${albumId}`;
           navigator.clipboard.writeText(link);
-          alert("Link copiato!");
         },
       });
       items.push({ divider: true });
@@ -313,7 +295,6 @@ export default function AppSidebar() {
         icon: "",
         danger: true,
         action: () => {
-          alert("Grazie per la segnalazione. Il nostro team la analizzerà presto.");
           console.log("Segnala album:", item.id);
         },
       });
