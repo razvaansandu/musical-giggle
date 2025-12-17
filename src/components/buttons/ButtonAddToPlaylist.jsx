@@ -80,7 +80,6 @@ export default function ButtonAddToPlaylist({
       setImage(null);
     } catch (err) {
       console.error("Failed to create playlist:", err);
-      alert("Impossibile creare la playlist: " + err.message);
     } finally {
       setLoading(false);
     }
