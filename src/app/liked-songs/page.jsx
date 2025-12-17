@@ -11,14 +11,28 @@ import Player from "../../components/Player/Player";
 export default function LikedSongs() {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const fetchLikedSongs = async () => {
     try {
-      const res = await fetch("/api/tracks/saved?limit=50");
-      if (res.ok) {
+      const allItems = [];
+      const limit = 50;
+      let offset = 0;
+
+      while (true) {
+        const res = await fetch(`/api/tracks/saved?limit=${limit}&offset=${offset}`);
+        if (!res.ok) {
+          console.error('Errore fetch liked songs page', res.status);
+          break;
+        }
         const data = await res.json();
-        setTracks(data.items || []);
+        const items = data.items || [];
+        allItems.push(...items);
+
+        if (!data.next || items.length < limit) break;
+
+        offset += limit;
       }
+
+      setTracks(allItems);
     } catch (error) {
       console.error("Errore fetch liked songs", error);
     } finally {
