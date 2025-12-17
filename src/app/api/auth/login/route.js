@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST() {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
+  console.log("Redirect URI:",clientId, redirectUri);
 
   const scopes = [
   "user-read-private",
