@@ -114,26 +114,16 @@ export default function LikedSongs() {
             </div>
           </div>
 
-          <div className={styles.playlistControls} style={{ padding: '24px 32px' }}>
-             <button className={styles.playButton} style={{ 
-                 width: '56px', height: '56px', borderRadius: '50%', 
-                 background: '#1db954', border: 'none', display: 'flex', 
-                 alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                 boxShadow: '0 8px 8px rgba(0,0,0,0.3)',
-                 transition: 'transform 0.1s'
-             }}>
-                <Play fill="black" size={28} style={{ marginLeft: '4px' }} />
-             </button>
-          </div>
+          <>
+             
+          </>
 
-          {/* TABLE HEADER - RIMOSSO borderBottom */}
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: '16px 6fr 4fr 3fr minmax(100px, 1fr)', 
             gridGap: '16px', 
             padding: '0 32px', 
-            // borderBottom: '1px solid rgba(255,255,255,0.1)',  <-- RIMOSSA QUESTA RIGA
-            borderBottom: 'none', // Assicuriamoci che non ci sia bordo
+            borderBottom: 'none', 
             marginBottom: '16px',
             color: '#b3b3b3',
             fontSize: '12px',
