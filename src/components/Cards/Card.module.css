@@ -9,6 +9,7 @@
   outline: none;
   text-align: left;
   pointer-events: auto;
+  width: 160px;
 }
 
 .card:hover {
@@ -23,6 +24,17 @@
   background-position: center;
   margin-bottom: 12px;
   pointer-events: none;
+  position: relative;
+}
+
+.artistImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .title {

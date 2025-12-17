@@ -9,6 +9,9 @@ import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
 import Loader from "../../components/Loader/Loader";
+import ArtistCard from "../../components/Cards/ArtistCard";
+import PlaylistCard from "../../components/Cards/PlaylistCard";
+import ScrollRow from "../../components/ScrollRow/ScrollRow";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -16,6 +19,8 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [topArtistsThisMonth, setTopArtistsThisMonth] = useState([]);
+  const [publicPlaylists, setPublicPlaylists] = useState([]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -31,6 +36,20 @@ export default function ProfilePage() {
 
         const data = await res.json();
         setProfile(data);
+
+        // Fetch top artists this month
+        const topArtistsRes = await fetch("/api/spotify/get-user-top?type=artists&time_range=short_term&limit=10");
+        if (topArtistsRes.ok) {
+          const topArtistsData = await topArtistsRes.json();
+          setTopArtistsThisMonth(topArtistsData.items ?? []);
+        }
+
+        // Fetch public playlists
+        const playlistsRes = await fetch("/api/playlists/user?limit=10");
+        if (playlistsRes.ok) {
+          const playlistsData = await playlistsRes.json();
+          setPublicPlaylists(playlistsData.items ?? []);
+        }
       } catch (err) {
         console.error("Errore profilo:", err);
         if (err?.message?.includes("profilo") || err?.status === 401) {
@@ -95,20 +114,40 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className={styles.actions}>
-                <button
-                  className={styles.primaryButton}
-                  onClick={() => router.push("/")}
-                >
-                  Torna alla home
-                </button>
-              </div>
+              
+
+              {/*Top Artists*/}
+              <ScrollRow title="Artisti top di questo mese" seeAllLink="/top-artists">
+                {topArtistsThisMonth.map((artist, index) => (
+                  <ArtistCard
+                    key={`${artist.id || "artist"}-${index}`}
+                    artist={artist}
+                    onClick={() => router.push(`/artist/${artist.id}`)}
+                  />
+                ))}
+              </ScrollRow>
+
+              {/*Playlist pubbliche*/}
+              <section className={styles.section}>
+                <h2>Playlist pubbliche</h2>
+                <div className={styles.grid}>
+                  {publicPlaylists.map((playlist, index) => (
+                    <PlaylistCard
+                      key={`${playlist.id || "playlist"}-${index}`}
+                      playlist={playlist}
+                      onClick={() => router.push(`/playlist/${playlist.id}`)}
+                    />
+                  ))}
+                </div>
+              </section>
             </section>
           )}
         </main>
       </div>
+      
 
       <Player />
     </div>
+    
   );
 }
