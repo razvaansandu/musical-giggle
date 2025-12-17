@@ -73,7 +73,11 @@ export default function HomePage() {
         const recentItems = Array.isArray(recentJson.items)
           ? recentJson.items.map((i) => i.track)
           : [];
-        setRecentTracks(recentItems);
+        // Remove duplicates based on track ID
+        const uniqueRecentTracks = recentItems.filter((track, index, self) => 
+          self.findIndex(t => t.id === track.id) === index
+        );
+        setRecentTracks(uniqueRecentTracks);
         
         const albums = (albumsJson.items ?? []).map(item => item.album).filter(Boolean);
         setSavedAlbums(albums);
