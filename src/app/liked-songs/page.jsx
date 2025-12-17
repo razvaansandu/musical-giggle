@@ -112,14 +112,12 @@ export default function LikedSongs() {
              </button>
           </div>
 
-          {/* TABLE HEADER - RIMOSSO borderBottom */}
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: '16px 6fr 4fr 3fr minmax(100px, 1fr)', 
             gridGap: '16px', 
             padding: '0 32px', 
-            // borderBottom: '1px solid rgba(255,255,255,0.1)',  <-- RIMOSSA QUESTA RIGA
-            borderBottom: 'none', // Assicuriamoci che non ci sia bordo
+            borderBottom: 'none', 
             marginBottom: '16px',
             color: '#b3b3b3',
             fontSize: '12px',
