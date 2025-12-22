@@ -12,7 +12,6 @@ import TrackList from "../../../components/TrackList/TrackList";
 import ButtonShuffle from "../../../components/buttons/buttonShuffle";
 import PlayButton from "../../../components/buttons/PlayButton";
 import AddToLibraryButton from "../../../components/buttons/AddToLibraryButton";
-
 import Loader from "../../../components/Loader/Loader";
 
 export default function AlbumPage() {
@@ -124,7 +123,6 @@ export default function AlbumPage() {
               </section>
 
               <section className={styles.section}>
-                <h2>Brani</h2>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '12px 0' }}>
                   <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} />
                   <PlayButton isPlaying={isPlaying} onClick={handlePlayAll} />

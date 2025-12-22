@@ -100,37 +100,38 @@ export default function ProfilePage() {
                   )}
                 </div>
 
+
                 <div>
-                  <p className={styles.type}>Profilo</p>
-                  <h1 className={styles.name}>{profile.display_name}</h1>
-                  <p className={styles.meta}>
-                    {profile.followers?.total ?? 0} follower ·{" "}
-                    {profile.country || "Paese sconosciuto"} ·{" "}
-                    {profile.product === "premium" ? "Premium" : "Free"}
-                  </p>
-                  {profile.email && (
-                    <p className={styles.email}>{profile.email}</p>
-                  )}
+                  <section>
+                    <p className={styles.type}>Profilo</p>
+                    <h1 className={styles.name}>{profile.display_name}</h1>
+                    <p className={styles.meta}>
+                      {profile.followers?.total ?? 0} follower ·{" "}
+                      {profile.country || "Paese sconosciuto"} ·{" "}
+                      {profile.product === "premium" ? "Premium" : "Free"}
+                    </p>
+                    {profile.email && (
+                      <p className={styles.email}>{profile.email}</p>
+                    )}
+                  </section>
                 </div>
               </div>
 
-              
 
               {/*Top Artists*/}
               <div>
-                &nbsp;
-               
                 <ScrollRow title="Artisti top di questo mese" seeAllLink="/top-artists">
-                {topArtistsThisMonth.map((artist, index) => (
-                  <ArtistCard
-                    key={`${artist.id || "artist"}-${index}`}
-                    artist={artist}
-                    onClick={() => router.push(`/artist/${artist.id}`)}
-                  />
-                ))}
-              </ScrollRow>
+                  {topArtistsThisMonth.map((artist, index) => (
+                    <ArtistCard
+                      key={`${artist.id || "artist"}-${index}`}
+                      artist={artist}
+                      onClick={() => router.push(`/artist/${artist.id}`)}
+                    />
+                  ))}
+                </ScrollRow>
+
               </div>
-              
+
 
               {/*Playlist pubbliche*/}
               <section className={styles.section}>
@@ -149,10 +150,10 @@ export default function ProfilePage() {
           )}
         </main>
       </div>
-      
+
 
       <Player />
     </div>
-    
+
   );
 }

@@ -10,6 +10,8 @@ import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
 import TrackList from "../../../components/TrackList/TrackList";
 import Loader from "../../../components/Loader/Loader";
+import ButtonShuffle from "../../../components/buttons/buttonShuffle";
+import PlayButton from "../../../components/buttons/PlayButton";
 
 export default function PlaylistPage() {
   const { id } = useParams();
@@ -131,7 +133,10 @@ export default function PlaylistPage() {
               </section>
 
               <section className={styles.section}>
-                <h2>Brani</h2>
+                <div>
+                  <ButtonShuffle/>
+                  <PlayButton/>
+                </div>
                 <TrackList tracks={tracks} />
               </section>
             </>
