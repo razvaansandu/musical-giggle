@@ -244,9 +244,9 @@
   background: rgba(255, 255, 255, 0.9);
   color: #000;
   padding: 8px 24px;
-  border-radius: 24px;
+  border-radius: 24px; 
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -254,6 +254,9 @@
   transition: all 0.2s ease;
   opacity: 0;
   animation: fadeIn 0.3s forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 @keyframes fadeIn {
