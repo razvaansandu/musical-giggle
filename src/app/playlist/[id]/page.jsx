@@ -20,14 +20,29 @@ export default function PlaylistPage() {
 
   useEffect(() => {
     if (!id) return;
+    const controller = new AbortController();
 
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const plRes = await fetch(`/api/playlists/${id}`);
-        if (!plRes.ok) throw new Error("Errore caricamento playlist");
+        const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
+          const res = await fetch(url, { signal: controller.signal });
+          if (res.status === 429 && retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError');
+            return fetchWithRetry(url, retries - 1, delay * 2);
+          }
+          return res;
+        };
+
+        const plRes = await fetchWithRetry(`/api/playlists/${id}`);
+        if (plRes.status === 401) {
+          setSessionExpired();
+          return;
+        }
+        if (!plRes.ok) throw new Error(`Errore caricamento playlist: ${plRes.status}`);
         const plJson = await plRes.json();
 
         const allItems = [];
@@ -35,9 +50,13 @@ export default function PlaylistPage() {
         const limit = 100; 
 
         while (true) {
-          const res = await fetch(
+          const res = await fetchWithRetry(
             `/api/playlists/tracks/${id}?limit=${limit}&offset=${offset}`
           );
+          if (res.status === 401) {
+            setSessionExpired();
+            return;
+          }
           if (!res.ok) throw new Error("Errore caricamento brani playlist");
           const json = await res.json();
 
@@ -48,19 +67,26 @@ export default function PlaylistPage() {
 
           offset += items.length;
           if (allItems.length >= total || items.length === 0) break;
+          
+          await new Promise(r => setTimeout(r, 100));
+          if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError');
         }
 
         setPlaylist(plJson);
         setTracks(allItems.map((it) => it.track || it));
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error(err);
         setError(err.message || "Errore caricamento playlist");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+    return () => controller.abort();
   }, [id]);
 
   return (

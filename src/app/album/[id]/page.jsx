@@ -8,7 +8,11 @@ import styles from "../../home/home.module.css";
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
-import Card from "../../../components/Cards/Card";
+import TrackList from "../../../components/TrackList/TrackList";
+import ButtonShuffle from "../../../components/buttons/buttonShuffle";
+import PlayButton from "../../../components/buttons/PlayButton";
+import AddToLibraryButton from "../../../components/buttons/AddToLibraryButton";
+
 import Loader from "../../../components/Loader/Loader";
 
 export default function AlbumPage() {
@@ -44,11 +48,38 @@ export default function AlbumPage() {
     fetchData();
   }, [id]);
 
-  if (loading) return <Loader />;
-  if (error) return <p style={{ color: "#f87171" }}>{error}</p>;
-console.log(tracks); 
-  return (  
-    
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handleShuffle = async (next) => {
+    try {
+      const newState = typeof next === 'boolean' ? next : !isShuffle;
+      setIsShuffle(newState);
+      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: 'PUT' });
+    } catch (err) {
+      console.error('Errore shuffle', err);
+      setIsShuffle(prev => !prev);
+    }
+  };
+
+  const handlePlayAll = async (play) => {
+    try {
+      setIsPlaying(play);
+      if (!tracks || !tracks.length) return;
+      const uris = tracks.map(t => t.uri).filter(Boolean);
+      if (!uris.length) return;
+      await fetch('/api/player/start-resume-playback', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uris }),
+      });
+    } catch (err) {
+      console.error('Errore play', err);
+      setIsPlaying(!play);
+    }
+  };
+
+  return (
     <div className={styles.container}>
       <SpotifyHeader />
 
@@ -56,47 +87,55 @@ console.log(tracks);
         <Sidebar />
 
         <main className={styles.mainContent}>
+          {loading && (
+            <div style={{ marginTop: 40 }}>
+              <Loader />
+            </div>
+          )}
 
-          <section className={styles.heroAlbumSection}>
-            <div className={styles.heroAlbumContainer}>
-              <div className={styles.heroAlbumImage}>
-                <img
-                  src={album.images?.[0]?.url || "/placeholder.png"}
-                  alt={album.name}
-                  className={styles.heroAlbumImg}
-                />
-              </div>
+          {error && !loading && (
+            <p style={{ color: "#f87171", marginBottom: "1rem" }}>{error}</p>
+          )}
 
-              <div className={styles.heroAlbumText}>
-                <span className={styles.heroAlbumType}>Album</span>
-                <h1 className={styles.heroAlbumTitle}>{album.name}</h1>
-                <div className={styles.heroAlbumMeta}>
-                  <span>{album.artists?.map((a) => a.name).join(", ")}</span>
-                  <span className={styles.heroAlbumDot}>•</span>
-                  <span>{album.release_date}</span>
-                  <span className={styles.heroAlbumDot}>•</span>
-                  <span>{album.total_tracks} songs</span>
+          {!loading && album && (
+            <>
+              <section className={styles.heroAlbumSection}>
+                <div className={styles.heroAlbumContainer}>
+                  <div className={styles.heroAlbumImage}>
+                    <img
+                      src={album.images?.[0]?.url || "/placeholder.png"}
+                      alt={album.name}
+                      className={styles.heroAlbumImg}
+                    />
+                  </div>
+
+                  <div className={styles.heroAlbumText}>
+                    <span className={styles.heroAlbumType}>Album</span>
+                    <h1 className={styles.heroAlbumTitle}>{album.name}</h1>
+                    <div className={styles.heroAlbumMeta}>
+                      <span>{album.artists?.map((a) => a.name).join(", ")}</span>
+                      <span className={styles.heroAlbumDot}>•</span>
+                      <span>{album.release_date}</span>
+                      <span className={styles.heroAlbumDot}>•</span>
+                      <span>{album.total_tracks} songs</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </section>
+              </section>
 
-          <section className={styles.tracklistHeader}>
-            <div className={styles.tracklistHeaderLeft}>
-              <span className={styles.tracklistNumber}>#</span>
-              <span className={styles.tracklistTitle}>TITLE</span>
-            </div>
-            <div className={styles.tracklistHeaderRight}>
-              <span className={styles.tracklistDuration}>DURATION</span>
-            </div>
-          </section>
-
-          <section className={styles.tracklist}>
-            {tracks.map((t, i) => (
-              <Card key={t.id} item={t} index={i + 1} />
-            ))}
-          </section>
-
+              <section className={styles.section}>
+                <h2>Brani</h2>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '12px 0' }}>
+                  <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} />
+                  <PlayButton isPlaying={isPlaying} onClick={handlePlayAll} />
+                  <div>
+                    <AddToLibraryButton albumId={album?.id} />
+                  </div>
+                </div>
+                <TrackList tracks={tracks} />
+              </section>
+            </>
+          )}
         </main>
       </div>
 

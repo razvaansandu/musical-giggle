@@ -1,6 +1,6 @@
 "use client";
 
-import { Library, Plus, Search, ListMusic, X, Check } from "lucide-react";
+import { Library, Plus, Search, ListMusic, X, Check, Heart } from "lucide-react"; // Aggiunto Heart
 import styles from "../../app/home/home.module.css"; 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,12 @@ export default function AppSidebar() {
     setIsCollapsed(!isCollapsed);
   };
 
-  const fetchData = async () => {
+  // Nuova funzione per navigare alle Liked Songs
+  const goToLikedSongs = () => {
+    router.push('/liked-songs');
+  };
+
+  const fetchData = async (signal) => {
     let url = "";
     if (filter === "Playlists") url = "/api/playlists/user?limit=50";
     else if (filter === "Albums") url = "/api/albums/saved?limit=50";
@@ -45,7 +50,7 @@ export default function AppSidebar() {
     if (!url) return;
 
     try { 
-      const res = await fetch(url);
+      const res = await fetch(url, { signal });
       if (!res.ok) throw new Error("Errore nel caricamento");
       
       const data = await res.json();
@@ -55,13 +60,16 @@ export default function AppSidebar() {
         setLibraryItems(data.items || []);
       }
     } catch (error) {
+      if (error.name === 'AbortError') return;
       console.error("Errore fetch sidebar:", error);
       setLibraryItems([]);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
   }, [filter]);
 
   const handleFilterChange = (newFilter) => {
@@ -130,8 +138,8 @@ export default function AppSidebar() {
         label: "Copia link a playlist",
         icon: "",
         action: () => {
-          const link = `https://open.spotify.com/playlist/${item.id}`;
-          navigator.clipboard.writeText(link);
+         const link = `https://open.spotify.com/playlist/${item.id}`;
+         navigator.clipboard.writeText(link);
         },
       });
       items.push({
@@ -410,6 +418,41 @@ export default function AppSidebar() {
         )}
       </div>
 
+      {/* NUOVO ITEM: Liked Songs - Posizionato subito dopo l'header */}
+      <div 
+        className={styles.libraryItem} 
+        onClick={goToLikedSongs}
+        style={{ 
+          justifyContent: isCollapsed ? 'center' : 'flex-start', 
+          padding: isCollapsed ? '8px 0' : '12px',
+          cursor: 'pointer',
+          marginBottom: '8px'
+        }}
+      >
+        <div 
+          className={styles.itemImagePlaylist}
+          style={{ 
+            width: isCollapsed ? '48px' : '52px', 
+            height: isCollapsed ? '48px' : '52px', 
+            minWidth: isCollapsed ? '48px' : '52px',
+            background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '4px',
+            marginRight: isCollapsed ? 0 : '12px'
+          }}
+        >
+          <Heart size={isCollapsed ? 24 : 28} fill="white" stroke="white" />
+        </div>
+        {!isCollapsed && (
+          <div className={styles.itemInfo}>
+            <span className={styles.itemTitle}>Liked Songs</span>
+            <span className={styles.itemDetails}>I tuoi brani salvati</span>
+          </div>
+        )}
+      </div>
+
       <CreatePlaylistModal 
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
@@ -423,74 +466,74 @@ export default function AppSidebar() {
 
       {!isCollapsed && (
         <div className={styles.libraryFilters}>
-          {["Playlists", "Artists", "Albums"].map((f) => (
-            <button 
-              key={f} 
-              className={styles.chip}
-              onClick={() => handleFilterChange(f)}
-              style={{
-                backgroundColor: filter === f ? "white" : "",
-                color: filter === f ? "black" : "",
-              }}
-            >
-              {f}
-            </button>
-          ))} 
+        {["Playlists", "Artists", "Albums"].map((f) => (
+          <button 
+            key={f} 
+            className={styles.chip}
+            onClick={() => handleFilterChange(f)}
+            style={{
+              backgroundColor: filter === f ? "white" : "",
+              color: filter === f ? "black" : "",
+            }}
+          >
+            {f}
+          </button>
+        ))} 
         </div>
       )}
 
       {!isCollapsed && (
         <div className={styles.libraryUtilities}>
-          {isSearchOpen ? (
-            <div className={styles.searchContainer}>
-              <button className={styles.iconButton} onClick={() => setIsSearchOpen(false)}>
-                 <Search size={16} />
-              </button>
-              <input 
-                type="text" 
-                className={styles.searchInput} 
-                placeholder="Cerca..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                autoFocus
-              />
-              <button className={styles.iconButton} onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}>
-                <X size={16} />
-              </button>
-            </div>
-          ) : (
-            <button className={`${styles.iconButton} ${styles.searchIcon}`} onClick={() => setIsSearchOpen(true)}>
-              <Search size={18} />
+        {isSearchOpen ? (
+          <div className={styles.searchContainer}>
+            <button className={styles.iconButton} onClick={() => setIsSearchOpen(false)}>
+               <Search size={16} />
             </button>
-          )}
+            <input 
+              type="text" 
+              className={styles.searchInput} 
+              placeholder="Cerca..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+            />
+            <button className={styles.iconButton} onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}>
+              <X size={16} />
+            </button>
+          </div>
+        ) : (
+          <button className={`${styles.iconButton} ${styles.searchIcon}`} onClick={() => setIsSearchOpen(true)}>
+            <Search size={18} />
+          </button>
+        )}
+        
+        <div style={{ position: 'relative' }} ref={sortMenuRef}>
+          <button 
+            className={styles.sortButton} 
+            onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
+          >
+            <span>{sortOrder === "Recents" ? "Recenti" : sortOrder === "Alphabetical" ? "Alfabetico" : "Autore"}</span>
+            <ListMusic size={16} />
+          </button>
           
-          <div style={{ position: 'relative' }} ref={sortMenuRef}>
-            <button 
-              className={styles.sortButton} 
-              onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
-            >
-              <span>{sortOrder === "Recents" ? "Recenti" : sortOrder === "Alphabetical" ? "Alfabetico" : "Autore"}</span>
-              <ListMusic size={16} />
-            </button>
-            
-            {isSortMenuOpen && (
-              <div className={styles.sortMenu}>
-                <div className={styles.navTitle}>Ordina per</div>
-                <button 
+          {isSortMenuOpen && (
+            <div className={styles.sortMenu}>
+              <div className={styles.navTitle}>Ordina per</div>
+              <button 
                   className={`${styles.sortMenuItem} ${sortOrder === "Recents" ? styles.active : ''}`}
                   onClick={() => { setSortOrder("Recents"); setIsSortMenuOpen(false); }}
-                >
+              >
                   Recenti
                   {sortOrder === "Recents" && <Check size={16} />}
-                </button>
-                <button 
+              </button>
+              <button 
                   className={`${styles.sortMenuItem} ${sortOrder === "Alphabetical" ? styles.active : ''}`}
                   onClick={() => { setSortOrder("Alphabetical"); setIsSortMenuOpen(false); }}
-                >
+              >
                   Alfabetico
                   {sortOrder === "Alphabetical" && <Check size={16} />}
-                </button>
-                {filter === "Playlists" && (
+              </button>
+              {filter === "Playlists" && (
                   <button 
                     className={`${styles.sortMenuItem} ${sortOrder === "Creator" ? styles.active : ''}`}
                     onClick={() => { setSortOrder("Creator"); setIsSortMenuOpen(false); }}
@@ -498,10 +541,10 @@ export default function AppSidebar() {
                     Autore
                     {sortOrder === "Creator" && <Check size={16} />}
                   </button>
-                )}
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
+        </div>
         </div> 
       )}
 
@@ -522,4 +565,3 @@ export default function AppSidebar() {
     </div>
   );
 }
- 
