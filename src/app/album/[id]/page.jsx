@@ -132,17 +132,6 @@ export default function AlbumPage() {
                     <AddToLibraryButton albumId={album?.id} />
                   </div>
                 </div>
-
-                <section className={styles.tracklistHeader}>
-                  <div className={styles.tracklistHeaderLeft}>
-                    <span className={styles.tracklistNumber}>#</span>
-                    <span className={styles.tracklistTitle}>TITLE</span>
-                  </div>
-                  <div className={styles.tracklistHeaderRight}>
-                    <span className={styles.tracklistDuration}>DURATION</span>
-                  </div>
-                </section>
-
                 <TrackList tracks={tracks} />
               </section>
             </>

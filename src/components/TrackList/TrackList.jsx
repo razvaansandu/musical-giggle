@@ -65,11 +65,6 @@ export default function TrackList({ tracks }) {
             >
               <div className={styles.colIndex}>{index + 1}</div>
               <div className={styles.colTitle}>
-                <img
-                  src={imageUrl}
-                  alt={name}
-                  className={styles.trackImage}
-                />
                 <div className={styles.trackName}>{name}</div>
               </div>
               <div className={styles.colArtist}>
