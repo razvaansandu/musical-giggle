@@ -117,7 +117,10 @@ export default function ProfilePage() {
               
 
               {/*Top Artists*/}
-              <ScrollRow title="Artisti top di questo mese" seeAllLink="/top-artists">
+              <div>
+                &nbsp;
+               
+                <ScrollRow title="Artisti top di questo mese" seeAllLink="/top-artists">
                 {topArtistsThisMonth.map((artist, index) => (
                   <ArtistCard
                     key={`${artist.id || "artist"}-${index}`}
@@ -126,6 +129,8 @@ export default function ProfilePage() {
                   />
                 ))}
               </ScrollRow>
+              </div>
+              
 
               {/*Playlist pubbliche*/}
               <section className={styles.section}>

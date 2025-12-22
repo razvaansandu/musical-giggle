@@ -614,7 +614,7 @@ export default function Player() {
   <path fillRule="evenodd" d="M14 11V2h1v9zM6 3v10H5V3z"/>
   <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4z"/>
 </svg>
-             Sincronizza
+             &nbsp;Sincronizza
           </button>
         )}
       </div>
