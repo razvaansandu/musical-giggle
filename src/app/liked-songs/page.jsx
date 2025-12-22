@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import styles from "../home/home.module.css";
 import { Clock, Play, Heart, Trash2 } from "lucide-react";
-
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
@@ -175,26 +174,10 @@ export default function LikedSongs() {
                 {track.album?.name}
               </div>
 
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '16px 6fr 4fr 3fr minmax(100px, 1fr)', 
-            gridGap: '16px', 
-            padding: '0 32px', 
-            borderBottom: 'none', 
-            marginBottom: '16px',
-            color: '#b3b3b3',
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            height: '36px',
-            alignItems: 'center',
-            letterSpacing: '1px'
-          }}>
-            <div style={{ textAlign: 'center' }}>#</div>
-            <div>Titolo</div>
-            <div>Artista</div>
-            <div>Album</div>
-            <div style={{ textAlign: 'right', paddingRight: '30px' }}><Clock size={16} /></div>
-          </div>
+              {/* Data aggiunta (from saved items -> item.added_at) */}
+              <div style={{ color: '#b3b3b3', fontSize: '13px', textTransform: 'none', textAlign: 'left' }}>
+                {formatDate(item.added_at)}
+              </div>
 
               {/* Action (Remove) */}
               <div style={{ display: 'flex', justifyContent: 'center' }}>
