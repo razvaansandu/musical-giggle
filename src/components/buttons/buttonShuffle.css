@@ -13,10 +13,20 @@
   transition: background-color .12s ease, color .12s ease, transform .06s ease;
   line-height: 0;
 }
+
 .btn-shuffle:hover{ 
-    transform: translateY(-1px); 
+  transform: translateY(-1px); 
 } 
+
 .btn-shuffle:active {
   transform: translateY(0);
-   color:white;  
-}  
+  color: white;  
+}
+
+.btn-shuffle.active {
+  color: #1db954 !important; 
+}
+
+.btn-shuffle.active:hover {
+  color: #1ed760 !important; 
+}
