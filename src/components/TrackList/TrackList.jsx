@@ -5,29 +5,52 @@ import ContextMenu from "../ContextMenu/ContextMenu";
 import { useState } from "react";
 import { useContextMenu } from "../../hooks/useContextMenu";
 import LikeButton from "../buttons/LikeButton";
+import { useRouter } from "next/navigation";
 
 export default function TrackList({ tracks }) {
   const [selectedTrack, setSelectedTrack] = useState(null);
   const contextMenu = useContextMenu();
-    const formatDuration = (ms) => {
+  const router = useRouter();
+
+  const formatDuration = (ms) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  const handlePlay = async (track) => {
+  const handlePlay = async (clickedTrack) => {
     try {
-      const uri = track?.uri ?? track?.track?.uri;
+      const uri = clickedTrack?.uri ?? clickedTrack?.track?.uri;
       if (!uri) {
-        console.warn("Nessuna URI per questa traccia:", track);
+        console.warn("Nessuna URI per questa traccia:", clickedTrack);
         return;
       }
+
+      const allUris = tracks
+        .map((t) => t?.uri ?? t?.track?.uri)
+        .filter(Boolean);
+
+      const clickedIndex = allUris.indexOf(uri);
+
+      let orderedUris;
+      if (clickedIndex !== -1) {
+        orderedUris = [
+          ...allUris.slice(clickedIndex),
+          ...allUris.slice(0, clickedIndex),
+        ];
+      } else {
+        orderedUris = allUris;
+      }
+
+      console.log(`Avvio coda con ${orderedUris.length} tracce`);
 
       await fetch("/api/player/start-resume-playback", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uris: [uri] }),
+        body: JSON.stringify({ uris: orderedUris }), 
       });
+
+      console.log("Coda creata correttamente!");
     } catch (err) {
       console.error("Errore durante la riproduzione:", err);
     }
@@ -59,12 +82,18 @@ export default function TrackList({ tracks }) {
               className={styles.trackRow}
               onClick={() => handlePlay(track)}
               onContextMenu={(e) => {
+                e.preventDefault();
                 contextMenu.handleContextMenu(e);
                 setSelectedTrack(track);
               }}
             >
               <div className={styles.colIndex}>{index + 1}</div>
               <div className={styles.colTitle}>
+                <img
+                  src={imageUrl}
+                  alt={name}
+                  className={styles.trackImage}
+                />
                 <div className={styles.trackName}>{name}</div>
               </div>
               <div className={styles.colArtist}>
@@ -104,24 +133,7 @@ export default function TrackList({ tracks }) {
         id: "play-now",
         label: "Riproduci",
         icon: "▶",
-        action: async () => {
-          try {
-            const uri = track?.uri ?? track?.track?.uri;
-            if (!uri) throw new Error("URI della traccia non trovata");
-            const res = await fetch("/api/player/start-resume-playback", {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ uris: [uri] }),
-            });
-            if (res.ok) {
-              console.log("▶ Riproduzione avviata");
-            } else {
-              throw new Error("Errore nell'avviare la riproduzione");
-            }
-          } catch (err) {
-            console.error(err);
-          }
-        },
+        action: () => handlePlay(track), 
       },
       {
         id: "add-to-queue",
@@ -135,7 +147,7 @@ export default function TrackList({ tracks }) {
               method: "POST",
             });
             if (res.ok) {
-              console.log(" Traccia aggiunta alla coda");
+              console.log("Traccia aggiunta alla coda");
             } else {
               throw new Error("Errore nell'aggiungere alla coda");
             }
@@ -164,7 +176,7 @@ export default function TrackList({ tracks }) {
               body: JSON.stringify({ ids: [trackId] }),
             });
             if (res.ok) {
-              console.log(" Brano salvato");
+              console.log("Brano salvato");
             } else {
               throw new Error("Errore nel salvare il brano");
             }
@@ -174,7 +186,7 @@ export default function TrackList({ tracks }) {
         },
       },
       {
-        id: "unlike",
+        id: "unlikely",
         label: "Rimuovi dai tuoi salvataggi",
         icon: "",
         action: async () => {
@@ -185,7 +197,7 @@ export default function TrackList({ tracks }) {
               body: JSON.stringify({ ids: [trackId] }),
             });
             if (res.ok) {
-              console.log(" Brano rimosso");
+              console.log("✅ Brano rimosso");
             } else {
               throw new Error("Errore nel rimuovere il brano");
             }
@@ -202,7 +214,6 @@ export default function TrackList({ tracks }) {
         action: () => {
           if (artistIds.length > 0) {
             router.push(`/artist/${artistIds[0]}`);
-          } else {
           }
         },
       },
@@ -214,7 +225,6 @@ export default function TrackList({ tracks }) {
           const albumId = track?.album?.id ?? track?.track?.album?.id;
           if (albumId) {
             router.push(`/albums/${albumId}`);
-          } else {
           }
         },
       },
