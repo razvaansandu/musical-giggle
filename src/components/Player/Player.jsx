@@ -129,7 +129,10 @@ export default function Player() {
         return;
       }
 
-      const data = await res.json();
+      const text = await res.text();
+      if (!text) return;
+
+      const data = JSON.parse(text);
       setCurrent(data.item || null);
       setIsPlaying(data.is_playing || false);
       setIsShuffle(data.shuffle_state || false);

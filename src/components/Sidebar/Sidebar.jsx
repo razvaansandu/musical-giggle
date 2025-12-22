@@ -36,7 +36,7 @@ export default function AppSidebar() {
     setIsCollapsed(!isCollapsed);
   };
 
-  const fetchData = async () => {
+  const fetchData = async (signal) => {
     let url = "";
     if (filter === "Playlists") url = "/api/playlists/user?limit=50";
     else if (filter === "Albums") url = "/api/albums/saved?limit=50";
@@ -45,7 +45,7 @@ export default function AppSidebar() {
     if (!url) return;
 
     try { 
-      const res = await fetch(url);
+      const res = await fetch(url, { signal });
       if (!res.ok) throw new Error("Errore nel caricamento");
       
       const data = await res.json();
@@ -55,13 +55,16 @@ export default function AppSidebar() {
         setLibraryItems(data.items || []);
       }
     } catch (error) {
+      if (error.name === 'AbortError') return;
       console.error("Errore fetch sidebar:", error);
       setLibraryItems([]);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
   }, [filter]);
 
   const handleFilterChange = (newFilter) => {
