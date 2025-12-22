@@ -40,17 +40,6 @@ export default function ScrollRow({ children, title, seeAllLink, rightElement })
     });
   };
 
-  const handleWheel = (e) => {
-    if (!scrollRef.current) return;
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;  
-    
-    e.preventDefault();
-    scrollRef.current.scrollBy({
-      left: e.deltaY,
-      behavior: "auto",
-    });
-  };
-
   return (
     <section className={styles.section}>
       <div className={styles.header}>
@@ -71,7 +60,7 @@ export default function ScrollRow({ children, title, seeAllLink, rightElement })
             className={`${styles.arrowButton} ${styles.arrowLeft}`}
             onClick={() => scroll("left")}
             aria-label="Scroll left"
-          >
+          > 
             <ChevronLeft size={24} />
           </button>
         )}
@@ -79,7 +68,6 @@ export default function ScrollRow({ children, title, seeAllLink, rightElement })
         <div
           ref={scrollRef}
           className={styles.scrollRow}
-          onWheel={handleWheel}
         >
           {children}
         </div>
