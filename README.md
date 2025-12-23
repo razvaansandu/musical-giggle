@@ -31,12 +31,24 @@ Configurazione rapida
 
     Crea un file .env.local con le credenziali della tua app Spotify:
 
-        SPOTIFY_CLIENT_ID
-
-        SPOTIFY_CLIENT_SECRET
-
-        NEXTAUTH_URL
-
-        NEXTAUTH_SECRET
+       SPOTIFY_CLIENT_ID=*************************************
+       SPOTIFY_CLIENT_SECRET=***********************************
+       NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+       SPOTIFY_REDIRECT_URI="http://127.0.0.1:3000/api/auth/callback"
+       SPOTIFY_API_URL="https://api.spotify.com/v1" 
+       SPOTIFY_ACCOUNTS_URL="https://accounts.spotify.com"
 
     Installa le dipendenze:
+    
+Installa le dipendenze:
+
+bash
+npm install
+
+Avvia l’ambiente di sviluppo:
+
+bash
+npm run dev
+
+Apri http://localhost:3000 nel browser per effettuare il login con Spotify e testare il tuo dashboard musicale.
+
