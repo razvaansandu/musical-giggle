@@ -13,38 +13,40 @@ import PlayButton from "../../components/buttons/PlayButton";
 import { useSpotifyFetch } from "../../hooks/useSpotifyFetch";
 
 export default function LikedSongs() {
+  const [total, sTotal] = useState(0);
   const [tracks, setTracks] = useState([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [playbackState, setPlaybackState] = useState({ isShuffle: false, isPlaying: false });
   
-  // ✅ USA IL HOOK - gestisce loading/error automaticamente
   const { loading, spotifyFetch } = useSpotifyFetch();
 
-  // ✅ SEMPLICE - usaSpotifyFetch gestisce tutto (retry, 429, AbortController)
-  useEffect(() => {
-    const loadTracks = async () => {
-      try {
-        const allItems = [];
-        let offset = 0;
+  const loadTracks = async () => {
+    try {
+      const offset = page * 50;
+      const data = await spotifyFetch(`/tracks/saved?limit=50&offset=${offset}`);
+      sTotal(data.total);
+      if (!data) return;
 
-        while (true) {
-          const data = await spotifyFetch(`/tracks/saved?limit=50&offset=${offset}`);
-          if (!data) break; // Hook gestisce errori
-
-          const items = data.items || [];
-          allItems.push(...items);
-
-          if (!data.next || items.length < 50) break;
-          offset += 50;
-        }
-
-        setTracks(allItems.map(it => it.track || it));
-      } catch (err) {
-        console.error("Errore liked songs:", err);
+      const items = data.items || [];
+      
+      if (page === 0) {
+        setTracks(items.map(it => it.track || it));
+      } else {
+        setTracks(prev => [...prev, ...items.map(it => it.track || it)]);
       }
-    };
+      
+      if (!data.next || items.length < 50) {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Errore caricamento:", err);
+    }
+  };
 
+  useEffect(() => {
     loadTracks();
-  }, [spotifyFetch]);
+  }, [page, spotifyFetch]);
 
   const fetchPlaybackState = async () => {
     try {
@@ -130,7 +132,7 @@ export default function LikedSongs() {
                 <div className={styles.heroAlbumMeta}>
                   <span style={{ fontWeight: "bold", color: "white" }}>Tu</span>
                   <span className={styles.heroAlbumDot}>•</span>
-                  <span>{tracks.length} brani</span>
+                  <span>{total} brani</span>
                 </div>
               </div>
             </div>
@@ -148,7 +150,23 @@ export default function LikedSongs() {
                 onClick={handlePlayAll}
               />
             </div>
+            
             <TrackList tracks={tracks} />
+
+            {hasMore && (
+              <button 
+                onClick={() => setPage(prev => prev + 1)} 
+                disabled={loading}
+                style={{  
+                  margin: '20px 0', 
+                  padding: '12px 24px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1
+                }}
+              >
+                {loading ? 'Caricamento...' : 'Carica altre'}
+              </button>
+            )}
           </div>
         </main>
       </div>

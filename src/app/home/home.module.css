@@ -740,12 +740,3 @@
 .buttonGabryActive:hover {
   background: #e0e0e0;
 }      
-.btnLoad{ 
-  border-radius: 24px; 
-  color: black; 
-  background-color: white; 
-  border-color: #1db954; 
-  width: 150px;  
-  height: 45px;  
-
-}
