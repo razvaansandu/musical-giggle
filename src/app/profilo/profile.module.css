@@ -20,10 +20,12 @@
   margin-top: 32px;
 }
 
+
 .header {
   display: flex;
   gap: 24px;
   align-items: center;
+  margin-bottom: 48px;
 }
 
 .avatarWrapper {
