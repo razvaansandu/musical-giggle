@@ -4,6 +4,7 @@ import styles from "./ArtistHero.module.css";
 
 export default function ArtistHero({ artist }) {
   const [following, setFollowing] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   if (!artist) return null;
 
@@ -11,6 +12,32 @@ export default function ArtistHero({ artist }) {
   const listeners = artist.followers?.total;
   const image = artist.images?.[0]?.url || "/placeholder.png";
   const spotifyUrl = artist.external_urls?.spotify;
+  const artistId = artist.id;
+
+  const handlePlay = async () => {
+    try {
+      setPlaying(true);
+      const res = await fetch(`/api/artist/top-tracks/${artistId}`);
+      if (!res.ok) throw new Error("Errore nel caricamento delle tracce");
+      
+      const data = await res.json();
+      const uris = data.tracks?.map(track => track.uri).filter(Boolean) || [];
+      
+      if (!uris.length) {
+        console.error("Nessuna traccia trovata");
+        setPlaying(false);
+        return;
+      }
+      await fetch('/api/player/start-resume-playback', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uris }),
+      });
+    } catch (err) {
+      console.error("Errore durante la riproduzione:", err);
+      setPlaying(false);
+    }
+  };
 
   return (
     <header className={styles.hero} role="banner">
@@ -26,15 +53,12 @@ export default function ArtistHero({ artist }) {
         </p>   
 
         <div className={styles.actions}>
-          <a className={styles.play} href={spotifyUrl} target="_self" rel="noreferrer">
-            Play 
-          </a>
-          <button
-            className={styles.follow}
-            onClick={() => setFollowing((s) => !s)}
-            aria-pressed={following}
+          <button 
+            className={styles.play} 
+            onClick={handlePlay}
+            disabled={playing}
           >
-            {following ? "Segui già" : "Segui"}
+            {playing ? "Caricamento..." : "Play"}
           </button>
         </div>
       </div>

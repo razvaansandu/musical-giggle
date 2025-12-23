@@ -2,202 +2,195 @@
 
 import { useEffect, useState } from "react";
 import styles from "../home/home.module.css";
-import { Clock, Play, Heart, Trash2 } from "lucide-react";
+import { Heart } from "lucide-react";
+
 import SpotifyHeader from "../../components/Header/SpotifyHeader";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Player from "../../components/Player/Player";
+import TrackList from "../../components/TrackList/TrackList";
+import ButtonShuffle from "../../components/buttons/buttonShuffle";
+import PlayButton from "../../components/buttons/PlayButton";
+import { useSpotifyFetch } from "../../hooks/useSpotifyFetch";
 
 export default function LikedSongs() {
+  const [total, sTotal] = useState(0);
   const [tracks, setTracks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const fetchLikedSongs = async () => {
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [playbackState, setPlaybackState] = useState({ isShuffle: false, isPlaying: false });
+  
+  const { loading, spotifyFetch } = useSpotifyFetch();
+
+  const loadTracks = async () => {
     try {
-      const allItems = [];
-      const limit = 50;
-      let offset = 0;
+      const offset = page * 50;
+      const data = await spotifyFetch(`/tracks/saved?limit=50&offset=${offset}`);
+      sTotal(data.total);
+      if (!data) return;
 
-      while (true) {
-        const res = await fetch(`/api/tracks/saved?limit=${limit}&offset=${offset}`);
-        if (!res.ok) {
-          console.error('Errore fetch liked songs page', res.status);
-          break;
-        }
-        const data = await res.json();
-        const items = data.items || [];
-        allItems.push(...items);
-
-        if (!data.next || items.length < limit) break;
-
-        offset += limit;
+      const items = data.items || [];
+      
+      if (page === 0) {
+        setTracks(items.map(it => it.track || it));
+      } else {
+        setTracks(prev => [...prev, ...items.map(it => it.track || it)]);
       }
-
-      setTracks(allItems);
-    } catch (error) {
-      console.error("Errore fetch liked songs", error);
-    } finally {
-      setLoading(false);
+      
+      if (!data.next || items.length < 50) {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Errore caricamento:", err);
     }
   };
 
   useEffect(() => {
-    fetchLikedSongs();
+    loadTracks();
+  }, [page, spotifyFetch]);
+
+  const fetchPlaybackState = async () => {
+    try {
+      const res = await fetch("/api/player/get-playback-state");
+      if (res.status === 204) {
+        setPlaybackState({ isShuffle: false, isPlaying: false });
+        return;
+      }
+      const text = await res.text();
+      if (text) {
+        const data = JSON.parse(text);
+        setPlaybackState({
+          isShuffle: data.shuffle_state || false,
+          isPlaying: data.is_playing || false
+        });
+      }
+    } catch (err) {
+      console.error("Errore fetch playback state:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlaybackState();
+    const interval = setInterval(fetchPlaybackState, 3000);
+    return () => clearInterval(interval);
   }, []);
 
-  const playTrack = async (uri) => {
+  const handleShuffle = async () => {
     try {
-      await fetch("/api/player/play-track", { 
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uri }) 
-      });
-    } catch (e) {
-      console.error("Errore play", e);
+      const newState = !playbackState.isShuffle;
+      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: 'PUT' });
+    } catch (err) {
+      console.error('Errore shuffle', err);
     }
   };
 
-  const removeTrack = async (id) => {
+  const handlePlayAll = async () => {
     try {
-      const res = await fetch("/api/tracks/saved", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: [id] }), 
+      if (!tracks || !tracks.length) return;
+      const uris = tracks.map(t => t.uri).filter(Boolean);
+      if (!uris.length) return;
+      
+      await fetch('/api/player/start-resume-playback', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uris }),
       });
-
-      if (res.ok) {
-        setTracks((prev) => prev.filter((item) => item.track.id !== id));
-      } else {
-        console.error("Errore rimozione brano");
-      }
-    } catch (error) {
-      console.error("Errore API remove track", error);
+    } catch (err) {
+      console.error('Errore play', err);
     }
   };
 
-  const formatDuration = (ms) => {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = ((ms % 60000) / 1000).toFixed(0);
-    return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+  const handleTrackRemoved = (trackId) => {
+    setTracks(prev => prev.filter(track => {
+      const id = track?.id ?? track?.track?.id;
+      return id !== trackId;
+    }));
+    sTotal(prev => prev - 1);
   };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('it-IT', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
-
-  if (loading) return <div className={styles.loading}>Caricamento...</div>; // Assicurati di avere .loading nel css o rimuovilo
 
   return (
-    // Usa .mainContent invece di .container per coerenza con la tua struttura home
-    <div className={styles.mainContent}>
-      
-      {/* HEADER SECTION (Adattato con le classi .hero... del tuo CSS) */}
-      <div className={styles.heroAlbumSection}>
-        <div className={styles.heroAlbumContainer}>
-          <div className={styles.heroAlbumImage}>
-            {/* Icona cuore grande */}
-            <div style={{
-              width: '100%', height: '100%', 
-              background: 'linear-gradient(135deg, #450af5, #8e8e8e)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-               <Heart size={80} fill="white" color="white" />
-            </div>
-          </div>
-          
-          <div className={styles.heroAlbumText}>
-            <span className={styles.heroAlbumType}>Playlist</span>
-            <h1 className={styles.heroAlbumTitle} style={{ fontSize: '4rem' }}>Brani che ti piacciono</h1>
-            <div className={styles.heroAlbumMeta}>
-              <span style={{ fontWeight: 'bold', color: 'white' }}>Tu</span>
-              <span className={styles.heroAlbumDot}>•</span>
-              <span>{tracks.length} brani</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className={styles.container}>
+      <SpotifyHeader />
 
-      {/* ACTION BUTTONS */}
-      <div className={styles.filterButtons} style={{ padding: '24px 0' }}>
-         <button className={styles.roundButton} style={{ width: '56px', height: '56px' }}>
-            <Play fill="black" size={28} style={{ marginLeft: '4px' }} />
-         </button>
-      </div>
+      <div className={styles.content}>
+        <Sidebar />
 
-      {/* TRACKLIST HEADER - Modificato per supportare colonne extra */}
-      {/* Nota: Il tuo CSS usa grid-template-columns specifico in .tracklistHeader. 
-          Potremmo dover sovrascrivere lo stile inline per questa pagina specifica se le colonne non matchano. */}
-      <div className={styles.tracklistHeader} style={{ gridTemplateColumns: '40px 4fr 3fr 2fr 40px 60px' }}>
-        <div className={styles.tracklistNumber}>#</div>
-        <div className={styles.tracklistTitle}>Titolo</div>
-        <div className={styles.tracklistTitle}>Album</div>
-        <div className={styles.tracklistTitle}>Data agg.</div>
-        <div></div> {/* Spazio vuoto per action */}
-        <div className={styles.tracklistDuration}><Clock size={16} /></div>
-      </div>
-
-      {/* TRACKLIST */}
-      <div className={styles.tracklist}>
-        {tracks.map((item, index) => {
-          const track = item.track;
-          if (!track) return null; 
-
-          return (
-            <div 
-              key={`${item.added_at}-${track.id}`} 
-              className={styles.tracklistItem}
-              onDoubleClick={() => playTrack(track.uri)}
-              // Sovrascriviamo display flex con grid per allineamento colonne perfetto in questa vista
-              style={{ 
-                display: 'grid', 
-                gridTemplateColumns: '40px 4fr 3fr 2fr 40px 60px',
-                gap: '16px',
-                alignItems: 'center'
-              }}
-            >
-              {/* Indice */}
-              <div className={styles.tracklistNumber} style={{ textAlign: 'center' }}>
-                {index + 1}
-              </div>
-              
-              {/* Titolo + Img + Artista */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', overflow: 'hidden' }}>
-                {track.album?.images?.[2] && (
-                  <img src={track.album.images[2].url} alt="" className={styles.tracklistImage} />
-                )}
-                <div className={styles.tracklistInfo}>
-                  <div className={styles.tracklistTitle} style={{ fontSize: '15px', color: 'white' }}>{track.name}</div>
-                  <div className={styles.tracklistArtist}>{track.artists?.map(a => a.name).join(", ")}</div>
+        <main className={styles.mainContent}>
+          <div className={styles.heroAlbumSection}>
+            <div className={styles.heroAlbumContainer}>
+              <div className={styles.heroAlbumImage}>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: "linear-gradient(135deg, #450af5, #8e8e8e)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Heart size={80} fill="white" color="white" />
                 </div>
               </div>
 
-              {/* Album */}
-              <div className={styles.tracklistArtist} style={{ color: '#b3b3b3' }}>
-                {track.album?.name}
-              </div>
-
-              {/* Data aggiunta (from saved items -> item.added_at) */}
-              <div style={{ color: '#b3b3b3', fontSize: '13px', textTransform: 'none', textAlign: 'left' }}>
-                {formatDate(item.added_at)}
-              </div>
-
-              {/* Action (Remove) */}
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); removeTrack(track.id); }}
-                  title="Rimuovi"
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-                >
-                   <Heart size={18} fill="#1db954" color="#1db954" />
-                </button>
-              </div>
-
-              {/* Durata */}
-              <div className={styles.tracklistDuration}>
-                {formatDuration(track.duration_ms)}
+              <div className={styles.heroAlbumText}>
+                <span className={styles.heroAlbumType}>Playlist</span>
+                <h1 className={styles.heroAlbumTitle} style={{ fontSize: "4rem" }}>
+                  Brani che ti piacciono
+                </h1>
+                <div className={styles.heroAlbumMeta}>
+                  <span style={{ fontWeight: "bold", color: "white" }}>Tu</span>
+                  <span className={styles.heroAlbumDot}>•</span>
+                  <span>{total} brani</span>
+                </div>
               </div>
             </div>
-          );
-        })}
+          </div>
+
+          <div className={styles.section}>
+            <h2>Brani</h2>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '12px 0' }}>
+              <ButtonShuffle
+                isShuffled={playbackState.isShuffle}
+                onToggle={handleShuffle}
+              />
+              <PlayButton
+                isPlaying={playbackState.isPlaying}
+                onClick={handlePlayAll}
+              />
+            </div>
+            
+            <TrackList tracks={tracks} onTrackRemoved={handleTrackRemoved} />
+
+            {hasMore && (
+              <button 
+                onClick={() => setPage(prev => prev + 1)} 
+                disabled={loading}
+                style={{  
+                  margin: '20px 0', 
+                  padding: '12px 40px',
+                  backgroundColor: 'var(--primary)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '500px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  letterSpacing: '0.5px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1,
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(29, 185, 84, 0.3)',
+                }}
+                onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--primary-light)') && (e.target.style.transform = 'scale(1.04)') && (e.target.style.boxShadow = '0 6px 16px rgba(29, 185, 84, 0.5)')}
+                onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--primary)') && (e.target.style.transform = 'scale(1)') && (e.target.style.boxShadow = '0 4px 12px rgba(29, 185, 84, 0.3)')}
+              >
+                {loading ? 'Caricamento...' : 'Carica altre'}
+              </button>
+            )}
+          </div>
+        </main>
       </div>
+
+      <Player />
     </div>
   );
 }

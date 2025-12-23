@@ -130,6 +130,8 @@ export default function SpotifyHeader() {
         <div className={styles.notificationDropdown} ref={dropdownRef}>
           {loadingNotifications ? (
             <div style={{ padding: '20px', textAlign: 'center', color: '#b3b3b3' }}>Caricamento...</div>
+          ) : notifications.albums.length === 0 && notifications.tracks.length === 0 && notifications.playlists.length === 0 ? (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#b3b3b3' }}>Nessuna notifica</div>
           ) : (
             <>
               {notifications.albums.length > 0 && (

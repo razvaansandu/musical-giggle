@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-
 import styles from "../../home/home.module.css";
 
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
@@ -13,86 +12,50 @@ import Loader from "../../../components/Loader/Loader";
 import ButtonShuffle from "../../../components/buttons/buttonShuffle";
 import PlayButton from "../../../components/buttons/PlayButton";
 import AddToLibraryButton from "../../../components/buttons/AddToLibraryButton";
+import { useSpotifyFetch } from "../../../hooks/useSpotifyFetch"; 
 
 export default function PlaylistPage() {
   const { id } = useParams();
   const [playlist, setPlaylist] = useState(null);
   const [tracks, setTracks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const [playbackState, setPlaybackState] = useState({ isShuffle: false, isPlaying: false });
+  
+  const { loading, error, spotifyFetch } = useSpotifyFetch();
 
   useEffect(() => {
     if (!id) return;
-    const controller = new AbortController();
 
-    const fetchData = async () => {
+    const loadPlaylist = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
-          const res = await fetch(url, { signal: controller.signal });
-          if (res.status === 429 && retries > 0) {
-            await new Promise(resolve => setTimeout(resolve, delay));
-            if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError');
-            return fetchWithRetry(url, retries - 1, delay * 2);
-          }
-          return res;
-        };
-
-        const plRes = await fetchWithRetry(`/api/playlists/${id}`);
-        if (plRes.status === 401) {
-          setSessionExpired();
-          return;
-        }
-        if (!plRes.ok) throw new Error(`Errore caricamento playlist: ${plRes.status}`);
-        const plJson = await plRes.json();
+        const plData = await spotifyFetch(`/playlists/${id}`);
+        if (!plData) return;
+        setPlaylist(plData);
 
         const allItems = [];
         let offset = 0;
         const limit = 100;
 
         while (true) {
-          const res = await fetchWithRetry(
-            `/api/playlists/tracks/${id}?limit=${limit}&offset=${offset}`
-          );
-          if (res.status === 401) {
-            setSessionExpired();
-            return;
-          }
-          if (!res.ok) throw new Error("Errore caricamento brani playlist");
-          const json = await res.json();
+          const data = await spotifyFetch(`/playlists/tracks/${id}?limit=${limit}&offset=${offset}`);
+          if (!data) break;
 
-          const items = json.items || [];
+          const items = data.items || [];
           allItems.push(...items);
 
-          const total = json.total ?? allItems.length;
-
+          const total = data.total ?? allItems.length;
           offset += items.length;
+          
           if (allItems.length >= total || items.length === 0) break;
-
-          await new Promise(r => setTimeout(r, 100));
-          if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError');
         }
 
-        setPlaylist(plJson);
-        setTracks(allItems.map((it) => it.track || it));
+        setTracks(allItems.map(it => it.track || it));
       } catch (err) {
-        if (err.name === 'AbortError') return;
-        console.error(err);
-        setError(err.message || "Errore caricamento playlist");
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+        console.error("Errore playlist:", err);
       }
     };
 
-    fetchData();
-    return () => controller.abort();
-  }, [id]);
+    loadPlaylist();
+  }, [id, spotifyFetch]);
 
   const fetchPlaybackState = async () => {
     try {
@@ -209,6 +172,6 @@ export default function PlaylistPage() {
       </div>
 
       <Player />
-    </div>  
+    </div>
   );
 }

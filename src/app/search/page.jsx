@@ -92,7 +92,6 @@ export default function SearchPage() {
                 </section>
               )}
 
-              {/* ALBUMS */}
               {albums.length > 0 && (
                 <section className={styles.section}>
                   <h2>Albums</h2>

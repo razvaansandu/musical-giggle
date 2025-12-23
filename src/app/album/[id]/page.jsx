@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-
 import styles from "../../home/home.module.css";
 
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
@@ -13,41 +12,33 @@ import ButtonShuffle from "../../../components/buttons/buttonShuffle";
 import PlayButton from "../../../components/buttons/PlayButton";
 import AddToLibraryButton from "../../../components/buttons/AddToLibraryButton";
 import Loader from "../../../components/Loader/Loader";
+import { useSpotifyFetch } from "../../../hooks/useSpotifyFetch"; 
 
 export default function AlbumPage() {
   const { id } = useParams();
   const [album, setAlbum] = useState(null);
   const [tracks, setTracks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const [playbackState, setPlaybackState] = useState({ isShuffle: false, isPlaying: false });
+  
+  const { loading, error, spotifyFetch } = useSpotifyFetch();
 
   useEffect(() => {
-    if (!id) return; 
+    if (!id) return;
 
-    const fetchData = async () => {
+    const loadAlbum = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        const res = await fetch(`/api/albums/${id}`);
-        const data = await res.json();
-
-        if (!res.ok) throw new Error("Errore caricamento album");
-
+        const data = await spotifyFetch(`/albums/${id}`);
+        if (!data) return;
+        
         setAlbum(data);
         setTracks(data.tracks?.items || []);
       } catch (err) {
-        console.error(err);
-        setError(err.message || "Errore caricamento album");
-      } finally {
-        setLoading(false);
+        console.error("Errore album:", err);
       }
     };
 
-    fetchData();
-  }, [id]);
+    loadAlbum();
+  }, [id, spotifyFetch]);
 
   const fetchPlaybackState = async () => {
     try {

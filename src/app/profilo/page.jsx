@@ -37,14 +37,12 @@ export default function ProfilePage() {
         const data = await res.json();
         setProfile(data);
 
-        // Fetch top artists this month
         const topArtistsRes = await fetch("/api/spotify/get-user-top?type=artists&time_range=short_term&limit=10");
         if (topArtistsRes.ok) {
           const topArtistsData = await topArtistsRes.json();
           setTopArtistsThisMonth(topArtistsData.items ?? []);
         }
 
-        // Fetch public playlists
         const playlistsRes = await fetch("/api/playlists/user?limit=10");
         if (playlistsRes.ok) {
           const playlistsData = await playlistsRes.json();
@@ -118,7 +116,6 @@ export default function ProfilePage() {
               </div>
 
 
-              {/*Top Artists*/}
               <div>
                 <ScrollRow title="Artisti top di questo mese" seeAllLink="/top-artists">
                   {topArtistsThisMonth.map((artist, index) => (
@@ -133,7 +130,6 @@ export default function ProfilePage() {
               </div>
 
 
-              {/*Playlist pubbliche*/}
               <section className={styles.section}>
                 <h2>Playlist pubbliche</h2>
                 <div className={styles.grid}>
