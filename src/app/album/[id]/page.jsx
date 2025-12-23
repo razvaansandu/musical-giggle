@@ -21,6 +21,8 @@ export default function AlbumPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [playbackState, setPlaybackState] = useState({ isShuffle: false, isPlaying: false });
+
   useEffect(() => {
     if (!id) return; 
 
@@ -47,26 +49,47 @@ export default function AlbumPage() {
     fetchData();
   }, [id]);
 
-  const [isShuffle, setIsShuffle] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const handleShuffle = async (next) => {
+  const fetchPlaybackState = async () => {
     try {
-      const newState = typeof next === 'boolean' ? next : !isShuffle;
-      setIsShuffle(newState);
-      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: 'PUT' });
+      const res = await fetch("/api/player/get-playback-state");
+      if (res.status === 204) {
+        setPlaybackState({ isShuffle: false, isPlaying: false });
+        return;
+      }
+      const text = await res.text();
+      if (text) {
+        const data = JSON.parse(text);
+        setPlaybackState({
+          isShuffle: data.shuffle_state || false,
+          isPlaying: data.is_playing || false
+        });
+      }
     } catch (err) {
-      console.error('Errore shuffle', err);
-      setIsShuffle(prev => !prev);
+      console.error("Errore fetch playback state:", err);
     }
   };
 
-  const handlePlayAll = async (play) => {
+  useEffect(() => {
+    fetchPlaybackState();
+    const interval = setInterval(fetchPlaybackState, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleShuffle = async () => {
     try {
-      setIsPlaying(play);
+      const newState = !playbackState.isShuffle;
+      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: 'PUT' });
+    } catch (err) {
+      console.error('Errore shuffle', err);
+    }
+  };
+
+  const handlePlayAll = async () => {
+    try {
       if (!tracks || !tracks.length) return;
       const uris = tracks.map(t => t.uri).filter(Boolean);
       if (!uris.length) return;
+      
       await fetch('/api/player/start-resume-playback', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -74,7 +97,6 @@ export default function AlbumPage() {
       });
     } catch (err) {
       console.error('Errore play', err);
-      setIsPlaying(!play);
     }
   };
 
@@ -124,8 +146,14 @@ export default function AlbumPage() {
 
               <section className={styles.section}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '12px 0' }}>
-                  <ButtonShuffle isShuffled={isShuffle} onToggle={handleShuffle} />
-                  <PlayButton isPlaying={isPlaying} onClick={handlePlayAll} />
+                  <ButtonShuffle 
+                    isShuffled={playbackState.isShuffle} 
+                    onToggle={handleShuffle} 
+                  />
+                  <PlayButton 
+                    isPlaying={playbackState.isPlaying} 
+                    onClick={handlePlayAll} 
+                  />
                   <div>
                     <AddToLibraryButton albumId={album?.id} />
                   </div>

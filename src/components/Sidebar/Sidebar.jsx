@@ -6,9 +6,11 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import CreatePlaylistModal from "../CreatePlaylistModal/CreatePlaylistModal";
+import { useSessionManager } from "../../hooks/useSessionManager";
 
 export default function AppSidebar() {
   const router = useRouter();
+  const { setSessionExpired } = useSessionManager();
   const [filter, setFilter] = useState("Playlists");
   const [libraryItems, setLibraryItems] = useState([]);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
@@ -51,7 +53,11 @@ export default function AppSidebar() {
 
     try { 
       const res = await fetch(url, { signal });
-      if (!res.ok) throw new Error("Errore nel caricamento");
+      if (res.status === 401) {
+        setSessionExpired();
+        return;
+      }
+      if (!res.ok) throw new Error(`Errore nel caricamento: ${res.status} ${res.statusText}`);
       
       const data = await res.json();
       if (filter === "Artists") {

@@ -12,6 +12,7 @@ import TrackList from "../../../components/TrackList/TrackList";
 import Loader from "../../../components/Loader/Loader";
 import ButtonShuffle from "../../../components/buttons/buttonShuffle";
 import PlayButton from "../../../components/buttons/PlayButton";
+import AddToLibraryButton from "../../../components/buttons/AddToLibraryButton";
 
 export default function PlaylistPage() {
   const { id } = useParams();
@@ -19,6 +20,8 @@ export default function PlaylistPage() {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [playbackState, setPlaybackState] = useState({ isShuffle: false, isPlaying: false });
 
   useEffect(() => {
     if (!id) return;
@@ -49,7 +52,7 @@ export default function PlaylistPage() {
 
         const allItems = [];
         let offset = 0;
-        const limit = 100; 
+        const limit = 100;
 
         while (true) {
           const res = await fetchWithRetry(
@@ -69,7 +72,7 @@ export default function PlaylistPage() {
 
           offset += items.length;
           if (allItems.length >= total || items.length === 0) break;
-          
+
           await new Promise(r => setTimeout(r, 100));
           if (controller.signal.aborted) throw new DOMException('Aborted', 'AbortError');
         }
@@ -90,6 +93,57 @@ export default function PlaylistPage() {
     fetchData();
     return () => controller.abort();
   }, [id]);
+
+  const fetchPlaybackState = async () => {
+    try {
+      const res = await fetch("/api/player/get-playback-state");
+      if (res.status === 204) {
+        setPlaybackState({ isShuffle: false, isPlaying: false });
+        return;
+      }
+      const text = await res.text();
+      if (text) {
+        const data = JSON.parse(text);
+        setPlaybackState({
+          isShuffle: data.shuffle_state || false,
+          isPlaying: data.is_playing || false
+        });
+      }
+    } catch (err) {
+      console.error("Errore fetch playback state:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlaybackState();
+    const interval = setInterval(fetchPlaybackState, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleShuffle = async () => {
+    try {
+      const newState = !playbackState.isShuffle;
+      await fetch(`/api/player/toggle-shuffle?state=${newState}`, { method: 'PUT' });
+    } catch (err) {
+      console.error('Errore shuffle', err);
+    }
+  };
+
+  const handlePlayAll = async () => {
+    try {
+      if (!tracks || !tracks.length) return;
+      const uris = tracks.map(t => t.uri).filter(Boolean);
+      if (!uris.length) return;
+      
+      await fetch('/api/player/start-resume-playback', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uris }),
+      });
+    } catch (err) {
+      console.error('Errore play', err);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -133,9 +187,19 @@ export default function PlaylistPage() {
               </section>
 
               <section className={styles.section}>
-                <div>
-                  <ButtonShuffle/>
-                  <PlayButton/>
+                <h2>Brani</h2>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '12px 0' }}>
+                  <ButtonShuffle
+                    isShuffled={playbackState.isShuffle}
+                    onToggle={handleShuffle}
+                  />
+                  <PlayButton
+                    isPlaying={playbackState.isPlaying}
+                    onClick={handlePlayAll}
+                  />
+                  <div>
+                    <AddToLibraryButton playlistId={playlist?.id} />
+                  </div>
                 </div>
                 <TrackList tracks={tracks} />
               </section>
@@ -145,6 +209,6 @@ export default function PlaylistPage() {
       </div>
 
       <Player />
-    </div>
+    </div>  
   );
 }
