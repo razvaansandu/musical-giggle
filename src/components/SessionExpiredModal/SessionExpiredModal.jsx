@@ -13,10 +13,8 @@ export default function SessionExpiredModal({ isOpen, onRelogin }) {
 
   const handleRelogin = async () => {
     try {
-      // Effettua il logout
       await fetch("/api/auth/logout", { method: "POST" });
       
-      // Reindirizza a login
       window.location.href = "/login";
     } catch (err) {
       console.error("Errore durante il re-login:", err);

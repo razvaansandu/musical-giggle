@@ -118,7 +118,6 @@ export default function TrackDetailModal({ track, isOpen, onClose }) {
               </button>
             </div>
 
-            {/* Release Info */}
             <div className={styles.releaseInfo}>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Data di uscita</span>

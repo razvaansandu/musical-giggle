@@ -6,7 +6,8 @@ export default function TrackCard({
   track, 
   onClick,          
   allTracks = null,  
-  playOnly = false   
+  playOnly = false,
+  onContextMenu = null
 }) {
   if (!track) return null;
 
@@ -16,6 +17,13 @@ export default function TrackCard({
   
   const name = track?.name || track?.track?.name || "Unknown";
   const artists = (track?.artists || track?.track?.artists || []);
+
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    if (onContextMenu) {
+      onContextMenu(e, track);
+    }
+  };
 
   const handlePlay = async () => {
     if (onClick) {
@@ -84,7 +92,7 @@ export default function TrackCard({
   };
 
   return (
-    <button type="button" className={styles.card} onClick={handlePlay}>
+    <button type="button" className={styles.card} onClick={handlePlay} onContextMenu={handleContextMenu}>
       <div
         className={styles.imageWrapper}
         style={{ backgroundImage: `url(${img})` }}

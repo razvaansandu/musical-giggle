@@ -12,15 +12,21 @@ import Loader from "../../components/Loader/Loader";
 import ArtistCard from "../../components/Cards/ArtistCard";
 import PlaylistCard from "../../components/Cards/PlaylistCard";
 import ScrollRow from "../../components/ScrollRow/ScrollRow";
+import ContextMenu from "../../components/ContextMenu/ContextMenu";
+import { useContextMenu } from "../../hooks/useContextMenu";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { setSessionExpired } = useSessionManager();
+  const contextMenu = useContextMenu();
+  
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [topArtistsThisMonth, setTopArtistsThisMonth] = useState([]);
   const [publicPlaylists, setPublicPlaylists] = useState([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [selectedArtist, setSelectedArtist] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -123,6 +129,11 @@ export default function ProfilePage() {
                       key={`${artist.id || "artist"}-${index}`}
                       artist={artist}
                       onClick={() => router.push(`/artist/${artist.id}`)}
+                      onContextMenu={(e, artist) => {
+                        e.preventDefault();
+                        contextMenu.handleContextMenu(e);
+                        setSelectedArtist(artist);
+                      }}
                     />
                   ))}
                 </ScrollRow>
@@ -138,6 +149,11 @@ export default function ProfilePage() {
                       key={`${playlist.id || "playlist"}-${index}`}
                       playlist={playlist}
                       onClick={() => router.push(`/playlist/${playlist.id}`)}
+                      onContextMenu={(e, playlist) => {
+                        e.preventDefault();
+                        contextMenu.handleContextMenu(e);
+                        setSelectedPlaylist(playlist);
+                      }}
                     />
                   ))}
                 </div>
@@ -147,9 +163,95 @@ export default function ProfilePage() {
         </main>
       </div>
 
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={
+          selectedArtist ? getArtistContextMenuItems() :
+          getPlaylistContextMenuItems()
+        }
+        onClose={contextMenu.close}
+      />
 
       <Player />
     </div>
 
   );
+
+  function getArtistContextMenuItems() {
+    if (!selectedArtist) return [];
+
+    const artist = selectedArtist;
+    const artistId = artist.id;
+    const artistName = artist.name;
+
+    return [
+      {
+        id: "go-to-artist",
+        label: "Apri profilo artista",
+        icon: "▶",
+        action: () => {
+          router.push(`/artist/${artistId}`);
+        },
+      },
+      { divider: true },
+      {
+        id: "copy-link",
+        label: "Copia link",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/artist/${artistId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+      {
+        id: "share",
+        label: "Condividi",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/artist/${artistId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+    ];
+  }
+
+  function getPlaylistContextMenuItems() {
+    if (!selectedPlaylist) return [];
+
+    const playlist = selectedPlaylist;
+    const playlistId = playlist.id;
+    const playlistName = playlist.name;
+
+    return [
+      {
+        id: "go-to-playlist",
+        label: "Apri playlist",
+        icon: "▶",
+        action: () => {
+          router.push(`/playlist/${playlistId}`);
+        },
+      },
+      { divider: true },
+      {
+        id: "copy-link",
+        label: "Copia link",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/playlist/${playlistId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+      {
+        id: "share",
+        label: "Condividi",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/playlist/${playlistId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+    ];
+  }
 }

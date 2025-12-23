@@ -1,12 +1,21 @@
 "use client";
 
-import Link from "next/link";
 import styles from "./Card.module.css";
+import { useRouter } from "next/navigation";
 
-export default function ArtistCard({ artist, onClick }) {
+export default function ArtistCard({ artist, onClick, onContextMenu }) {
+  const router = useRouter();
+  
   if (!artist) return null;
 
   const img = artist?.images?.[0]?.url || "/default-artist.png";
+
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    if (onContextMenu) {
+      onContextMenu(e, artist);
+    }
+  };
 
   if (onClick) {
     return (
@@ -14,6 +23,7 @@ export default function ArtistCard({ artist, onClick }) {
         type="button"
         className={styles.card}
         onClick={() => onClick()}
+        onContextMenu={handleContextMenu}
       >
         <div
           className={styles.imageWrapper}
@@ -27,7 +37,12 @@ export default function ArtistCard({ artist, onClick }) {
   }
 
   return (
-    <Link href={`/artist/${artist.id}`} className={styles.card}>
+    <div 
+      className={styles.card}
+      onClick={() => router.push(`/artist/${artist.id}`)}
+      onContextMenu={handleContextMenu}
+      style={{ cursor: 'pointer' }}
+    >
       <div
         className={styles.imageWrapper}
       >
@@ -35,6 +50,6 @@ export default function ArtistCard({ artist, onClick }) {
       </div>
       <h3 className={styles.title}>{artist.name}</h3>
       <p className={styles.subtitle}>Artist</p>
-    </Link>
+    </div>
   );
 } 

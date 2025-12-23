@@ -107,7 +107,7 @@
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s;
-  margin-top: -4px; /* Center thumb vertically */
+  margin-top: -4px;
 }
 
 .progressBar::-webkit-slider-runnable-track {
@@ -181,10 +181,10 @@
 
 .lyricsOverlay {
   position: fixed;
-  bottom: 90px; /* Height of player bar */
+  bottom: 90px;
   right: 0;
   width: 400px;
-  height: calc(100vh - 90px - 80px); /* Adjust based on header/other elements */
+  height: calc(100vh - 90px - 80px);
   background: rgba(18, 18, 18, 0.95);
   backdrop-filter: blur(20px);
   border-left: 1px solid var(--border-subtle);
@@ -317,7 +317,6 @@
   color: var(--primary);
 }
 
-/* Queue Dropdown */
 .queueDropdown {
   position: absolute;
   bottom: calc(100% + 16px);

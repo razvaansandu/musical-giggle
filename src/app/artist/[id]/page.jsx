@@ -12,15 +12,19 @@ import AlbumCard from "../../../components/Cards/AlbumCard";
 import ArtistHero from "../../../components/Cards/ArtistHero";
 import TrackList from "../../../components/TrackList/TrackList";
 import Loader from "../../../components/Loader/Loader";
-import ScrollRow from "../../../components/ScrollRow/ScrollRow"; 
+import ScrollRow from "../../../components/ScrollRow/ScrollRow";
+import ContextMenu from "../../../components/ContextMenu/ContextMenu";
+import { useContextMenu } from "../../../hooks/useContextMenu"; 
  
 export default function ArtistPage() { 
   const { id } = useParams();
   const router = useRouter();
+  const contextMenu = useContextMenu();
 
   const [artist, setArtist] = useState(null);
   const [topTracks, setTopTracks] = useState([]);
   const [albums, setAlbums] = useState([]);
+  const [selectedAlbum, setSelectedAlbum] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -89,6 +93,11 @@ export default function ArtistPage() {
                       key={a.id} 
                       album={a}
                       onClick={() => router.push(`/album/${a.id}`)}
+                      onContextMenu={(e, album) => {
+                        e.preventDefault();
+                        contextMenu.handleContextMenu(e);
+                        setSelectedAlbum(album);
+                      }}
                     />
                   ))}
                 </ScrollRow>
@@ -98,7 +107,64 @@ export default function ArtistPage() {
         </main>
       </div>
 
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={getAlbumContextMenuItems()}
+        onClose={contextMenu.close}
+      />
+
       <Player />
     </div>
   );
-}
+
+  function getAlbumContextMenuItems() {
+    if (!selectedAlbum) return [];
+
+    const album = selectedAlbum;
+    const albumId = album.id;
+    const albumName = album.name;
+    const artistIds = (album.artists || []).map(a => a.id);
+
+    return [
+      {
+        id: "go-to-album",
+        label: "Apri album",
+        icon: "▶",
+        action: () => {
+          router.push(`/album/${albumId}`);
+        },
+      },
+      { divider: true },
+      {
+        id: "go-to-artist",
+        label: "Vai all'artista",
+        icon: "",
+        action: () => {
+          if (artistIds.length > 0) {
+            router.push(`/artist/${artistIds[0]}`);
+          }
+        },
+      },
+      { divider: true },
+      {
+        id: "copy-link",
+        label: "Copia link",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/album/${albumId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+      {
+        id: "share",
+        label: "Condividi",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/album/${albumId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+    ];
+  }}

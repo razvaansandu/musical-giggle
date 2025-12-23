@@ -1,28 +1,23 @@
 :root {
-  /* Color Palette - Spotify Official */
-  --primary: #1db954;           /* Spotify Green */
-  --primary-light: #1ed760;     /* Light Green */
-  --primary-dark: #1aa34a;      /* Dark Green */
-  --accent: #191414;            /* Spotify Black */
-  --accent-light: #282828;      /* Light Black */
-  --accent-dark: #0f0f0f;       /* Dark Black */
+  --primary: #1db954;
+  --primary-light: #1ed760;
+  --primary-dark: #1aa34a;
+  --accent: #191414;
+  --accent-light: #282828;
+  --accent-dark: #0f0f0f;
   
-  /* Neutral Colors */
-  --bg-primary: #121212;        /* Main Dark */
-  --bg-secondary: #181818;      /* Secondary Dark */
-  --bg-tertiary: #282828;       /* Tertiary Dark */
-  --bg-hover: #3e3e3e;          /* Hover state */
+  --bg-primary: #121212;
+  --bg-secondary: #181818;
+  --bg-tertiary: #282828;
+  --bg-hover: #3e3e3e;
   
-  /* Text Colors */
-  --text-primary: #ffffff;      /* White */
-  --text-secondary: #b3b3b3;    /* Medium Gray */
-  --text-tertiary: #7f7f7f;     /* Muted Gray */
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --text-tertiary: #7f7f7f;
   
-  /* Background & Foreground */
   --background: #121212;
   --foreground: #ffffff;
   
-  /* Border Colors */
   --border-subtle: rgba(255, 255, 255, 0.05);
   --border-medium: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.2);
@@ -64,7 +59,6 @@ a {
   }
 }
 
-/* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

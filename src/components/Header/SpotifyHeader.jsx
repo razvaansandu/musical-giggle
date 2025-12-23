@@ -10,9 +10,11 @@ export default function SpotifyHeader() {
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   
   const [profileImage, setProfileImage] = useState(null); 
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   
   const bellRef = useRef(null);
   const dropdownRef = useRef(null);
+  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -64,10 +66,26 @@ export default function SpotifyHeader() {
       ) {
         setShowNotifications(false);
       }
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
+        setShowProfileMenu(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+    } catch (err) {
+      console.error("Errore durante il logout:", err);
+      router.push("/login");
+    }
+  };
 
   return (
     <header className={styles.header}>
@@ -108,22 +126,47 @@ export default function SpotifyHeader() {
           </svg>
         </button>
 
-        <button
-          className={styles.profileButton}
-          onClick={() => router.push('/profilo')}
-        >
-          {profileImage ? (
-            <img src={profileImage} alt="Profilo" className={styles.profileImage} />
-          ) : (
-            <div className={styles.profileImagePlaceholder} style={{ 
-               width: 32, height: 32, borderRadius: '50%', background: '#535353', display: 'flex', alignItems: 'center', justifyContent: 'center' 
-            }}>
-               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 16 16">
-                 <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-               </svg>
+        <div className={styles.profileMenuContainer} ref={profileMenuRef}>
+          <button
+            className={styles.profileButton}
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+          >
+            {profileImage ? (
+              <img src={profileImage} alt="Profilo" className={styles.profileImage} />
+            ) : (
+              <div className={styles.profileImagePlaceholder} style={{ 
+                 width: 32, height: 32, borderRadius: '50%', background: '#535353', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+              }}>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 16 16">
+                   <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                 </svg>
+              </div>
+            )}
+          </button>
+
+          {showProfileMenu && (
+            <div className={styles.profileDropdown}>
+              <button
+                className={styles.dropdownItem}
+                onClick={() => {
+                  router.push('/profilo');
+                  setShowProfileMenu(false);
+                }}
+              >
+                Profilo
+              </button>
+              <button
+                className={styles.dropdownItem}
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  handleLogout();
+                }}
+              >
+                Esci
+              </button>
             </div>
           )}
-        </button>
+        </div>
       </div>
 
       {showNotifications && (
