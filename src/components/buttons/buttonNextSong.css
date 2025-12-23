@@ -1,43 +1,33 @@
-/* src/components/buttonNextSong.css */
-
-/* Pulsante piatto (no cerchio) */
 .btn-next-flat {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;            /* spazio intorno all'icona */
-  background: transparent; /* niente sfondo colorato */
-  color: #000;         /* colore icona (spotify green) */
-  border: none;           /* niente bordo */
-  border-radius: 4px;     /* angoli lievi, non circolari */
+  padding: 6px;           
+  background: transparent; 
+  color: #ffffff;         
+  border: none;           
+  border-radius: 4px;     
   cursor: pointer;
   transition: background-color .12s ease, transform .08s ease, color .12s ease;
-  line-height: 0;         /* evita spazio attorno all'svg */
+  line-height: 0;         
 }
 
-/* Hover leggero: sfondo molto trasparente per feedback */
 .btn-next-flat:hover { 
   transform: translateY(-1px);
 }
 
-/* Active: piccolo feedback */
 .btn-next-flat:active {
   transform: translateY(0);
   background-color: rgba(29, 185, 84, 0.12);
 }
 
-/* Focus ring accessibile */
-
-
-/* Stato disabled */
 .btn-next-flat.disabled,
 .btn-next-flat[disabled] {
   opacity: 0.45;
   cursor: not-allowed;
-  color: currentColor; /* mantiene colore ma attenuato */
+  color: currentColor; 
 }
 
-/* Variante: icona scura o bianca se vuoi */
 .btn-next-flat.dark {
   color: #000;
 } 

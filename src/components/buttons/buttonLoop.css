@@ -1,0 +1,40 @@
+.btn-loop {
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.btn-loop:hover {
+  color: #fff;
+}
+
+.btn-loop.active {
+  color: #1DB954;
+}
+
+.btn-loop.one {
+  color: #1DB954;
+}
+
+.btn-loop .one {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 10px;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
