@@ -1,11 +1,11 @@
-// src/components/buttonPrevSong.jsx
 "use client";
 
 import React from "react";
-import "./buttonNextSong.css"; // riusa gli stessi stili del btn piatto
+import "./buttonNextSong.css"; 
 
 export default function ButtonPrevSong({ onPrev, disabled = false, title = "Previous", className = "" }) {
-  return (
+  return ( 
+    <> 
     <button
       type="button"
       className={`btn-next-flat ${disabled ? "disabled" : ""} ${className}`}
@@ -23,10 +23,10 @@ export default function ButtonPrevSong({ onPrev, disabled = false, title = "Prev
         aria-hidden="true"
         focusable="false"
       >
-        {/* icon: rewind / previous */}
         <path d="M18 6v12l-8.5-6L18 6zM9.5 6v12h-2V6h2z" />
       </svg>
-    </button>
+    </button> 
+     </>
   );
 }
  

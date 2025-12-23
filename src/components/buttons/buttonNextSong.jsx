@@ -1,4 +1,3 @@
-// src/components/buttonNextSong.jsx
 "use client";
 
 import React from "react";

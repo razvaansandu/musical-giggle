@@ -9,13 +9,13 @@
 
 .primary {
 
-  background-color: #1DB954;
-  color: #000000;
+  background-color: #ffffff;
+  color: #ffffff;
   padding: 14px 32px;
 }
 
 .primary:hover {
-  background-color: #1ed760;
+  background-color: #ffffff;
   transform: scale(1.04);
 }
 
@@ -41,20 +41,35 @@
 }
 
 .iconButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgb(0, 0, 0);
 }
 
 .playButton {
-  background-color: #1DB954;
-  width: 56px;
-  height: 56px;
+  background-color: #ffffff;
+  color: #000000;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .playButton:hover {
   transform: scale(1.06);
-  background-color: #1ed760;
+  background-color: #ffffff;
+}
+
+.playButton:active {
+  transform: scale(0.98);
+  background-color: #e0e0e0;
+}
+
+.playButton svg {
+  width: 24px;
+  height: 24px;
 }

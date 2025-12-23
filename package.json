@@ -9,13 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "16.0.1",
+    "lucide-react": "^0.468.0",
+    "next": "^16.0.10",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@types/node": "24.9.2",
     "@types/react": "19.2.2",
+    "baseline-browser-mapping": "^2.9.7",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "nodemon": "^3.1.10"

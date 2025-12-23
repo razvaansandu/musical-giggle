@@ -1,147 +1,358 @@
-'use client';
-import { useState, useRef } from 'react';
-import styles from './home.module.css';
-import SpotifyHeader from '../../components/SpotifyHeader';
-import SearchTestPage from "../search/page"; 
+"use client";
 
-// Componente principale 
-function MainContent() {
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import styles from "./home.module.css";
+import { useSessionManager } from "../../hooks/useSessionManager";
+
+import SpotifyHeader from "../../components/Header/SpotifyHeader";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import Player from "../../components/Player/Player";
+import ScrollRow from "../../components/ScrollRow/ScrollRow";
+
+import TrackCard from "../../components/Cards/TrackCard";
+import PlaylistCard from "../../components/Cards/PlaylistCard";
+import AlbumCard from "../../components/Cards/AlbumCard";
+import Loader from "../../components/Loader/Loader";
+import ContextMenu from "../../components/ContextMenu/ContextMenu";
+import { useContextMenu } from "../../hooks/useContextMenu";
+
+export default function HomePage() {
+  const router = useRouter();
+  const { setSessionExpired } = useSessionManager();
+  const contextMenu = useContextMenu();
+  
+  const [profile, setProfile] = useState(null);
+  const [publicPlaylists, setPublicPlaylists] = useState([]);
+  const [userPlaylists, setUserPlaylists] = useState([]);
+  const [recentTracks, setRecentTracks] = useState([]);
+  const [savedAlbums, setSavedAlbums] = useState([]);
+  const [selectedAlbum, setSelectedAlbum] = useState(null);
+  const [selectedTrack, setSelectedTrack] = useState(null);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const [ 
+          profileRes,
+          playlistsRes,
+          albumsRes,
+          recentRes,
+        ] = await Promise.all([
+          fetch("/api/spotify/get-user-profile"),
+          fetch("/api/playlists/user?limit=50"),
+          fetch("/api/albums/saved?limit=50"),
+          fetch("/api/player/get-recently-played-tracks?limit=20"),
+        ]);
+
+        if (!profileRes.ok) throw new Error("Errore profilo utente");
+        if (!playlistsRes.ok) throw new Error("Errore playlist utente");
+
+        const profileJson = await profileRes.json();
+        const playlistsJson = await playlistsRes.json();
+        const albumsJson = albumsRes.ok ? await albumsRes.json() : { items: [] };
+        const recentJson = await recentRes.json();
+
+        console.log("PROFILE:", profileJson);
+        console.log("PLAYLISTS:", playlistsJson);
+        console.log("ALBUMS:", albumsJson);
+        console.log("RECENT:", recentJson);
+
+        setProfile(profileJson);
+
+        const allPlaylists = playlistsJson.items ?? playlistsJson ?? [];
+        const userOwnedPlaylists = allPlaylists.filter(pl => 
+          pl.owner?.id === profileJson.id || pl.owner?.display_name === profileJson.display_name
+        );
+        const publicPlaylistsFiltered = allPlaylists.filter(pl => 
+          pl.public === true && (pl.owner?.id !== profileJson.id && pl.owner?.display_name !== profileJson.display_name)
+        );
+
+        setUserPlaylists(userOwnedPlaylists);
+        setPublicPlaylists(publicPlaylistsFiltered);
+
+        const recentItems = Array.isArray(recentJson.items)
+          ? recentJson.items.map((i) => i.track)
+          : [];
+        const uniqueRecentTracks = recentItems.filter((track, index, self) => 
+          self.findIndex(t => t.id === track.id) === index
+        );
+        setRecentTracks(uniqueRecentTracks);
+        
+        const albums = (albumsJson.items ?? []).map(item => item.album).filter(Boolean);
+        setSavedAlbums(albums);
+      } catch (err) {
+        console.error("Errore nella home:", err);
+        if (err.message.includes("profilo")) {
+          setSessionExpired();
+        } else {
+          setError(err.message || "Errore nel caricamento della home");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
+  
   return (
-    <main className={styles.mainContent}>
-      <div className={styles.recentlyPlayed}>
-      </div>
-    </main> 
-  );
-}
+    <div className={styles.container}>
+      <SpotifyHeader />
 
-// funzione del volume
-function VolumeButton() {
-  const [volume, setVolume] = useState(75);
-  const prevVolume = useRef(75);
-
-  function toggleMute() {
-    if (volume > 0) {
-      prevVolume.current = volume;
-      setVolume(0);
-    } else {
-      setVolume(prevVolume.current || 75);
-    }
-  }
-
-  return (
-    <div className={styles.volumeWrapper}>
-      <button
-        className={styles.volumeButton}
-        onClick={toggleMute}
-        aria-label={volume === 0 ? 'Unmute' : 'Mute'}
-        title={volume === 0 ? 'Unmute' : 'Mute'}
-      >
-        {volume === 0 ? (
-          //bottone mutato
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M5 9v6h4l5 5V4l-5 5H5z" fill="currentColor" />
-            <line x1="16" y1="8" x2="20" y2="16" stroke="currentColor" strokeWidth="2" />
-            <line x1="20" y1="8" x2="16" y2="16" stroke="currentColor" strokeWidth="2" />
-          </svg>
-        ) : (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M5 9v6h4l5 5V4l-5 5H5z" fill="currentColor" />
-            <path d="M15.5 12c0-1.5-.9-2.8-2.2-3.4v6.8c1.3-.6 2.2-1.9 2.2-3.4z" fill="currentColor" />
-            <path d="M17.5 12c0 2.2-1.3 4.1-3.2 4.9v-9.8c1.9.8 3.2 2.7 3.2 4.9z" fill="currentColor" />
-          </svg>
-        )}
-      </button>
-
-      <div className={styles.volumePopover} role="group" aria-label="Volume control">
-        <div className={styles.sliderContainer}>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
-            className={styles.volumeSlider}
-            aria-label="Volume slider"
-          />
-        </div>
-      </div>
-    </div> 
-  );
-}
-
-export default function Home() { 
-  return ( 
-    <div className={styles.container}> 
-    <SearchTestPage>  </SearchTestPage> 
-      <SpotifyHeader /> 
       <div className={styles.content}>
-        {/* Prime 3 icone del menu */}
-        <nav className={styles.sidebar}>
-          <div className={styles.menu}>
-            <div className={styles.menuItem}>
-              <svg viewBox="0 0 24 24" width="24" height="24">
-                <path d="M12.5 3.247a1 1 0 0 0-1 0L4 7.577V20h4.5v-6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 0 1 3 0l7.5 4.33a2 2 0 0 1 1 1.732V21a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-1-1v-6h-3v6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.577a2 2 0 0 1 1-1.732l7.5-4.33z" fill="currentColor"/>
-              </svg>
-              <span>Home</span>
-            </div>
-            <div className={styles.menuItem}>
-              <svg viewBox="0 0 24 24" width="24" height="24">
-                <path d="M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 1 0 1.414-1.414l-4.344-4.344a9.157 9.157 0 0 0 2.077-5.816c0-5.14-4.226-9.28-9.407-9.28zm-7.407 9.279c0-4.006 3.302-7.28 7.407-7.28s7.407 3.274 7.407 7.28-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.28z" fill="currentColor"/>
-              </svg>
-              <span>Search</span>
-            </div>
-            <div className={styles.menuItem}>
-              <svg viewBox="0 0 24 24" width="24" height="24">
-                <path d="M14.5 2.134a1 1 0 0 1 1 0l6 3.464a1 1 0 0 1 .5.866V21a1 1 0 0 1-1 1h-6a1 1 0 0 1-1-1V3a1 1 0 0 1 .5-.866zM16 4.732V20h4V7.041l-4-2.309zM3 22a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H3zm1-2h4V4H4v16z" fill="currentColor"/>
-              </svg>
-              <span>Your Library</span>
-            </div>
-          </div>
-          <div className={styles.playlists}>
-            { /* Icone del menu Playlist */ }
-            <h2>Playlists</h2>
-            <div className={styles.playlistItem}>
-              <div className={styles.createPlaylist}>
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                  <path d="M15.25 8a.75.75 0 0 1-.75.75H8.75v5.75a.75.75 0 0 1-1.5 0V8.75H1.5a.75.75 0 0 1 0-1.5h5.75V1.5a.75.75 0 0 1 1.5 0v5.75h5.75a.75.75 0 0 1 .75.75z" fill="currentColor"/>
-                </svg>
-                <span>Create Playlist</span>
-              </div>
-            </div>
-          </div>
-        </nav>
-
+        <Sidebar />
+       
         <main className={styles.mainContent}>
-          {/* array playlist */}
-          <section className={styles.section}>
-            <h2>Recently played</h2>
-            <div className={styles.grid}>
-              {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-                <AlbumPage> </AlbumPage>
-               
-              ))}
+          {loading && (
+            <div style={{ marginTop: 40 }}>
+              <Loader />
             </div>
-          </section>
+          )}
 
-          {/* array daily mix */}
-          <section className={styles.section}>
-            <h2>Made for you</h2>
-            <div className={styles.grid}>
-              {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-                <div key={item} className={styles.card}>
-                  <div className={styles.cardImage}></div>
-                  <div className={styles.cardContent}>
-                    <h3>Daily Mix {item}</h3>
-                    <p>custom mix</p> 
-                  </div>
-                </div> 
-              ))} 
-            </div>
-          </section>
-          {/* Funzine bottone volume */}
-          <VolumeButton />
-          </main> 
+          {error && !loading && (
+            <p style={{ color: "#f87171", marginBottom: "1rem" }}>
+              {error}
+            </p>
+          )}
+
+          {!loading && (
+            <>
+              <ScrollRow title="Ascoltati di recente" seeAllLink="/recently-played">
+                {recentTracks.length > 0 ? (
+                  recentTracks.map((track, index) => (
+                    <TrackCard
+                      key={`${track.id || "track"}-${index}`}
+                      track={track}
+                      playOnly={true}
+                      onContextMenu={(e, track) => {
+                        e.preventDefault();
+                        contextMenu.handleContextMenu(e);
+                        setSelectedTrack(track);
+                      }}
+                    />
+                  ))
+                ) : (
+                  <p style={{ color: 'var(--text-secondary)' }}>Nessun brano ascoltato di recente</p>
+                )}
+              </ScrollRow>
+
+              <ScrollRow title="I tuoi album" seeAllLink="/albums">
+                {savedAlbums.length > 0 ? (
+                  savedAlbums.map((album, index) => (
+                    <AlbumCard
+                      key={`${album.id || "album"}-${index}`}
+                      album={album}
+                      onClick={() => router.push(`/album/${album.id}`)}
+                      onContextMenu={(e, album) => {
+                        e.preventDefault();
+                        contextMenu.handleContextMenu(e);
+                        setSelectedAlbum(album);
+                      }}
+                    />
+                  ))
+                ) : (
+                  <p style={{ color: 'var(--text-secondary)' }}>Nessun album salvato</p>
+                )}
+              </ScrollRow>
+
+              {publicPlaylists.length > 0 && (
+                <ScrollRow title="Playlist Pubbliche">
+                  {publicPlaylists.map((pl, index) => (
+                    <PlaylistCard
+                      key={`${pl.id || "public-playlist"}-${index}`}
+                      playlist={pl}
+                      onClick={() => router.push(`/playlist/${pl.id}`)}
+                      onContextMenu={(e, playlist) => {
+                        e.preventDefault();
+                        contextMenu.handleContextMenu(e);
+                        setSelectedPlaylist(playlist);
+                      }}
+                    />
+                  ))}
+                </ScrollRow>
+              )}
+
+              <ScrollRow 
+                title="Le tue playlist"
+                seeAllLink="/playlists"
+              >
+                {userPlaylists.map((pl, index) => (
+                  <PlaylistCard
+                    key={`${pl.id || "playlist"}-${index}`}
+                    playlist={pl}
+                    onClick={() => router.push(`/playlist/${pl.id}`)}
+                    onContextMenu={(e, playlist) => {
+                      e.preventDefault();
+                      contextMenu.handleContextMenu(e);
+                      setSelectedPlaylist(playlist);
+                    }}
+                  />
+                ))}
+              </ScrollRow>
+            </>
+          )}
+        </main>
       </div>
+
+      <ContextMenu
+        visible={contextMenu.visible}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        items={
+          selectedTrack ? getTrackContextMenuItems() :
+          selectedPlaylist ? getPlaylistContextMenuItems() :
+          getAlbumContextMenuItems()
+        }
+        onClose={contextMenu.close}
+      />
+
+      <Player />
     </div>
   );
-} 
+
+  function getTrackContextMenuItems() {
+    if (!selectedTrack) return [];
+    const track = selectedTrack;
+    const trackName = track?.name ?? track?.track?.name ?? "Unknown";
+    const trackId = track?.id ?? track?.track?.id ?? track?.uri;
+    const artistIds = (track?.artists ?? track?.track?.artists ?? []).map(a => a.id);
+
+    return [
+      {
+        id: "go-to-artist",
+        label: "Vai all'artista",
+        icon: "",
+        action: () => {
+          if (artistIds.length > 0) {
+            router.push(`/artist/${artistIds[0]}`);
+          }
+        },
+      },
+      {
+        id: "go-to-album",
+        label: "Vai all'album",
+        icon: "",
+        action: () => {
+          const albumId = track?.album?.id ?? track?.track?.album?.id;
+          if (albumId) {
+            router.push(`/album/${albumId}`);
+          }
+        },
+      },
+      { divider: true },
+      {
+        id: "copy-link",
+        label: "Copia link",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/track/${trackId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+      {
+        id: "share",
+        label: "Condividi",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/track/${trackId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+    ];
+  }
+
+  function getPlaylistContextMenuItems() {
+    if (!selectedPlaylist) return [];
+
+    const playlist = selectedPlaylist;
+    const playlistId = playlist.id;
+    const playlistName = playlist.name;
+
+    return [
+      {
+        id: "go-to-playlist",
+        label: "Apri playlist",
+        icon: "▶",
+        action: () => {
+          router.push(`/playlist/${playlistId}`);
+        },
+      },
+      { divider: true },
+      {
+        id: "copy-link",
+        label: "Copia link",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/playlist/${playlistId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+      {
+        id: "share",
+        label: "Condividi",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/playlist/${playlistId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+    ];
+  }
+
+  function getAlbumContextMenuItems() {
+    if (!selectedAlbum) return [];
+
+    const album = selectedAlbum;
+    const albumId = album.id;
+    const albumName = album.name;
+    const artistIds = (album.artists || []).map(a => a.id);
+
+    return [
+      {
+        id: "go-to-album",
+        label: "Apri album",
+        icon: "▶",
+        action: () => {
+          router.push(`/album/${albumId}`);
+        },
+      },
+      { divider: true },
+      {
+        id: "go-to-artist",
+        label: "Vai all'artista",
+        icon: "",
+        action: () => {
+          if (artistIds.length > 0) {
+            router.push(`/artist/${artistIds[0]}`);
+          }
+        },
+      },
+      { divider: true },
+      {
+        id: "copy-link",
+        label: "Copia link",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/album/${albumId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+      {
+        id: "share",
+        label: "Condividi",
+        icon: "",
+        action: () => {
+          const link = `https://open.spotify.com/album/${albumId}`;
+          navigator.clipboard.writeText(link);
+        },
+      },
+    ];
+  }
+}
