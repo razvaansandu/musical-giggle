@@ -8,8 +8,6 @@ import styles from "../../home/home.module.css";
 import SpotifyHeader from "../../../components/Header/SpotifyHeader";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import Player from "../../../components/Player/Player";
-import TrackCard from "../../../components/Cards/TrackCard";
-import PlaylistCard from "../../../components/Cards/PlaylistCard";
 import AlbumCard from "../../../components/Cards/AlbumCard";
 import ArtistHero from "../../../components/Cards/ArtistHero";
 import TrackList from "../../../components/TrackList/TrackList";

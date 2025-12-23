@@ -1,28 +1,33 @@
 "use client";
 
-import { Library, Plus, Search, ListMusic, X, Check, Heart } from "lucide-react"; // Aggiunto Heart
-import styles from "../../app/home/home.module.css"; 
+import { Library, Plus, Search, ListMusic, X, Check, Heart } from "lucide-react";
+import styles from "../../app/home/home.module.css";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import CreatePlaylistModal from "../CreatePlaylistModal/CreatePlaylistModal";
 import { useSessionManager } from "../../hooks/useSessionManager";
+import { useSpotifyFetch } from "../../hooks/useSpotifyFetch"; // ✅ AGGIUNTO
 
 export default function AppSidebar() {
   const router = useRouter();
   const { setSessionExpired } = useSessionManager();
+
   const [filter, setFilter] = useState("Playlists");
   const [libraryItems, setLibraryItems] = useState([]);
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
   const [selectedItem, setSelectedItem] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState("Recents");
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const sortMenuRef = useRef(null);
+
+  // ✅ HOOK SPOTIFY
+  const { spotifyFetch } = useSpotifyFetch();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,50 +43,45 @@ export default function AppSidebar() {
     setIsCollapsed(!isCollapsed);
   };
 
-  // Nuova funzione per navigare alle Liked Songs
   const goToLikedSongs = () => {
-    router.push('/liked-songs');
+    router.push("/liked-songs");
   };
 
-  const fetchData = async (signal) => {
-    let url = "";
-    if (filter === "Playlists") url = "/api/playlists/user?limit=50";
-    else if (filter === "Albums") url = "/api/albums/saved?limit=50";
-    else if (filter === "Artists") url = "/api/spotify/get-followed-artists?limit=50";
+  // ✅ fetchData riscritto con useSpotifyFetch
+  const fetchData = async () => {
+    let endpoint = "";
+    if (filter === "Playlists") endpoint = "/playlists/user?limit=50";
+    else if (filter === "Albums") endpoint = "/albums/saved?limit=50";
+    else if (filter === "Artists") endpoint = "/spotify/get-followed-artists?limit=50";
 
-    if (!url) return;
+    if (!endpoint) return;
 
-    try { 
-      const res = await fetch(url, { signal });
-      if (res.status === 401) {
-        setSessionExpired();
+    try {
+      const data = await spotifyFetch(endpoint);
+      if (!data) {
+        setLibraryItems([]);
         return;
       }
-      if (!res.ok) throw new Error(`Errore nel caricamento: ${res.status} ${res.statusText}`);
-      
-      const data = await res.json();
+
       if (filter === "Artists") {
         setLibraryItems(data.artists?.items || []);
       } else {
         setLibraryItems(data.items || []);
       }
     } catch (error) {
-      if (error.name === 'AbortError') return;
       console.error("Errore fetch sidebar:", error);
       setLibraryItems([]);
     }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    fetchData(controller.signal);
-    return () => controller.abort();
-  }, [filter]);
+    fetchData();
+  }, [filter, spotifyFetch]);
 
   const handleFilterChange = (newFilter) => {
     if (filter === newFilter) return;
-    setLibraryItems([]); 
-    setFilter(newFilter); 
+    setLibraryItems([]);
+    setFilter(newFilter);
   };
 
   const handleContextMenu = (e, item, type) => {
@@ -108,11 +108,7 @@ export default function AppSidebar() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ playlist_id: item.id }),
             });
-            if (res.ok) {
-              console.log("Playlist seguita");
-            } else {
-              throw new Error("Errore nel seguire la playlist");
-            }
+            if (!res.ok) throw new Error("Errore nel seguire la playlist");
           } catch (err) {
             console.error(err);
           }
@@ -129,11 +125,7 @@ export default function AppSidebar() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ playlist_id: item.id }),
             });
-            if (res.ok) {
-              console.log("Playlist non più seguita");
-            } else {
-              throw new Error("Errore nel smettere di seguire");
-            }
+            if (!res.ok) throw new Error("Errore nel smettere di seguire");
           } catch (err) {
             console.error(err);
           }
@@ -144,8 +136,8 @@ export default function AppSidebar() {
         label: "Copia link a playlist",
         icon: "",
         action: () => {
-         const link = `https://open.spotify.com/playlist/${item.id}`;
-         navigator.clipboard.writeText(link);
+          const link = `https://open.spotify.com/playlist/${item.id}`;
+          navigator.clipboard.writeText(link);
         },
       });
       items.push({
@@ -166,11 +158,7 @@ export default function AppSidebar() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ type: "artist", ids: [item.id] }),
             });
-            if (res.ok) {
-              console.log("Artista seguito");
-            } else {
-              throw new Error("Errore nel seguire l'artista");
-            }
+            if (!res.ok) throw new Error("Errore nel seguire l'artista");
           } catch (err) {
             console.error(err);
           }
@@ -187,11 +175,7 @@ export default function AppSidebar() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ type: "artist", ids: [item.id] }),
             });
-            if (res.ok) {
-              console.log("Artista non più seguito");
-            } else {
-              throw new Error("Errore nel smettere di seguire");
-            }
+            if (!res.ok) throw new Error("Errore nel smettere di seguire");
           } catch (err) {
             console.error(err);
           }
@@ -244,11 +228,7 @@ export default function AppSidebar() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ ids: [albumId] }),
             });
-            if (res.ok) {
-              console.log(" Album salvato");
-            } else {
-              throw new Error("Errore nel salvare l'album");
-            }
+            if (!res.ok) throw new Error("Errore nel salvare l'album");
           } catch (err) {
             console.error(err);
           }
@@ -266,11 +246,7 @@ export default function AppSidebar() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ ids: [albumId] }),
             });
-            if (res.ok) {
-              console.log(" Album rimosso");
-            } else {
-              throw new Error("Errore nel rimuovere l'album");
-            }
+            if (!res.ok) throw new Error("Errore nel rimuovere l'album");
           } catch (err) {
             console.error(err);
           }
@@ -280,7 +256,7 @@ export default function AppSidebar() {
         id: "go-to-album",
         label: "Vai all'album",
         icon: "",
-        action: () => router.push(`/albums/${item.album?.id || item.id}`),
+        action: () => router.push(`/album/${item.album?.id || item.id}`),
       });
       items.push({
         id: "share",
@@ -348,45 +324,42 @@ export default function AppSidebar() {
       details = `Playlist • ${item.owner.display_name}`;
       imageClass = styles.itemImagePlaylist;
       linkUrl = `/playlist/${key}`;
-    } 
-    else if (filter === "Artists") {
+    } else if (filter === "Artists") {
       if (item.type !== "artist") return null;
       key = item.id;
       image = item.images?.[0]?.url;
       title = item.name;
       details = "Artist";
-      imageClass = styles.itemImageArtist; 
+      imageClass = styles.itemImageArtist;
       linkUrl = `/artist/${key}`;
-    } 
-    else if (filter === "Albums") {
+    } else if (filter === "Albums") {
       if (!item.album) return null;
       key = item.album.id;
       image = item.album.images?.[0]?.url;
       title = item.album.name;
-      details = `Album • ${item.album.artists
-        .map((a) => a.name)
-        .join(", ")}`;
+      details = `Album • ${item.album.artists.map((a) => a.name).join(", ")}`;
       imageClass = styles.itemImagePlaylist;
       linkUrl = `/album/${key}`;
-    }  
-    else {
+    } else {
       return null;
     }
 
     return (
-      <div 
-        key={key} 
-        className={styles.libraryItem} 
+      <div
+        key={key}
+        className={styles.libraryItem}
         onClick={() => router.push(linkUrl)}
         onContextMenu={(e) => handleContextMenu(e, item, filter)}
-        style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', padding: isCollapsed ? '8px 0' : '12px' }}
+        style={{ justifyContent: isCollapsed ? "center" : "flex-start", padding: isCollapsed ? "8px 0" : "12px" }}
       >
-        {image && <img 
-          src={image} 
-          alt={title} 
-          className={imageClass} 
-          style={isCollapsed ? { width: '48px', height: '48px', minWidth: '48px', borderWidth: '0' } : {}}
-        />}
+        {image && (
+          <img
+            src={image}
+            alt={title}
+            className={imageClass}
+            style={isCollapsed ? { width: "48px", height: "48px", minWidth: "48px", borderWidth: "0" } : {}}
+          />
+        )}
         {!isCollapsed && (
           <div className={styles.itemInfo}>
             <span className={styles.itemTitle}>{title}</span>
@@ -398,58 +371,61 @@ export default function AppSidebar() {
   };
 
   return (
-    <div 
+    <div
       className={styles.libraryContainer}
-      style={{ 
-        width: isCollapsed ? '80px' : '320px', 
-        transition: 'width 0.3s ease',
-        alignItems: isCollapsed ? 'center' : 'stretch'
+      style={{
+        width: isCollapsed ? "80px" : "320px",
+        transition: "width 0.3s ease",
+        alignItems: isCollapsed ? "center" : "stretch"
       }}
     >
-      <div className={styles.libraryHeader} style={{ justifyContent: isCollapsed ? 'center' : 'space-between', padding: isCollapsed ? '0' : '0 8px' }}>
-        <button className={styles.libraryTitle} onClick={getSmall}> 
-          <Library /> 
-          {!isCollapsed && "Your Library"} 
-        </button> 
-        {!isCollapsed && ( 
+      <div className={styles.libraryHeader} style={{ justifyContent: isCollapsed ? "center" : "space-between", padding: isCollapsed ? "0" : "0 8px" }}>
+        <button className={styles.libraryTitle} onClick={getSmall}>
+          <Library />
+          {!isCollapsed && "Your Library"}
+        </button>
+        {!isCollapsed && (
           <div className={styles.headerButtons}>
-            <button 
+            <button
               className={styles.addPlaylistButton}
               onClick={() => setShowCreateModal(true)}
               title="Crea playlist"
-            > 
+            >
               <Plus size={20} />
             </button>
-          </div>  
+          </div>
         )}
       </div>
 
-      {/* NUOVO ITEM: Liked Songs - Posizionato subito dopo l'header */}
-      <div 
-        className={styles.libraryItem} 
+      <div
+        className={styles.libraryItem}
         onClick={goToLikedSongs}
-        style={{ 
-          justifyContent: isCollapsed ? 'center' : 'flex-start', 
-          padding: isCollapsed ? '8px 0' : '12px',
-          cursor: 'pointer',
-          marginBottom: '8px'
+        style={{
+          justifyContent: isCollapsed ? "center" : "flex-start",
+          padding: isCollapsed ? "8px 0" : "12px",
+          cursor: "pointer",
+          marginBottom: "8px"
         }}
       >
-        <div 
+        <div
           className={styles.itemImagePlaylist}
-          style={{ 
-            width: isCollapsed ? '48px' : '52px', 
-            height: isCollapsed ? '48px' : '52px', 
-            minWidth: isCollapsed ? '48px' : '52px',
-            background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: '4px',
-            marginRight: isCollapsed ? 0 : '12px'
+          style={{
+            width: isCollapsed ? "48px" : "52px",
+            height: isCollapsed ? "48px" : "52px",
+            minWidth: isCollapsed ? "48px" : "52px",
+            background: "linear-gradient(135deg, #450af5, #8e8e8e)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "4px",
+            marginRight: isCollapsed ? 0 : "12px"
           }}
         >
-          <Heart size={isCollapsed ? 24 : 28} fill="white" stroke="white" />
+          <Heart
+            size={isCollapsed ? 24 : 28}
+            fill="#ffffff"
+            stroke="#ffffff"
+          />
         </div>
         {!isCollapsed && (
           <div className={styles.itemInfo}>
@@ -459,11 +435,10 @@ export default function AppSidebar() {
         )}
       </div>
 
-      <CreatePlaylistModal 
+      <CreatePlaylistModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreated={(playlist) => {
-          // Ricarica le playlist
           if (filter === "Playlists") {
             fetchData();
           }
@@ -472,86 +447,92 @@ export default function AppSidebar() {
 
       {!isCollapsed && (
         <div className={styles.libraryFilters}>
-        {["Playlists", "Artists", "Albums"].map((f) => (
-          <button 
-            key={f} 
-            className={styles.chip}
-            onClick={() => handleFilterChange(f)}
-            style={{
-              backgroundColor: filter === f ? "white" : "",
-              color: filter === f ? "black" : "",
-            }}
-          >
-            {f}
-          </button>
-        ))} 
+          {["Playlists", "Artists", "Albums"].map((f) => (
+            <button
+              key={f}
+              className={styles.chip}
+              onClick={() => handleFilterChange(f)}
+              style={{
+                backgroundColor: filter === f ? "white" : "",
+                color: filter === f ? "black" : "",
+              }}
+            >
+              {f}
+            </button>
+          ))}
         </div>
       )}
 
       {!isCollapsed && (
         <div className={styles.libraryUtilities}>
-        {isSearchOpen ? (
-          <div className={styles.searchContainer}>
-            <button className={styles.iconButton} onClick={() => setIsSearchOpen(false)}>
-               <Search size={16} />
+          {isSearchOpen ? (
+            <div className={styles.searchContainer}>
+              <button className={styles.iconButton} onClick={() => setIsSearchOpen(false)}>
+                <Search size={16} />
+              </button>
+              <input
+                type="text"
+                className={styles.searchInput}
+                placeholder="Cerca..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+              <button className={styles.iconButton} onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}>
+                <X size={16} />
+              </button>
+            </div>
+          ) : (
+            <button className={`${styles.iconButton} ${styles.searchIcon}`} onClick={() => setIsSearchOpen(true)}>
+              <Search size={18} />
             </button>
-            <input 
-              type="text" 
-              className={styles.searchInput} 
-              placeholder="Cerca..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              autoFocus
-            />
-            <button className={styles.iconButton} onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}>
-              <X size={16} />
+          )}
+
+          <div style={{ position: "relative" }} ref={sortMenuRef}>
+            <button
+              className={styles.sortButton}
+              onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
+            >
+              <span>
+                {sortOrder === "Recents"
+                  ? "Recenti"
+                  : sortOrder === "Alphabetical"
+                    ? "Alfabetico"
+                    : "Autore"}
+              </span>
+              <ListMusic size={16} />
             </button>
-          </div>
-        ) : (
-          <button className={`${styles.iconButton} ${styles.searchIcon}`} onClick={() => setIsSearchOpen(true)}>
-            <Search size={18} />
-          </button>
-        )}
-        
-        <div style={{ position: 'relative' }} ref={sortMenuRef}>
-          <button 
-            className={styles.sortButton} 
-            onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
-          >
-            <span>{sortOrder === "Recents" ? "Recenti" : sortOrder === "Alphabetical" ? "Alfabetico" : "Autore"}</span>
-            <ListMusic size={16} />
-          </button>
-          
-          {isSortMenuOpen && (
-            <div className={styles.sortMenu}>
-              <div className={styles.navTitle}>Ordina per</div>
-              <button 
-                  className={`${styles.sortMenuItem} ${sortOrder === "Recents" ? styles.active : ''}`}
+
+            {isSortMenuOpen && (
+              <div className={styles.sortMenu}>
+                <div className={styles.navTitle}>Ordina per</div>
+                <button
+                  className={`${styles.sortMenuItem} ${sortOrder === "Recents" ? styles.active : ""}`}
                   onClick={() => { setSortOrder("Recents"); setIsSortMenuOpen(false); }}
-              >
+                >
                   Recenti
                   {sortOrder === "Recents" && <Check size={16} />}
-              </button>
-              <button 
-                  className={`${styles.sortMenuItem} ${sortOrder === "Alphabetical" ? styles.active : ''}`}
+                </button>
+                <button
+                  className={`${styles.sortMenuItem} ${sortOrder === "Alphabetical" ? styles.active : ""}`}
                   onClick={() => { setSortOrder("Alphabetical"); setIsSortMenuOpen(false); }}
-              >
+                >
                   Alfabetico
                   {sortOrder === "Alphabetical" && <Check size={16} />}
-              </button>
-              {filter === "Playlists" && (
-                  <button 
-                    className={`${styles.sortMenuItem} ${sortOrder === "Creator" ? styles.active : ''}`}
+                </button>
+                {filter === "Playlists" && (
+                  <button
+                    className={`${styles.sortMenuItem} ${sortOrder === "Creator" ? styles.active : ""}`}
                     onClick={() => { setSortOrder("Creator"); setIsSortMenuOpen(false); }}
                   >
                     Autore
                     {sortOrder === "Creator" && <Check size={16} />}
                   </button>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
         </div>
-        </div> 
       )}
 
       <div className={styles.libraryList}>

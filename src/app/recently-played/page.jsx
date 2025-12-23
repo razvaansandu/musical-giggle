@@ -27,7 +27,6 @@ export default function RecentlyPlayedPage() {
         const tracks = Array.isArray(data.items)
           ? data.items.map((i) => i.track)
           : [];
-        // Remove duplicates based on track ID
         const uniqueTracks = tracks.filter((track, index, self) => 
           self.findIndex(t => t.id === track.id) === index
         );

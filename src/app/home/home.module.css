@@ -270,8 +270,7 @@
   height: 72px;
   border-radius: 8px;
   object-fit: cover;
-  flex-shrink: 0;
-  border: 2px solid var(--border-subtle);
+  flex-shrink: 0; 
   transition: all 0.3s ease;
 }
 

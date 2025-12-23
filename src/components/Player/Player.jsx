@@ -172,7 +172,6 @@ export default function Player() {
     }
   };
 
-  // ✅ HANDLER CORRETTO PER CAMBIARE DISPOSITIVO
   const handleDeviceClick = async (deviceId) => {
     try {
       await fetch("/api/player/transfer-playback", {
@@ -180,11 +179,11 @@ export default function Player() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           device_ids: [deviceId],
-          play: true // Riprende la riproduzione sul nuovo dispositivo
+          play: true 
         }),
       });
       setShowDevices(false);
-      setTimeout(fetchCurrent, 1000); // Refresh stato dopo 1s
+      setTimeout(fetchCurrent, 1000); 
     } catch (err) {
       console.error("Errore nel trasferire la riproduzione", err);
     }
@@ -465,7 +464,6 @@ export default function Player() {
         </button>
         <VolumeButton />
 
-        {/* ✅ LISTA DISPOSITIVI FUNZIONANTE */}
         {showDevices && (
           <div ref={deviceRef} className={styles.queueDropdown} style={{right: '180px'}}>
             <div className={styles.queueHeader}>
