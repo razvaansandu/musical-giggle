@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🎧 Spotify Dashboard con Next.js
 
-## Getting Started
+Questo progetto è una web app costruita con Next.js che si integra con la Spotify Web API per mostrare dati del profilo, brani in riproduzione e playlist personali.
 
-First, run the development server:
+​
+Funzionalità principali
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    Login con account Spotify tramite OAuth 2.0.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+​
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Visualizzazione del brano attualmente in riproduzione e dei top tracks/top artists dell’utente.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+​
 
-## Learn More
+Lista delle playlist personali con link diretti all’app Spotify o al player web.
 
-To learn more about Next.js, take a look at the following resources:
+​
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Interfaccia responsive ottimizzata per desktop e mobile.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    ​
 
-## Deploy on Vercel
+Stack tecnologico
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    Next.js (App Router) per frontend e routing.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+​
+
+NextAuth.js come provider di autenticazione Spotify.
+
+​
+
+Spotify Web API per recuperare dati musicali e statistiche.
+
+​
+
+Tailwind CSS per lo styling veloce e modulare.
+​
+
+    ​
+
+Requisiti
+
+    Account Spotify (gratuito o Premium) e app registrata su Spotify Developer Dashboard.
+
+​
+
+Node.js installato in locale.
+
+    ​
+
+Configurazione rapida
+
+    Clona il repository ed entra nella cartella del progetto.
+
+​
+
+Crea un file .env.local con le credenziali della tua app Spotify: SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, NEXTAUTH_URL, NEXTAUTH_SECRET.
+
+​
+
+Installa le dipendenze con npm install e avvia l’ambiente di sviluppo con npm run dev.
+
+    ​
+
+Ora apri http://localhost:3000 per effettuare il login con Spotify e testare il tuo dashboard musicale.
+​
