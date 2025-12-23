@@ -1,0 +1,118 @@
+.trackListContainer {
+  width: 100%;
+  padding: 1.5rem 0;
+}
+
+.trackListHeader {
+  display: grid;
+  grid-template-columns: 50px 2fr 2fr 2fr 100px 50px;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trackListBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.trackRow {
+  display: grid;
+  grid-template-columns: 50px 2fr 2fr 2fr 100px 50px;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.trackRow:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.colIndex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.colTitle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.trackImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.trackName {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.colArtist {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.colAlbum {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.colDuration {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.colLike {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .trackListHeader,
+  .trackRow {
+    grid-template-columns: 50px 2fr 2fr 80px 50px;
+  }
+
+  .colAlbum {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .trackListHeader,
+  .trackRow {
+    grid-template-columns: 50px 2fr 80px 50px;
+  }
+
+  .colAlbum,
+  .colArtist {
+    display: none;
+  }
+}

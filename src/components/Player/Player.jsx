@@ -172,26 +172,30 @@ export default function Player() {
     }
   };
 
+  // ✅ HANDLER CORRETTO PER CAMBIARE DISPOSITIVO
+  const handleDeviceClick = async (deviceId) => {
+    try {
+      await fetch("/api/player/transfer-playback", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          device_ids: [deviceId],
+          play: true // Riprende la riproduzione sul nuovo dispositivo
+        }),
+      });
+      setShowDevices(false);
+      setTimeout(fetchCurrent, 1000); // Refresh stato dopo 1s
+    } catch (err) {
+      console.error("Errore nel trasferire la riproduzione", err);
+    }
+  };
+
   const toggleDevices = () => {
     if (!showDevices) {
       fetchDevices();
       setShowQueue(false); 
     }
     setShowDevices(!showDevices);
-  };
-
-  const handleDeviceClick = async (deviceId) => {
-    try {
-      await fetch('/api/player/transfer-playback', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceId }),
-      });
-      setShowDevices(false);
-      setTimeout(fetchCurrent, 1000);
-    } catch (err) {
-      console.error("Errore nel trasferire la riproduzione", err);
-    }
   };
 
   const fetchQueue = async () => {
@@ -366,9 +370,7 @@ export default function Player() {
   }, [showQueue, showDevices]);
 
   if (!current) { 
-    return (
-     <p></p>
-    );
+    return <p></p>;
   }
 
   const img = current?.album?.images?.[0]?.url;
@@ -463,6 +465,7 @@ export default function Player() {
         </button>
         <VolumeButton />
 
+        {/* ✅ LISTA DISPOSITIVI FUNZIONANTE */}
         {showDevices && (
           <div ref={deviceRef} className={styles.queueDropdown} style={{right: '180px'}}>
             <div className={styles.queueHeader}>
@@ -475,14 +478,17 @@ export default function Player() {
                     key={device.id} 
                     className={`${styles.queueItem} ${device.is_active ? styles.activeDevice : ''}`}
                     onClick={() => !device.is_active && handleDeviceClick(device.id)}
-                    style={{ cursor: device.is_active ? 'default' : 'pointer', background: device.is_active ? 'rgba(29, 185, 84, 0.1)' : 'transparent' }}
+                    style={{ 
+                      cursor: device.is_active ? 'default' : 'pointer', 
+                      background: device.is_active ? 'rgba(29, 185, 84, 0.1)' : 'transparent' 
+                    }}
                   >
                     <div className={styles.queueItemInfo}>
                       <div className={styles.queueItemTitle} style={{ color: device.is_active ? '#1DB954' : 'inherit' }}>
                         {device.name}
                       </div>
                       <div className={styles.queueItemArtist}>
-                        {device.type} {device.is_active && '• Ascoltando ora'}
+                        {device.type} {device.is_active && '• Attivo'}
                       </div>
                     </div>
                   </div>
