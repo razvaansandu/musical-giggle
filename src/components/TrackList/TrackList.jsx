@@ -7,7 +7,7 @@ import { useContextMenu } from "../../hooks/useContextMenu";
 import LikeButton from "../buttons/LikeButton";
 import { useRouter } from "next/navigation";
 
-export default function TrackList({ tracks }) {
+export default function TrackList({ tracks, onTrackRemoved }) {
   const [selectedTrack, setSelectedTrack] = useState(null);
   const contextMenu = useContextMenu();
   const router = useRouter();
@@ -99,7 +99,14 @@ export default function TrackList({ tracks }) {
                 {formatDuration(duration)}
               </div>
               <div className={styles.colLike} onClick={(e) => e.stopPropagation()}>
-                <LikeButton trackId={stableId} />
+                <LikeButton 
+                  trackId={stableId} 
+                  onLikeChange={(isLiked) => {
+                    if (!isLiked && onTrackRemoved) {
+                      onTrackRemoved(stableId);
+                    }
+                  }}
+                />
               </div>
             </div>
           );

@@ -99,6 +99,14 @@ export default function LikedSongs() {
     }
   };
 
+  const handleTrackRemoved = (trackId) => {
+    setTracks(prev => prev.filter(track => {
+      const id = track?.id ?? track?.track?.id;
+      return id !== trackId;
+    }));
+    sTotal(prev => prev - 1);
+  };
+
   return (
     <div className={styles.container}>
       <SpotifyHeader />
@@ -151,7 +159,7 @@ export default function LikedSongs() {
               />
             </div>
             
-            <TrackList tracks={tracks} />
+            <TrackList tracks={tracks} onTrackRemoved={handleTrackRemoved} />
 
             {hasMore && (
               <button 
@@ -159,10 +167,21 @@ export default function LikedSongs() {
                 disabled={loading}
                 style={{  
                   margin: '20px 0', 
-                  padding: '12px 24px',
+                  padding: '12px 40px',
+                  backgroundColor: 'var(--primary)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '500px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  letterSpacing: '0.5px',
                   cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1
+                  opacity: loading ? 0.6 : 1,
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(29, 185, 84, 0.3)',
                 }}
+                onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = 'var(--primary-light)') && (e.target.style.transform = 'scale(1.04)') && (e.target.style.boxShadow = '0 6px 16px rgba(29, 185, 84, 0.5)')}
+                onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = 'var(--primary)') && (e.target.style.transform = 'scale(1)') && (e.target.style.boxShadow = '0 4px 12px rgba(29, 185, 84, 0.3)')}
               >
                 {loading ? 'Caricamento...' : 'Carica altre'}
               </button>
