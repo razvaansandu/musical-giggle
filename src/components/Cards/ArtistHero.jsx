@@ -60,13 +60,6 @@ export default function ArtistHero({ artist }) {
           >
             {playing ? "Caricamento..." : "Play"}
           </button>
-          <button
-            className={styles.follow}
-            onClick={() => setFollowing((s) => !s)}
-            aria-pressed={following}
-          >
-            {following ? "Segui già" : "Segui"}
-          </button>
         </div>
       </div>
     </header>
