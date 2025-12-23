@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import CreatePlaylistModal from "../CreatePlaylistModal/CreatePlaylistModal";
 import { useSessionManager } from "../../hooks/useSessionManager";
-import { useSpotifyFetch } from "../../hooks/useSpotifyFetch"; // ✅ AGGIUNTO
+import { useSpotifyFetch } from "../../hooks/useSpotifyFetch"; 
 
 export default function AppSidebar() {
   const router = useRouter();
@@ -26,7 +26,6 @@ export default function AppSidebar() {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const sortMenuRef = useRef(null);
 
-  // ✅ HOOK SPOTIFY
   const { spotifyFetch } = useSpotifyFetch();
 
   useEffect(() => {
@@ -47,7 +46,6 @@ export default function AppSidebar() {
     router.push("/liked-songs");
   };
 
-  // ✅ fetchData riscritto con useSpotifyFetch
   const fetchData = async () => {
     let endpoint = "";
     if (filter === "Playlists") endpoint = "/playlists/user?limit=50";
