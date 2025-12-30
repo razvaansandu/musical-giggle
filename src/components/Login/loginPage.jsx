@@ -6,7 +6,7 @@ export default function LoginPage() {
   const router = useRouter();
   const handleSpotifyLogin = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`, {
+    const res = await fetch("/api/auth/login", {
       method: 'POST'
     }).then(res => res.json());
     window.location.href = res.url; 
