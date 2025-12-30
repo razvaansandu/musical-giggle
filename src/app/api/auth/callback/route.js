@@ -35,7 +35,7 @@ export async function GET(request) {
   const data = await response.json();
 
   if (data.access_token) {
-    return redirect(`http://localhost:3000/api/auth/init?code=${data.access_token}`);
+    return redirect(`/api/auth/init?code=${data.access_token}`);
   } else {
     return NextResponse.redirect("/login?error=invalid_token");
   }
