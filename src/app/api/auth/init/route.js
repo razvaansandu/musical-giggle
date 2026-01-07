@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const response = NextResponse.redirect('http://localhost:3000');
+  const response = NextResponse.redirect("http://127.0.0.1:3000/api/auth/callback");
   response.cookies.set("auth_code", code);
   return response;
 }
